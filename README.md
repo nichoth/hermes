@@ -15,4 +15,4 @@ So wnfs I think has everything needed for this usecase. At this point it's more 
 * https://guide.fission.codes/developers/webnative/sharing-private-data
 * https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294
 * https://github.com/wnfs-wg/spec/discussions/22#discussioncomment-3312330
-* [this document also](https://github.com/nichoth/ssc-server/blob/main/version-two.md)
+* [this document also was also written here](https://github.com/nichoth/ssc-server/blob/main/version-two.md)
