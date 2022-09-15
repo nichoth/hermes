@@ -1,6 +1,6 @@
 // import * as React from "react"
 import { FunctionComponent, Component, createContext,
-  ComponentChildren } from 'preact';
+  ComponentChildren, ComponentChild } from 'preact';
 import { useState, useEffect, useContext } from 'preact/hooks';
 import * as wn from "webnative"
 import FileSystem from "webnative/fs/filesystem"
@@ -22,7 +22,7 @@ const WebnativeCtx = createContext<WebnativeContext | null>(null)
 interface Props {
   permissions?: Permissions
   loading?: Component
-  children: ComponentChildren
+  // children: ComponentChildren
 }
 
 // const WebnativeProvider: React.FC<Props> = ({
