@@ -16,3 +16,4 @@ So `wnfs` I think has everything needed for this usecase. At this point it's mor
 
 * https://guide.fission.codes/developers/webnative/sharing-private-data
 * https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294
+foo
