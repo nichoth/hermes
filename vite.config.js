@@ -5,27 +5,27 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  jsx: {
-    factory: 'h',
-    fragment: 'Fragment'
-  },
-  plugins: [
-    preact(),
-    NodeGlobalsPolyfillPlugin({
-      buffer: true
-    })
-  ],
-  css: {
-    postcss: {
-      plugins: [
-          postcssNesting
-      ],
+    jsx: {
+        factory: 'h',
+        fragment: 'Fragment'
     },
-  },
-  server: {
-    port: 3000
-  },
-  build: {
-    outDir: './dist'
-  }
+    plugins: [
+        preact(),
+        NodeGlobalsPolyfillPlugin({
+            buffer: true
+        })
+    ],
+    css: {
+        postcss: {
+            plugins: [
+                postcssNesting
+            ],
+        },
+    },
+    server: {
+        port: 3000
+    },
+    build: {
+        outDir: './dist'
+    }
 })

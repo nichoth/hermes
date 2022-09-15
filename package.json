@@ -11,6 +11,7 @@
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@preact/preset-vite": "^2.4.0",
+    "@types/react": "^18.0.20",
     "concurrently": "^7.4.0",
     "cypress": "^10.8.0",
     "postcss-nesting": "^10.2.0",
