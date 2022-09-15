@@ -1,1 +1,26 @@
-{}
+{
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags",
+    "test": "tape test/index.js | tap-arc",
+    "cypress-test": "concurrently --kill-others \"npx vite\" \"npx cypress open\""
+  },
+  "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@preact/preset-vite": "^2.4.0",
+    "concurrently": "^7.4.0",
+    "cypress": "^10.8.0",
+    "postcss-nesting": "^10.2.0",
+    "tap-arc": "^0.3.5",
+    "tape": "^5.6.0",
+    "vite": "^3.1.0"
+  },
+  "dependencies": {
+    "htm": "^3.1.1",
+    "json-stable-stringify": "^1.0.1",
+    "webnative": "^0.34.1"
+  }
+}
