@@ -1,6 +1,4 @@
-// import { h, render } from 'preact';
-import { render } from "preact";
-import { html } from 'htm/preact';
+import { h, render } from 'preact';
 import * as wn from "webnative"
 import { WebnativeProvider } from "./context/webnative"
 
@@ -15,13 +13,11 @@ const PERMISSIONS = {
 }
 
 function App () {
-	return (html`
-		<div>
-      <${WebnativeProvider} permissions=${PERMISSIONS}>
+	return (<div>
+      <WebnativeProvider permissions={PERMISSIONS}>
         <h1>Hello from Preact</h1>
-      <//>
-		</div>
-	`);
+      </WebnativeProvider>
+  </div>)
 }
 
-render(html`<${App} />`, document.getElementById('content')!);
+render(<App />, document.getElementById('content')!);
