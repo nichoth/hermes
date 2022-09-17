@@ -12,7 +12,6 @@ import { FunctionComponent } from 'preact';
 // import { useWebnative } from "./context/webnative"
 
 const PERMISSIONS = {
-<<<<<<< HEAD
     app: {
         name: "Hermes",
         creator: "snail-situation",
@@ -20,15 +19,6 @@ const PERMISSIONS = {
     fs: {
         public: [wn.path.directory("Apps", "snail-situation", "Hermes")],
     },
-=======
-  app: {
-    name: "Hermes",
-    creator: "snail-situation",
-  },
-  fs: {
-    public: [wn.path.directory("Apps", "snail-situaion", "Hermes")],
-  }
->>>>>>> three
 }
 
 const state = struct({
