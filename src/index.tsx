@@ -7,25 +7,10 @@ import { Permissions } from "webnative/ucan/permissions"
 import observ from 'observ'
 import struct from 'observ-struct'
 import { FunctionComponent } from 'preact';
-import Router from 'ruta3'
 // import { useWebnative } from "./context/webnative"
+import Router from './router'
 
 const router = Router()
-router.addRoute('/', () => {
-    return function Home () {
-        return [<p id="route-home">
-            this is the home route!
-        </p>,
-        <a href="/fooo">fooo</a>]
-    }
-})
-
-router.addRoute('/fooo', () => {
-    return function fooo () {
-        return [<p>fooo route :tada</p>,
-            <a href="/">home</a>]
-    }
-})
 
 const PERMISSIONS = {
     app: {
@@ -99,7 +84,7 @@ const App: FunctionComponent<Props> = function App (props) {
 
     return (<div class="testing">
         <p>the route is: {route}</p>
-        <p>hello, this is the app</p>
+        <h2>hello, this is the app</h2>
         {children}
     </div>)
 }
