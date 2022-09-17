@@ -13,9 +13,17 @@ import Router from 'ruta3'
 const router = Router()
 router.addRoute('/', () => {
     return function Home () {
-        return <p id="route-home">
+        return [<p id="route-home">
             this is the home route!
-        </p>
+        </p>,
+        <a href="/fooo">fooo</a>]
+    }
+})
+
+router.addRoute('/fooo', () => {
+    return function fooo () {
+        return [<p>fooo route :tada</p>,
+            <a href="/">home</a>]
     }
 })
 
@@ -50,17 +58,15 @@ navigation.addEventListener('navigate', ev => {
     })
 })
 
-// @ts-ignore
 state(function onChange (_state) {
     const { route, init } = _state
-    // console.log('state change', _state)
     const el = document.getElementById('root')
     if (!el) return
     const match = router.match(route)
     const Node = match ? match.action() : () => (<p>missing route</p>)
     render(<App init={init} route={route} permissions={PERMISSIONS}>
         <Node init={init} />
-    </App>, el);
+    </App>, el)
 })
 
 interface Props {
@@ -87,7 +93,6 @@ const App: FunctionComponent<Props> = function App (props) {
         return (<div>
             <p>the route is: {route}</p>
             <p>need to auth</p>
-            <a href="/fooo">fooo</a>
             {children}
         </div>)
     }
