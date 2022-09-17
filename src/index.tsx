@@ -4,12 +4,20 @@ wn.setup.debug({ enabled: true })
 // import { WebnativeProvider } from "./context/webnative"
 import { useEffect, useState } from 'preact/hooks'
 import { Permissions } from "webnative/ucan/permissions"
-// @ts-ignore
 import observ from 'observ'
-// @ts-ignore
 import struct from 'observ-struct'
 import { FunctionComponent } from 'preact';
+import Router from 'ruta3'
 // import { useWebnative } from "./context/webnative"
+
+const router = Router()
+router.addRoute('/', () => {
+    return function Home () {
+        return <p id="route-home">
+            this is the home route!
+        </p>
+    }
+})
 
 const PERMISSIONS = {
     app: {
@@ -48,7 +56,11 @@ state(function onChange (_state) {
     // console.log('state change', _state)
     const el = document.getElementById('root')
     if (!el) return
-    render(<App init={init} route={route} permissions={PERMISSIONS} />, el);
+    const match = router.match(route)
+    const Node = match ? match.action() : () => (<p>missing route</p>)
+    render(<App init={init} route={route} permissions={PERMISSIONS}>
+        <Node init={init} />
+    </App>, el);
 })
 
 interface Props {
@@ -57,18 +69,17 @@ interface Props {
     init?: wn.State
 }
 
-const App: FunctionComponent<Props> = function App ({ permissions, route, init })  {
+const App: FunctionComponent<Props> = function App (props) {
+    const { permissions, route, init, children } = props
+
     useEffect(() => {
-        async function getState() {
-            const result = await wn.initialise({ permissions })
-                .catch((err) => {
-                    if (err) console.log('errrrrrrrrr', err)
-                    return undefined
-                })
-            
-            state.init.set(result)
-        }
-        getState()
+        wn.initialise({ permissions })
+            .then(result => {
+                state.init.set(result)
+            })
+            .catch((err) => {
+                console.log('errrrrrrrrr', err)
+            })
     }, [permissions])
 
     if (!init?.authenticated) {
@@ -77,16 +88,21 @@ const App: FunctionComponent<Props> = function App ({ permissions, route, init }
             <p>the route is: {route}</p>
             <p>need to auth</p>
             <a href="/fooo">fooo</a>
+            {children}
         </div>)
     }
 
     return (<div class="testing">
         <p>the route is: {route}</p>
         <p>hello, this is the app</p>
+        {children}
     </div>)
 }
 
 const el = document.getElementById('root')
+const Node = router.match(state().route).action()
 if (el) {
-    render(<App route={''} permissions={PERMISSIONS} />, el)
+    render(<App route={state().route} permissions={PERMISSIONS}>
+        <Node />
+    </App>, el)
 }
