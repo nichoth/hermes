@@ -1,27 +1,46 @@
-import { h, render } from 'preact';
+import { h, render } from 'preact'
 import * as wn from "webnative"
 // import { WebnativeProvider } from "./context/webnative"
+import { useEffect, useState } from 'preact/hooks'
+import { Permissions } from "webnative/ucan/permissions"
+import { FunctionComponent } from 'preact';
 
-// const PERMISSIONS = {
-//     app: {
-//         name: "Blog",
-//         creator: "Fission",
-//     },
-//     fs: {
-//         public: [wn.path.directory("Apps", "Fission", "Blog")],
-//     },
-// }
+const folder = { directory: ['apps', 'snail-situation', 'hermes'] }
+const PERMISSIONS = {
+    app: {
+        name: "Blog",
+        creator: "Fission",
+    },
+    fs: {
+        public: [folder]
+        // public: [wn.path.directory("Apps", "Fission", "Blog")],
+    },
+}
 
-// function App () {
-//     return (<div>
-//         <WebnativeProvider permissions={PERMISSIONS}>
-//             <h1>Hello from Preact</h1>
-//         </WebnativeProvider>
-//     </div>)
-// }
+interface Props {
+    permissions?: Permissions
+}
 
-function App ()  {
-    const folder = wn.path.directory('aaa')
+const App: FunctionComponent<Props> = function App ({ permissions })  {
+    const [state, setState] = useState<wn.State>()
+    const [error, setError] = useState()
+
+    useEffect(() => {
+        async function getState() {
+            const result = await wn.initialise({ permissions })
+                .catch((err) => {
+                    setError(err)
+                    return undefined
+                })
+            
+            setState(result)
+        }
+        getState()
+    }, [permissions])
+
+    console.log('state', state)
+    console.log('errrrr', error)
+
     return (<div class="testing">
         hello from here
     </div>)
@@ -29,6 +48,5 @@ function App ()  {
 
 const el = document.getElementById('root')
 if (el) {
-    render(<App />, el);
+    render(<App permissions={PERMISSIONS} />, el);
 }
-    
