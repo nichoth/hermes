@@ -4,11 +4,11 @@ import { WebnativeProvider } from "./context/webnative"
 
 const PERMISSIONS = {
     app: {
-        name: "Blog",
-        creator: "Fission",
+        name: "Hermes",
+        creator: "snail-situation",
     },
     fs: {
-        public: [wn.path.directory("Apps", "Fission", "Blog")],
+        public: [wn.path.directory("Apps", "snail-situation", "Hermes")],
     },
 }
 
