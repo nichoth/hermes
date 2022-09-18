@@ -1,13 +1,9 @@
 import { h, render } from 'preact'
 import * as wn from "webnative"
 wn.setup.debug({ enabled: true })
-// import { WebnativeProvider } from "./context/webnative"
 import { useEffect, useState } from 'preact/hooks'
 import { Permissions } from "webnative/ucan/permissions"
-// import observ from 'observ'
-// import struct from 'observ-struct'
 import { FunctionComponent } from 'preact';
-// import { useWebnative } from "./context/webnative"
 import Router from './router'
 
 const router = Router()
@@ -22,48 +18,38 @@ const PERMISSIONS = {
     },
 }
 
-// const state = struct({
-//     route: observ(location.pathname),
-//     init: observ({})
-// })
-
-// state(function onChange (_state) {
-//     const el = document.getElementById('root')
-//     if (!el) return
-//     render(<App {..._state} permissions={PERMISSIONS} />, el)
-// })
-
 interface Props {
-    // route: string,
     permissions?: Permissions,
-    // init?: wn.State
 }
 
 const App: FunctionComponent<Props> = function App (props) {
-    // const { permissions, route, init } = props
     const { permissions } = props
     const [state, setState] = useState({
         route: location.pathname,
         init: null
     })
 
+    function onNavigate (ev) {
+        console.log('navigate', ev)
+        const url = new URL(ev.destination.url)
+        console.log('url', url)
+        console.log('location', location)
+
+        if (url.host !== location.host) return
+
+        ev.intercept({
+            handler () {
+                setState(Object.assign({}, state, { route: url.pathname }))
+            }
+        })
+    }
+
     // listen for route change events
     useEffect(() => {
         // @ts-ignore
-        navigation.addEventListener('navigate', ev => {
-            console.log('navigate', ev)
-            const url = new URL(ev.destination.url)
-            console.log('url', url)
-            console.log('location', location)
-
-            if (url.host !== location.host) return
-
-            ev.intercept({
-                handler () {
-                    setState(Object.assign({}, state, { route: url.pathname }))
-                }
-            })
-        })
+        navigation.addEventListener('navigate', onNavigate)
+        // @ts-ignore
+        return () => navigation.removeEventListener('navigate', onNavigate)
     }, [])
 
     // initialize webnative
