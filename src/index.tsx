@@ -26,7 +26,7 @@ const App: FunctionComponent<Props> = function App (props) {
     const { permissions } = props
     const [state, setState] = useState({
         route: location.pathname,
-        init: null
+        wn: null
     })
 
     function onNavigate (ev) {
@@ -56,7 +56,7 @@ const App: FunctionComponent<Props> = function App (props) {
     useEffect(() => {
         wn.initialise({ permissions })
             .then(result => {
-                setState(Object.assign({}, state, { init: result }))
+                setState(Object.assign({}, state, { wn: result }))
             })
             .catch((err) => {
                 console.log('errrrrrrrrr', err)
@@ -66,7 +66,7 @@ const App: FunctionComponent<Props> = function App (props) {
     console.log('**state**', state)
 
     const match = router.match(state.route)
-    const Node = match ? match.action(state.init) : () => (<p>missing route</p>)
+    const Node = match ? match.action(state.wn) : () => (<p>missing route</p>)
 
     return (<div class="testing">
         <p>the route is: {state.route}</p>
