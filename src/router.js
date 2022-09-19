@@ -1,4 +1,3 @@
-import { h } from 'preact'
 import Router from 'ruta3'
 
 export default function _Router () {
@@ -16,6 +15,7 @@ export default function _Router () {
     router.addRoute('/fooo', (init) => {
         console.log('init', init)
         return function fooo () {
+            return
             return [<p>fooo route :tada</p>,
                 <a href="/">home</a>]
         }
