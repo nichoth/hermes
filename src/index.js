@@ -3,9 +3,10 @@ import Tonic from '@socketsupply/tonic'
 import * as wn from "webnative"
 wn.setup.debug({ enabled: true })
 import Router from './router'
-import { Permissions } from "webnative/ucan/permissions"
-const observ = require('observ')
-const struct = require('struct')
+import observ from 'observ'
+import struct from 'observ-struct'
+// const observ = require('observ')
+// const struct = require('observ-struct')
 const router = Router()
 
 const PERMISSIONS = {
@@ -23,14 +24,16 @@ const state = struct({
     wn: observ(null)
 })
 
-wn.initialise({ PERMISSIONS })
+wn.initialise({ permissions: PERMISSIONS })
     .then(result => {
         state.wn.set(result)
+        return result
     })
     .catch((err) => {
         console.log('errrrrrrrrr', err)
     })
 
+// @ts-ignore
 navigation.addEventListener('navigate', function onNavigate (ev) {
     console.log('navigate', ev)
     const url = new URL(ev.destination.url)
@@ -41,19 +44,34 @@ navigation.addEventListener('navigate', function onNavigate (ev) {
 
     ev.intercept({
         handler () {
-            setState(Object.assign({}, state, { route: url.pathname }))
+            state.route.set(url.pathname)
         }
     })
 })
 
-state.route(function onChange (newRoute) {
-
-})
-
-class App extends Tonic {
-    render () {
-        return this.html`<div>Hello, world</div>`
-    }
+function getTagName (camelName) {
+    return camelName.match(/[A-Z][a-z0-9]*/g).join('-').toLowerCase()
 }
 
-Tonic.add(App)
+class TheApp extends Tonic {
+    constructor () {
+        super()
+        this.state = { route: null }
+        state.route((newRoute) => {
+            console.log('new route', newRoute)
+            this.state.route = newRoute
+            this.reRender()
+        })
+    }
+
+    render () {
+        const child = router.match(state().route).action(state.wn())
+
+        return this.html`<div>
+            <p>Hello, world</p>
+
+            <${getTagName(child.name)}></${getTagName(child.name)}>
+        </div>`
+    }
+}
+Tonic.add(TheApp)
