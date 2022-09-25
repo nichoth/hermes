@@ -32,6 +32,7 @@ navigation.addEventListener('navigate', function onNavigate (ev) {
 
     ev.intercept({
         handler () {
+            console.log('route change', url.pathname)
             state.route.set(url.pathname)
         }
     })
