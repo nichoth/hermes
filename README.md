@@ -1,5 +1,7 @@
 # hermes
 
+![Hermes logo -- the conch animal](./hermes_logo.png "Hermes")
+
 ## Focus on privacy and sharing data with known people
 
 This project is designed to share images via a social network. It started with using services that are more traditional — a DB and blob host, + UCANs for ID.
