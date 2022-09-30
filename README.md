@@ -14,6 +14,9 @@ And `wnfs` gives us a common backend/ID-source for users, which makes identity e
 
 So `wnfs` I think has everything needed for this usecase. At this point it's more a matter of finding time to try this & build some UI for it.
 
+## notes
+The `events` module is required by our dependencies. It wasn't included so we have added it here.
+
 ## relevant links:
 
 * https://guide.fission.codes/developers/webnative/sharing-private-data
