@@ -1,6 +1,6 @@
 # hermes
 
-![Hermes logo -- the conch animal](./hermes_logo.png "Hermes")
+![Hermes logo -- the conch animal](./hermes_logo_edit.png "Hermes")
 
 ## Focus on privacy and sharing data with known people
 
