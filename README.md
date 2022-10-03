@@ -12,7 +12,7 @@ This project is designed to share images via a social network. It started with u
 
 In the interest of dogfood though, I've realized that what I'm really looking for is a small scale way to share images with specific people, and I've discovered that [wnfs](https://guide.fission.codes/developers/webnative/file-system-wnfs) already has a way to do read permissions on a per-user basis. That's kind of interesting because it's all based on decryption capabilities instead of access control.
 
-And `wnfs` gives us a common backend / ID-source for users, which makes identity easier, since your ID cannot be cross-domain.
+And `wnfs` gives us a common backend / ID-source for users, which makes identity easier, since `webCrypto` private keys cannot be cross-domain.
 
 > to share private files with a group of people, you would need to write down the list of people in the group. Then call `fs.sharePrivate` and pass it the list of other users.
 
