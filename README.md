@@ -18,6 +18,10 @@ And `wnfs` gives us a common backend / ID-source for users, which makes identity
 
 So `wnfs` I think has everything needed for this usecase. At this point it's more a matter of finding time to try this & build some UI for it.
 
+-----------------
+
+The way I think about this is that it's like *Signal*, in the sense that no one is able to read your messages except the recipients, but with an added social network aspect. The social part is all configurable too, as far as who you allow to read your social graph. Do you want to let your friends see who your other friends are?
+
 ## notes
 The `events` module is required by our dependencies. It wasn't included so we have added it here.
 
