@@ -20,7 +20,11 @@ So `wnfs` I think has everything needed for this usecase. At this point it's mor
 
 -----------------
 
-The way I think about this is that it's like *Signal*, in the sense that no one is able to read your messages except the recipients, but with an added social network aspect. The social part is all configurable too, as far as who you allow to read your social graph. Do you want to let your friends see who your other friends are?
+The way I've been thinking about this at a high level is that it's like *Signal*, the messaging app, in the sense that no one is able to read your messages except the recipients, but with an added social network aspect. 
+
+The social part is all configurable too, at a pretty granular level. So you can configure things like -- do you want to let your friends see who your other friends are? Or hide that info from everyone? In any case, you *get to choose* who can read that. Not even the server-operator is able to read that info, unless you allow them to.
+
+This is a big difference from traditional social networks, like *Instagram*, where the server reads/knows all your data.
 
 ## notes
 The `events` module is required by our dependencies. It wasn't included so we have added it here.
@@ -29,3 +33,4 @@ The `events` module is required by our dependencies. It wasn't included so we ha
 
 * https://guide.fission.codes/developers/webnative/sharing-private-data
 * https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294
+
