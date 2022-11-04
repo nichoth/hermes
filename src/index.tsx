@@ -5,6 +5,7 @@ import { useEffect, useState } from 'preact/hooks'
 import { Permissions } from "webnative/ucan/permissions"
 import { FunctionComponent } from 'preact';
 import Router from './router'
+import Route from 'route-event'
 
 const router = Router()
 
@@ -29,27 +30,15 @@ const App: FunctionComponent<Props> = function App (props) {
         wn: null
     })
 
-    function onNavigate (ev) {
-        console.log('navigate', ev)
-        const url = new URL(ev.destination.url)
-        console.log('url', url)
-        console.log('location', location)
-
-        if (url.host !== location.host) return
-
-        ev.intercept({
-            handler () {
-                setState(Object.assign({}, state, { route: url.pathname }))
-            }
-        })
-    }
-
-    // listen for route change events
+    // 
+    // new stuff with route-event, because navigation API is chrome only
+    //
     useEffect(() => {
-        // @ts-ignore
-        navigation.addEventListener('navigate', onNavigate)
-        // @ts-ignore
-        return () => navigation.removeEventListener('navigate', onNavigate)
+        const route = Route()
+        const unlisten = route(function onRoute(path) {
+            setState(Object.assign({}, state, { route: path }))
+        })
+        return unlisten
     }, [])
 
     // initialize webnative
