@@ -5,6 +5,7 @@ import { useEffect, useState } from 'preact/hooks'
 import { Permissions } from "webnative/ucan/permissions"
 import { FunctionComponent } from 'preact';
 import Router from './router'
+import Route from 'route-event'
 
 const router = Router()
 
@@ -44,13 +45,20 @@ const App: FunctionComponent<Props> = function App (props) {
         })
     }
 
-    // listen for route change events
     useEffect(() => {
-        // @ts-ignore
-        navigation.addEventListener('navigate', onNavigate)
-        // @ts-ignore
-        return () => navigation.removeEventListener('navigate', onNavigate)
+        const route = Route()
+        route(function onRoute (path) {
+            setState(Object.assign({}, state, { route: path }))
+        })
     }, [])
+
+    // listen for route change events
+    // useEffect(() => {
+    //     // @ts-ignore
+    //     navigation.addEventListener('navigate', onNavigate)
+    //     // @ts-ignore
+    //     return () => navigation.removeEventListener('navigate', onNavigate)
+    // }, [])
 
     // initialize webnative
     useEffect(() => {
