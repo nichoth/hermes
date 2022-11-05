@@ -27,7 +27,7 @@ interface Props {
 
 const App: FunctionComponent<Props> = function App (props) {
     const { permissions } = props
-    const routeState = useSignal(location.pathname)
+    const routeState = useSignal<string>(location.pathname)
     const webnative = useSignal<wn.State | null>(null)
 
     console.log('render', routeState, webnative)
