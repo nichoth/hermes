@@ -1,7 +1,9 @@
+// @ts-check
 import { h, render } from 'preact'
 import * as wn from "webnative"
 wn.setup.debug({ enabled: true })
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect } from 'preact/hooks'
+import { useSignal } from "@preact/signals";
 import { Permissions } from "webnative/ucan/permissions"
 import { FunctionComponent } from 'preact';
 import Router from './router'
@@ -25,43 +27,41 @@ interface Props {
 
 const App: FunctionComponent<Props> = function App (props) {
     const { permissions } = props
-    const [state, setState] = useState({
-        route: location.pathname,
-        wn: null
-    })
-
-    // @ts-ignore
-    window.state = state
+    const routeState = useSignal(location.pathname)
+    const webnative = useSignal<wn.State | null>(null)
 
     // 
     // new stuff with route-event, because navigation API is chrome only
     //
     useEffect(() => {
         const route = Route()
-        const unlisten = route(function onRoute(path) {
-            setState(Object.assign({}, state, { route: path }))
+        const unlisten = route(function onRoute (path:string) {
+            routeState.value = path
         })
         return unlisten
+
     }, [])
 
+    //
     // initialize webnative
+    //
     useEffect(() => {
         wn.initialise({ permissions })
-            .then(result => {
-                setState(Object.assign({}, state, { wn: result }))
+            .then(res => {
+                webnative.value = res
             })
-            .catch((err) => {
-                console.log('errrrrrrrrr', err)
+            .catch(err => {
+                console.log('errrrrrrrrrrrr', err)
             })
     }, [permissions])
 
-    console.log('**state**', state)
-
-    const match = router.match(state.route)
-    const Node = match ? match.action(state.wn) : () => (<p>missing route</p>)
+    const match = router.match(routeState.value)
+    const Node = match ?
+        match.action(webnative.value) :
+        () => (<p>missing route</p>)
 
     return (<div class="testing">
-        <p>the route is: {state.route}</p>
+        <p>the route is: {routeState}</p>
         <h2>hello, this is the app</h2>
         <Node />
     </div>)
