@@ -30,6 +30,8 @@ const App: FunctionComponent<Props> = function App (props) {
     const routeState = useSignal(location.pathname)
     const webnative = useSignal<wn.State | null>(null)
 
+    console.log('render', routeState, webnative)
+
     // 
     // new stuff with route-event, because navigation API is chrome only
     //

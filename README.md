@@ -1,6 +1,6 @@
 # hermes
 
-<div style="text-align: center">
+<div align="center">
     <img style="width: 15vw" src="./hermes_logo_edit.png" alt="Hermes logo"
         title="Hermes logo"
     >
