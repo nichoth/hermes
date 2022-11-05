@@ -30,6 +30,9 @@ const App: FunctionComponent<Props> = function App (props) {
         wn: null
     })
 
+    // @ts-ignore
+    window.state = state
+
     // 
     // new stuff with route-event, because navigation API is chrome only
     //
