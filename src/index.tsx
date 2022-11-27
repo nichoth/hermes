@@ -33,7 +33,7 @@ const App: FunctionComponent<Props> = function App (props) {
     console.log('render', routeState, webnative)
 
     // 
-    // new stuff with route-event, because navigation API is chrome only
+    // use route-event, because navigation API is chrome only
     //
     useEffect(() => {
         const route = Route()
@@ -41,7 +41,6 @@ const App: FunctionComponent<Props> = function App (props) {
             routeState.value = path
         })
         return unlisten
-
     }, [])
 
     //

@@ -23,9 +23,11 @@ export default defineConfig({
         },
     },
     server: {
-        port: 3000
+        port: 8888
     },
     build: {
-        outDir: './dist'
+        minify: false,
+        outDir: './dist',
+        sourcemap: true
     }
 })
