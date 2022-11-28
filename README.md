@@ -46,3 +46,7 @@ Start a local development server:
 ```
 npm start
 ```
+
+### About the dev setup
+
+* [public dir](https://vitejs.dev/guide/assets.html)

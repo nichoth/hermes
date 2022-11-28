@@ -35,7 +35,8 @@ const App: FunctionComponent<Props> = function App (props) {
         bbb: 'bbb'
     }
 
-    console.log('render', routeState, webnative)
+    console.log('render routeState', routeState)
+    console.log('render webnative', webnative)
 
     console.log('test', test)
 
