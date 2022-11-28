@@ -11,6 +11,8 @@ import Route from 'route-event'
 
 const router = Router()
 
+console.log(import.meta.env)
+
 const PERMISSIONS = {
     app: {
         name: "Hermes",
