@@ -8,10 +8,11 @@ import { Permissions } from "webnative/ucan/permissions"
 import { FunctionComponent } from 'preact';
 import Router from './router'
 import Route from 'route-event'
+import './index.css'
 
 const router = Router()
 
-console.log(import.meta.env)
+console.log('env', import.meta.env)
 
 const PERMISSIONS = {
     app: {
@@ -39,7 +40,6 @@ const App: FunctionComponent<Props> = function App (props) {
 
     console.log('render routeState', routeState)
     console.log('render webnative', webnative)
-
     console.log('test', test)
 
     // 

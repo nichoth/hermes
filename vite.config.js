@@ -5,17 +5,17 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    jsx: {
-        factory: 'h',
-        fragment: 'Fragment'
-    },
-    publicDir: '_public',
     plugins: [
-        preact(),
+        preact({ devtoolsInProd: false, prefreshEnabled: true }),
         NodeGlobalsPolyfillPlugin({
             buffer: true
-        })
+        }),
     ],
+    // https://github.com/vitejs/vite/issues/8644#issuecomment-1159308803
+    esbuild: {
+        logOverride: { 'this-is-undefined-in-esm': 'silent' }
+    },
+    publicDir: '_public',
     css: {
         postcss: {
             plugins: [
@@ -29,6 +29,6 @@ export default defineConfig({
     build: {
         minify: false,
         outDir: './dist',
-        sourcemap: true
+        sourcemap: 'inline'
     }
 })
