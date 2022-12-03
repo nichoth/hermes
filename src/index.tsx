@@ -24,7 +24,7 @@ const PERMISSIONS = {
 }
 
 interface Props {
-    permissions?: Permissions,
+    permissions: Permissions,
 }
 
 const App: FunctionComponent<Props> = function App (props) {

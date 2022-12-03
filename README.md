@@ -38,7 +38,7 @@ The `events` module is required by our dependencies. It wasn't included so we ha
 
 
 ## develop
-This is an example of using `wnfs` + `preact` & `@preact/signals`. We are using client side routing via the browser's history API in [route-event](https://github.com/nichoth/route-event), because [the navigation API is chrome only](https://github.com/nichoth/hermes/discussions/10).
+This is an example of using `wnfs` + `preact` & [@preact/signals](https://preactjs.com/blog/introducing-signals/). We are using client side routing via the browser's history API in [route-event](https://github.com/nichoth/route-event), because [the navigation API is chrome only](https://github.com/nichoth/hermes/discussions/10).
 
 --------------
 
