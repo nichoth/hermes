@@ -49,4 +49,6 @@ npm start
 
 ### About the dev setup
 
-* [public dir](https://vitejs.dev/guide/assets.html)
+* [public dir](https://vitejs.dev/guide/assets.html#the-public-directory)
+
+> you can place the asset in a special public directory under your project root
