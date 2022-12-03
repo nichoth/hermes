@@ -9,6 +9,7 @@ export default defineConfig({
         factory: 'h',
         fragment: 'Fragment'
     },
+    publicDir: '_public',
     plugins: [
         preact(),
         NodeGlobalsPolyfillPlugin({
