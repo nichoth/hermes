@@ -33,8 +33,9 @@ The `events` module is required by our dependencies. It wasn't included so we ha
 
 ## relevant links:
 
-* https://guide.fission.codes/developers/webnative/sharing-private-data
-* https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294
+* [Fission docs -- sharing private data](https://guide.fission.codes/developers/webnative/sharing-private-data)
+* [discord talk](https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294)
+* [version 1 -- ssc](https://github.com/nichoth/ssc-server)
 
 
 ## develop
