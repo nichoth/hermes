@@ -33,17 +33,12 @@ const App: FunctionComponent<Props> = function App (props) {
     const routeState = useSignal<string>(location.pathname)
     const webnative = useSignal<wn.State | null>(null)
 
-    const test = {
-        aaa: 'aaa',
-        bbb: 'bbb'
-    }
-
-    console.log('render routeState', routeState)
-    console.log('render webnative', webnative)
-    console.log('test', test)
+    console.log('render routeState', routeState.value)
+    console.log('render webnative', webnative.value)
 
     // 
     // use route-event, because navigation API is chrome only
+    // https://github.com/nichoth/hermes/discussions/10
     //
     useEffect(() => {
         const route = Route()
