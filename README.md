@@ -31,7 +31,7 @@ This is a big difference from traditional social networks, like *Instagram*, whe
 ## notes
 The `events` module is required by our dependencies. It wasn't included so we have added it here.
 
-## relevant links:
+## relevant links
 
 * [Fission docs -- sharing private data](https://guide.fission.codes/developers/webnative/sharing-private-data)
 * [discord talk](https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294)
