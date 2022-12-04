@@ -11,7 +11,6 @@
   "dependencies": {
     "@preact/signals": "^1.1.2",
     "events": "^3.3.0",
-    "htm": "^3.1.1",
     "json-stable-stringify": "^1.0.1",
     "preact": "^10.11.2",
     "route-event": "^4.0.1",
