@@ -37,7 +37,7 @@ const App: FunctionComponent<Props> = function App (props) {
     console.log('render webnative', webnative.value)
 
     // 
-    // use route-event, because navigation API is chrome only
+    // use `route-event`, because navigation API is chrome only
     // https://github.com/nichoth/hermes/discussions/10
     //
     useEffect(() => {
