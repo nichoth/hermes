@@ -1,10 +1,11 @@
 import { h } from 'preact'
 import Router from 'ruta3'
+import { loginRoute } from './pages/login'
 
 export default function _Router () {
     const router = Router()
 
-    router.addRoute('/', (wn) => {
+    router.addRoute('/', () => {
         return function Home () {
             return [
                 <p id="route-home">this is the home route!</p>,
@@ -13,7 +14,7 @@ export default function _Router () {
         }
     })
 
-    router.addRoute('/fooo', (wn) => {
+    router.addRoute('/fooo', () => {
         return function fooo () {
             return [
                 <p>fooo route :tada</p>,
@@ -22,6 +23,9 @@ export default function _Router () {
         }
     })
 
+    router.addRoute('/login', () => {
+        return loginRoute
+    })
 
     return router
 }
