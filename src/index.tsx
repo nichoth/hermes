@@ -28,20 +28,46 @@ interface Props {
     permissions: Permissions,
 }
 
-const App: FunctionComponent<Props> = function App (props) {
-    const { permissions } = props
+const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const webnative = useSignal<wn.State | null>(null)
 
     console.log('render routeState', routeState.value)
     console.log('render webnative', webnative.value)
 
+    function login () {
+        wn.redirectToLobby(permissions)
+    }
+
+    function logout () {
+        wn.leave()
+    }
+
+    // let fs, username
+
+    // switch ((webnative.value || {}).scenario) {
+    //     case wn.Scenario.AuthCancelled:
+    //       // User was redirected to lobby,
+    //       // but cancelled the authorisation
+    //       break
+
+    //     case wn.Scenario.NotAuthorised:
+
+      
+    //     case wn.Scenario.AuthSucceeded:
+    //     case wn.Scenario.Continuation:
+    //       fs = webnative?.permissions.fs
+    //       username = webnative.username
+    //       break
+    // }
+
     // 
     // use `route-event`, because navigation API is chrome only
     // https://github.com/nichoth/hermes/discussions/10
     //
+    let route
     useEffect(() => {
-        const route = Route()
+        route = Route()
         const unlisten = route(function onRoute (path:string) {
             routeState.value = path
         })
@@ -61,15 +87,25 @@ const App: FunctionComponent<Props> = function App (props) {
             })
     }, [permissions])
 
+    //
+    // componenet did mount
+    //
+    useEffect(() => {
+        if ((webnative.value && !webnative.value.authenticated)) {
+            route.setRoute('/login')
+        }
+    }, [])
+
+    // find the view for this route
     const match = router.match(routeState.value)
     const Node = match ?
-        match.action(webnative.value) :
-        () => (<p>missing route</p>)
+        match.action({ login }, webnative.value) :
+        () => (<p class="404">missing route</p>)
 
     return (<div class="testing">
         <p>the route is: {routeState}</p>
         <h2>hello, this is the app</h2>
-        <Node />
+        <Node login={login} webnative={webnative} />
     </div>)
 }
 
