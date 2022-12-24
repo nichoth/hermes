@@ -6,6 +6,8 @@
     >
 </div>
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/f66ada49-9361-4e73-abee-1d538e3b59a3/deploy-status)](https://app.netlify.com/sites/ssc-hermes/deploys)
+
 ## Focus on privacy and sharing data with known people
 
 This project is designed to share images via a social network. It started with using services that are more traditional — a DB and blob host, + UCANs for ID.

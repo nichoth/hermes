@@ -30,10 +30,6 @@ interface Props {
 
 const route = Route()
 
-function logout () {
-    wn.leave()
-}
-
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const webnative = useSignal<wn.State | null>(null)
