@@ -28,8 +28,7 @@ interface Props {
     permissions: Permissions,
 }
 
-const App: FunctionComponent<Props> = function App (props) {
-    const { permissions } = props
+const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const webnative = useSignal<wn.State | null>(null)
 
@@ -37,8 +36,7 @@ const App: FunctionComponent<Props> = function App (props) {
     console.log('render webnative', webnative.value)
 
     function login () {
-        console.log('*logging in*')
-        // wn.redirectToLobby(permissions)
+        wn.redirectToLobby(permissions)
     }
 
     function logout () {
@@ -89,10 +87,12 @@ const App: FunctionComponent<Props> = function App (props) {
             })
     }, [permissions])
 
+    //
     // componenet did mount
+    //
     useEffect(() => {
-        if (!webnative.value?.authenticated) {
-            route?.setRoute('/login')
+        if ((webnative.value && !webnative.value.authenticated)) {
+            route.setRoute('/login')
         }
     }, [])
 
