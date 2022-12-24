@@ -16,11 +16,11 @@ console.log('env', import.meta.env)
 
 const PERMISSIONS = {
     app: {
-        name: "Hermes",
+        name: "hermes",
         creator: "snail-situation",
     },
     fs: {
-        public: [wn.path.directory("Apps", "snail-situation", "Hermes")],
+        public: [wn.path.directory("Apps", "snail-situation", "hermes")],
     },
 }
 
@@ -29,6 +29,10 @@ interface Props {
 }
 
 const route = Route()
+
+function logout () {
+    wn.leave()
+}
 
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
@@ -39,10 +43,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
     function login () {
         wn.redirectToLobby(permissions)
-    }
-
-    function logout () {
-        wn.leave()
     }
 
     // let fs, username
@@ -80,7 +80,11 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     }, [])
 
     useEffect(() => {
-        if (webnative.value && !webnative.value.authenticated) {
+        if (!webnative.value) return
+
+        if (webnative.value.authenticated) {
+            return
+        } else {
             route.setRoute('/login')
         }
     }, [webnative.value])
