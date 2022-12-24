@@ -8,6 +8,7 @@ export default function _Router () {
     router.addRoute('/', () => {
         return function Home () {
             return [
+                <h2>hello, this is the app</h2>,
                 <p id="route-home">this is the home route!</p>,
                 <a href="/fooo">fooo</a>
             ]

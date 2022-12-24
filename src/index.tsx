@@ -87,7 +87,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
     return (<div class="testing">
         <p>the route is: {routeState}</p>
-        <h2>hello, this is the app</h2>
         <Node login={login} webnative={webnative} />
     </div>)
 }
