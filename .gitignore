@@ -1,5 +1,5 @@
 node_modules
 bundle.js
 .DS_Store
-dist
-
+dist/*
+!dist/_redirects
