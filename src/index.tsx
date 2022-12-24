@@ -45,29 +45,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         wn.redirectToLobby(permissions)
     }
 
-    // let fs, username
-
-    // switch ((webnative.value || {}).scenario) {
-    //     case wn.Scenario.AuthCancelled:
-    //       // User was redirected to lobby,
-    //       // but cancelled the authorisation
-    //       break
-
-    //     case wn.Scenario.NotAuthorised:
-
-      
-    //     case wn.Scenario.AuthSucceeded:
-    //     case wn.Scenario.Continuation:
-    //       fs = webnative?.permissions.fs
-    //       username = webnative.username
-    //       break
-    // }
-
-    // 
-    // use `route-event`, because navigation API is chrome only
-    // https://github.com/nichoth/hermes/discussions/10
-    //
-
     //
     // componentDidMount
     //
