@@ -28,6 +28,8 @@ interface Props {
     permissions: Permissions,
 }
 
+const route = Route()
+
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const webnative = useSignal<wn.State | null>(null)
@@ -65,36 +67,36 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // use `route-event`, because navigation API is chrome only
     // https://github.com/nichoth/hermes/discussions/10
     //
-    let route
+
+    //
+    // componentDidMount
+    //
     useEffect(() => {
-        route = Route()
         const unlisten = route(function onRoute (path:string) {
             routeState.value = path
         })
+
         return unlisten
     }, [])
+
+    useEffect(() => {
+        if (webnative.value && !webnative.value.authenticated) {
+            route.setRoute('/login')
+        }
+    }, [webnative.value])
 
     //
     // initialize webnative
     //
     useEffect(() => {
         wn.initialise({ permissions })
-            .then(res => {
-                webnative.value = res
+            .then(wnState => {
+                webnative.value = wnState
             })
             .catch(err => {
                 console.log('errrrrrrrrrrrr', err)
             })
     }, [permissions])
-
-    //
-    // componenet did mount
-    //
-    useEffect(() => {
-        if ((webnative.value && !webnative.value.authenticated)) {
-            route.setRoute('/login')
-        }
-    }, [])
 
     // find the view for this route
     const match = router.match(routeState.value)
