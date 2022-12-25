@@ -4,9 +4,9 @@ import * as wn from "webnative"
 wn.setup.debug({ enabled: true })
 import { useEffect } from 'preact/hooks'
 import { useSignal } from "@preact/signals"
-import { Permissions } from "webnative/ucan/permissions"
+import { Permissions } from "webnative/ucan/permissions.js"
 import { FunctionComponent } from 'preact'
-import Router from './router.tsx'
+import Router from './router.jsx'
 import Route from 'route-event'
 import './index.css'
 

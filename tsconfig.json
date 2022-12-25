@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["es2020", "dom", "DOM.Iterable", "esnext"],
-    "allowJs": true,
+    "lib": ["es2020", "DOM", "DOM.Iterable", "esnext"],
+    "allowJs": false,
     "skipLibCheck": false,
-    "esModuleInterop": true,
+    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["node", "vite/client"],
