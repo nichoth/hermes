@@ -1,5 +1,6 @@
 {
   "name": "hermes",
+  "type": "module",
   "description": "Private by default social networking",
   "version": "0.0.0",
   "main": "src/index.tsx",
@@ -13,6 +14,7 @@
     "cypress-test": "concurrently --kill-others \"npx vite\" \"npx cypress open\""
   },
   "dependencies": {
+    "@nichoth/routes": "^3.0.4",
     "@preact/signals": "^1.1.2",
     "events": "^3.3.0",
     "json-stable-stringify": "^1.0.1",

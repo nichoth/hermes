@@ -1,7 +1,7 @@
 import { h } from 'preact'
-import Router from 'ruta3'
-import { loginRoute } from './pages/login'
-import { Home } from './pages/home'
+import Router from '@nichoth/routes'
+import { loginRoute } from './pages/login.jsx'
+import { Home } from './pages/home.jsx'
 
 export default function _Router () {
     const router = Router()
