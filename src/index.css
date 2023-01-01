@@ -1,6 +1,8 @@
 body {
     background-color: pink;
     margin: 0;
+    font-family: sans-serif;
+
     & button {
         cursor: pointer;
     }
@@ -14,10 +16,21 @@ body {
     display: flex;
     border-bottom: 1px solid black;
 
-    & .avatar.active {
-        & img {
-            outline: 3px solid cyan;
-            border: none;
+    & .avatar {
+        display: flex;
+        align-items: baseline;
+        text-decoration: none;
+        width: 20vw;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &.active {
+            & img {
+                outline: 3px solid cyan;
+                border: none;
+            }
         }
     }
 
