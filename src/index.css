@@ -1,6 +1,35 @@
 body {
     background-color: pink;
+    margin: 0;
     & button {
         cursor: pointer;
     }
+}
+
+.content {
+    margin: 0.5rem;
+}
+
+.head-part {
+    display: flex;
+    border-bottom: 1px solid black;
+
+    & figure {
+        margin: 0.2rem 0.5rem;
+        & img {
+            width: 4rem;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: outline 0.2s;
+            outline: 0px solid;
+        }
+    }
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.4rem 0;
+    width: 100%;
 }

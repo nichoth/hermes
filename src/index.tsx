@@ -13,6 +13,7 @@ import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
 import Router from './router.jsx'
 import Route from 'route-event'
+import { navList } from './navigation.js'
 import './index.css'
 
 const router = Router()
@@ -34,11 +35,6 @@ interface Props {
 }
 
 const route = Route()
-
-const navList = [
-    { body: 'test', href: '/test' },
-    { body: 'fooo', href: '/fooo' }
-]
 
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
@@ -98,14 +94,26 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         isOpen.value = !isOpen.value
     }
 
-    return (<div class="testing">
-        <div class="app">
-            <HamburgerWrapper isOpen={isOpen} onClick={mobileNavHandler} />
-            <MobileNav isOpen={isOpen} navList={navList} />
+    return (<div class="shell">
+        <HamburgerWrapper isOpen={isOpen} onClick={mobileNavHandler} />
+        <MobileNav isOpen={isOpen} navList={navList} />
+
+        <div class="head-part">
+            <figure>
+                <img src="favicon-16x16.png" alt="The beautiful MDN logo." />
+            </figure>
+
+            <nav>
+                {navList.map(item => {
+                    return <a href={item.href}>{item.body}</a>
+                })}
+            </nav>
         </div>
 
-        <p>the route is: {routeState}</p>
-        <Node login={login} webnative={webnative} />
+        <div class="content">
+            <p>the route is: {routeState}</p>
+            <Node login={login} webnative={webnative} />
+        </div>
     </div>)
 }
 
