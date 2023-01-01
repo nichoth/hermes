@@ -14,14 +14,26 @@ body {
     display: flex;
     border-bottom: 1px solid black;
 
+    & .avatar.active {
+        & img {
+            outline: 3px solid cyan;
+            border: none;
+        }
+    }
+
     & figure {
         margin: 0.2rem 0.5rem;
         & img {
             width: 4rem;
+            border: 1px solid;
             border-radius: 50%;
             object-fit: cover;
             transition: outline 0.2s;
             outline: 0px solid;
+
+            &:hover {
+                outline: 3px solid;
+            }
         }
     }
 }
@@ -32,4 +44,20 @@ nav {
     align-items: center;
     padding: 0.4rem 0;
     width: 100%;
+    & a {
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &.active {
+            border-bottom: 2px solid;
+        }
+    }
+}
+
+.route-whoami {
+    & dt {
+        text-decoration: underline;
+    }
 }

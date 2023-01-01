@@ -99,13 +99,23 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         <MobileNav isOpen={isOpen} navList={navList} />
 
         <div class="head-part">
-            <figure>
-                <img src="favicon-16x16.png" alt="The beautiful MDN logo." />
-            </figure>
+            <a href="/whoami" class={'avatar' + (routeState.value === '/whoami' ?
+                ' active' :
+                '')}
+            >
+                <figure>
+                    <img src="favicon-16x16.png" alt="placeholder" />
+                </figure>
+            </a>
 
             <nav>
                 {navList.map(item => {
-                    return <a href={item.href}>{item.body}</a>
+                    return <a className={'app-nav' + (routeState.value === item.href ?
+                        ' active' : '')}
+                        href={item.href}
+                    >
+                        {item.body}
+                    </a>
                 })}
             </nav>
         </div>
