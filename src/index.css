@@ -57,6 +57,7 @@ nav {
     align-items: center;
     padding: 0.4rem 0;
     width: 100%;
+
     & a {
         text-decoration: none;
         &:hover {
@@ -69,8 +70,23 @@ nav {
     }
 }
 
+@media (max-width: 600px) {
+    nav {
+        display: none;
+    }
+}
+
 .route-whoami {
     & dt {
         text-decoration: underline;
     }
+}
+
+/*
+overrides
+*/
+
+.hamburger-wrapper {
+    width: 95%;
+    position: fixed;
 }
