@@ -52,18 +52,20 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         return unlisten
     }, [])
 
+    //
+    // when webnative changes
+    // check the `authenticated` status, and redirect to `/login` if necessary
+    //
     useEffect(() => {
         if (!webnative.value) return
-
-        if (webnative.value.authenticated) {
-            return
-        } else {
+        if (!(webnative.value.authenticated)) {
             route.setRoute('/login')
         }
     }, [webnative.value])
 
     //
     // initialize webnative
+    // if/when permissions change
     //
     useEffect(() => {
         wn.initialise({ permissions })
