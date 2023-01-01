@@ -74,6 +74,10 @@ nav {
     nav {
         display: none;
     }
+
+    .head-part .avatar {
+        align-items: center;
+    }
 }
 
 .route-whoami {
@@ -82,9 +86,9 @@ nav {
     }
 }
 
-/*
-overrides
-*/
+/*****************
+  overrides
+******************/
 
 .hamburger-wrapper {
     width: 95%;

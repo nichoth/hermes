@@ -104,7 +104,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 '')}
             >
                 <figure>
-                    <img src="favicon-16x16.png" alt="placeholder" />
+                    <img src="favicon-32x32.png" alt="placeholder" />
                 </figure>
                 {/* @ts-ignore */}
                 <span>{webnative.value?.username || ''}</span>
