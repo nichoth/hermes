@@ -38,7 +38,6 @@ body {
         margin: 0.2rem 0.5rem;
         & img {
             width: 4rem;
-            border: 1px solid;
             border-radius: 50%;
             object-fit: cover;
             transition: outline 0.2s;

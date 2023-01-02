@@ -8,13 +8,14 @@ import { Permissions } from "webnative/ucan/permissions.js"
 import { FunctionComponent } from 'preact'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
-import '@nichoth/components/hamburger.css'
-import '@nichoth/components/mobile-nav-menu.css'
-import '@nichoth/components/z-index.css'
 import Router from './router.jsx'
 import Route from 'route-event'
 import { navList } from './navigation.js'
 import './index.css'
+import '@nichoth/components/hamburger.css'
+import '@nichoth/components/mobile-nav-menu.css'
+import '@nichoth/components/z-index.css'
+import './pages/whoami.css'
 
 const router = Router()
 
@@ -123,7 +124,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         </div>
 
         <div class="content">
-            <p>the route is: {routeState}</p>
             <Node login={login} webnative={webnative} />
         </div>
     </div>)
