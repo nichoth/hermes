@@ -20,10 +20,22 @@ body {
         display: flex;
         align-items: baseline;
         text-decoration: none;
-        width: 20vw;
+        width: 4rem;
 
         &:hover {
             text-decoration: underline;
+        }
+
+        & img {
+            width: 4rem;
+            border-radius: 50%;
+            outline: 1px solid;
+            transition: outline 0.2s;
+
+            &:hover {
+                text-decoration: underline;
+                outline: 3px solid;
+            }
         }
 
         &.active {
@@ -37,15 +49,9 @@ body {
     & figure {
         margin: 0.2rem 0.5rem;
         & img {
-            width: 4rem;
-            border-radius: 50%;
-            object-fit: cover;
-            transition: outline 0.2s;
-            outline: 0px solid;
-
-            &:hover {
+            /* &:hover {
                 outline: 3px solid;
-            }
+            } */
         }
     }
 }

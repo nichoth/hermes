@@ -11,6 +11,7 @@ import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Router from './router.jsx'
 import Route from 'route-event'
 import { navList } from './navigation.js'
+import { generateFromString } from 'generate-avatar'
 import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
@@ -105,7 +106,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 '')}
             >
                 <figure>
-                    <img src="favicon-32x32.png" alt="placeholder" />
+                    <img src={`data:image/svg+xml;utf8,${generateFromString("example@test.com")}`} />
                 </figure>
                 {/* @ts-ignore */}
                 <span>{webnative.value?.username || ''}</span>
