@@ -96,6 +96,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         isOpen.value = !isOpen.value
     }
 
+    if (!webnative.value) return null
+
     return (<div class="shell">
         <HamburgerWrapper isOpen={isOpen} onClick={mobileNavHandler} />
         <MobileNav isOpen={isOpen} navList={navList} />
@@ -106,7 +108,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 '')}
             >
                 <figure>
-                    <img src={`data:image/svg+xml;utf8,${generateFromString("example@test.com")}`} />
+                    <img src={`data:image/svg+xml;utf8,${generateFromString(webnative.value?.username)}`} />
                 </figure>
                 {/* @ts-ignore */}
                 <span>{webnative.value?.username || ''}</span>
