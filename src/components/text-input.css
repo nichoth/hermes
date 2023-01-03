@@ -1,0 +1,44 @@
+.form-stuff .input-group {
+    position: relative;
+    width: 100%;
+    margin: 2rem 0;
+
+    & label {
+        color: #999;
+        font-size: 18px;
+        font-weight: normal;
+        position: absolute;
+        pointer-events: none;
+        left: 5px;
+        top: 10px;
+        transition: 0.2s ease all;
+    }
+
+    & input {
+        font-size: 1.2rem;
+        padding: 10px 10px 10px 5px;
+        display: block;
+
+        width: calc(100% - 1rem);
+
+        border: none;
+        border-bottom: 1px solid #757575;
+
+        &:not(:placeholder-shown) ~ label {
+            top: -20px;
+            font-size: 14px;
+            color: #4285f4;
+        }
+
+        &:focus {
+            outline: none;
+            border-bottom: 4px solid #4285f4;
+
+            & ~ label {
+                top: -20px;
+                font-size: 14px;
+                color: #4285f4;
+            }
+        }
+    }
+}
