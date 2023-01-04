@@ -27,12 +27,12 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
         reader.onloadend = () => {
             setPendingImage({
+                file,
                 image: {
                     blob: reader.result,
                     type: file.type,
                     name: file.name
-                },
-                file: file
+                }
             })
         }
 
@@ -43,19 +43,20 @@ export const Whoami = function ({ webnative, appAvatar }) {
     async function saveImg (ev) {
         ev.preventDefault()
         if (!pendingImage) return
-        const el = document.getElementById('whoami-avatar') as HTMLInputElement | null
-        if (!el) return
 
         try {
             const filepath = fs.appPath(wn.path.file(CONSTANTS.avatarPath))
             console.log('file path written...', filepath)
-            console.log('the pending stuff...', pendingImage)
             await fs.write(filepath, pendingImage.file)
 
+            // read the file we just wrote
             const content = await fs.cat(filepath)
             appAvatar.value = URL.createObjectURL(
                 new Blob([content as BlobPart], { type: 'image/jpeg' })
             )
+
+            await fs.publish()
+
             setPendingImage(null)
         } catch (err) {
             if (err) console.log('errrrrrrrrrrr', err)
@@ -64,9 +65,9 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     return <div>
         <div class="route-whoami">
-            {/* var { url, onSelect, title, name, label } = props */}
+            {/* var { url, onChange, title, name, label } = props */}
             <EditableImg
-                onSelect={selectImg}
+                onChange={selectImg}
                 name="whoami-avatar"
                 url={pendingImage?.image.blob || appAvatar.value}
                 title="Set your avatar"

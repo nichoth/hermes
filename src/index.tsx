@@ -18,6 +18,7 @@ import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
 import './pages/whoami.css'
+import { FilePath } from 'webnative/path.js'
 
 const router = Router()
 
@@ -90,25 +91,27 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     //
     useEffect(() => {
         if (!webnative.value) return
-        // @ts-ignore
+        if (!('fs' in webnative.value) || !('username' in webnative.value)) return
+
         const { fs, username } = webnative.value
-        if (!fs) return
-        fs.cat(fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
+        if (!fs || !fs.appPath) return
+
+        fs.cat(fs.appPath(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
             .then(content => {
-                console.log('*catted*', content)
                 if (!content) return
-                    appAvatar.value = URL.createObjectURL(
-                        new Blob([content as BlobPart], { type: 'image/jpeg' })
-                    )
+                appAvatar.value = URL.createObjectURL(
+                    new Blob([content as BlobPart], { type: 'image/jpeg' })
+                )
             })
             .catch(err => {
-                // no avatar file, no nothing
+                // no avatar file, set it to an auto generated value
                 console.log('**cant read in index**', err)
-                console.log('the path we couldnt read...',
-                    fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
-                
                 appAvatar.value = 'data:image/svg+xml;utf8,' +
                     generateFromString(username)
+
+                if (!fs.appPath) return
+                console.log('the path we couldnt read...',
+                    fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
             })
     }, [webnative.value])
 
@@ -135,10 +138,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 '')}
             >
                 <figure>
-                    {/* @ts-ignore */}
-                    {/* <img src={`data:image/svg+xml;utf8,${generateFromString(webnative.value.username)}`} /> */}
-                    {/* <img src={appAvatar.value || ('data:image/svg+xml;utf8,' +
-                        generateFromString(webnative.value.username || ''))}></img> */}
                     <img src={appAvatar.value}></img>
                 </figure>
                 {/* @ts-ignore */}

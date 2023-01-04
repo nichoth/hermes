@@ -52,12 +52,7 @@ body {
     }
 
     & figure {
-        margin: 0.2rem 0.5rem;
-        & img {
-            /* &:hover {
-                outline: 3px solid;
-            } */
-        }
+        margin: 0.4rem 0.5rem 0.2rem 0.5rem;
     }
 }
 
