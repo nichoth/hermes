@@ -25,9 +25,7 @@ export default function _Router () {
     })
 
     router.addRoute('/whoami', (_, wn) => {
-        console.log('**wn**', wn)
         if (!wn || !wn.username) return () => null
-
         return Whoami
     })
 

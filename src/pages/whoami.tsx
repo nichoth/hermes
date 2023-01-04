@@ -1,11 +1,96 @@
-import { path } from "webnative"
+import * as wn from "webnative"
+import EditableImg from '../components/editable-image.jsx'
+import { useState } from 'preact/hooks'
+import CONSTANTS from "../CONSTANTS.jsx"
 
-export const Whoami = function ({ webnative }) {
-    const wn = webnative
-    return <div class="route-whoami">
-        <dl>
-            <dt>Your username</dt>
-            <dd>{wn.value.username}</dd>
-        </dl>
+export const Whoami = function ({ webnative, appAvatar }) {
+    const { fs, username } = webnative.value
+    interface Profile {
+        username: string | null;
+        description: string | null;
+    } 
+
+    interface Avatar {
+        image: { type: string, name: string, blob: string|ArrayBuffer|null };
+        file: File;
+    }
+
+    const [pendingProfile, setPendingProfile] = useState<Profile | null>(null)
+    const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
+
+    function selectImg (ev) {
+        ev.preventDefault()
+        const file = ev.target.files[0]
+        console.log('*file*', file)
+
+        const reader = new FileReader()
+
+        reader.onloadend = () => {
+            setPendingImage({
+                file,
+                image: {
+                    blob: reader.result,
+                    type: file.type,
+                    name: file.name
+                }
+            })
+        }
+
+        // this gives us base64
+        reader.readAsDataURL(file)
+    }
+
+    async function saveImg (ev) {
+        ev.preventDefault()
+        if (!pendingImage) return
+
+        try {
+            const filepath = fs.appPath(wn.path.file(CONSTANTS.avatarPath))
+            console.log('file path written...', filepath)
+            await fs.write(filepath, pendingImage.file)
+
+            // read the file we just wrote
+            const content = await fs.cat(filepath)
+            appAvatar.value = URL.createObjectURL(
+                new Blob([content as BlobPart], { type: 'image/jpeg' })
+            )
+
+            await fs.publish()
+
+            setPendingImage(null)
+        } catch (err) {
+            if (err) console.log('errrrrrrrrrrr', err)
+        }
+    }
+
+    return <div>
+        <div class="route-whoami">
+            {/* var { url, onChange, title, name, label } = props */}
+            <EditableImg
+                onChange={selectImg}
+                name="whoami-avatar"
+                url={pendingImage?.image.blob || appAvatar.value}
+                title="Set your avatar"
+            />
+
+            <dl class="profile-info">
+                <dt>Your username</dt>
+                <dd>{username}</dd>
+
+                <dt>Description</dt>
+                <dd>flob bar bla bla</dd>
+            </dl>
+
+        </div>
+
+        <div class="profile-controls">
+            <button
+                disabled={!(pendingImage?.image.blob) ||
+                    (pendingImage?.image.blob === appAvatar.value)}
+                onClick={saveImg}
+            >
+                Save
+            </button>
+        </div>
     </div>
 }

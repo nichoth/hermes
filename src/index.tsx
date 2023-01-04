@@ -8,13 +8,17 @@ import { Permissions } from "webnative/ucan/permissions.js"
 import { FunctionComponent } from 'preact'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
-import '@nichoth/components/hamburger.css'
-import '@nichoth/components/mobile-nav-menu.css'
-import '@nichoth/components/z-index.css'
 import Router from './router.jsx'
 import Route from 'route-event'
 import { navList } from './navigation.js'
+import { generateFromString } from 'generate-avatar'
+import CONSTANTS from './CONSTANTS.jsx'
 import './index.css'
+import '@nichoth/components/hamburger.css'
+import '@nichoth/components/mobile-nav-menu.css'
+import '@nichoth/components/z-index.css'
+import './pages/whoami.css'
+import { FilePath } from 'webnative/path.js'
 
 const router = Router()
 
@@ -26,7 +30,8 @@ const PERMISSIONS = {
         creator: "snail-situation",
     },
     fs: {
-        public: [wn.path.directory("Apps", "snail-situation", "hermes")],
+        public: [wn.path.directory('Apps', 'snail-situation', 'hermes')],
+        private: [wn.path.directory('Apps', 'snail-situation', 'hermes')]
     },
 }
 
@@ -38,11 +43,9 @@ const route = Route()
 
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
+    const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.State | null>(null)
     const isOpen = useSignal(false)
-
-    console.log('*render routeState*', routeState.value)
-    console.log('*render webnative*', webnative.value)
 
     function login () {
         wn.redirectToLobby(permissions)
@@ -83,6 +86,35 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             })
     }, [permissions])
 
+    //
+    // read the profile, set it in app state
+    //
+    useEffect(() => {
+        if (!webnative.value) return
+        if (!('fs' in webnative.value) || !('username' in webnative.value)) return
+
+        const { fs, username } = webnative.value
+        if (!fs || !fs.appPath) return
+
+        fs.cat(fs.appPath(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
+            .then(content => {
+                if (!content) return
+                appAvatar.value = URL.createObjectURL(
+                    new Blob([content as BlobPart], { type: 'image/jpeg' })
+                )
+            })
+            .catch(err => {
+                // no avatar file, set it to an auto generated value
+                console.log('**cant read in index**', err)
+                appAvatar.value = 'data:image/svg+xml;utf8,' +
+                    generateFromString(username)
+
+                if (!fs.appPath) return
+                console.log('the path we couldnt read...',
+                    fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
+            })
+    }, [webnative.value])
+
     // find the view for this route
     const match = router.match(routeState.value)
     const Node = match ?
@@ -94,6 +126,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         isOpen.value = !isOpen.value
     }
 
+    if (!webnative.value) return null
+
     return (<div class="shell">
         <HamburgerWrapper isOpen={isOpen} onClick={mobileNavHandler} />
         <MobileNav isOpen={isOpen} navList={navList} />
@@ -104,10 +138,10 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 '')}
             >
                 <figure>
-                    <img src="favicon-32x32.png" alt="placeholder" />
+                    <img src={appAvatar.value}></img>
                 </figure>
                 {/* @ts-ignore */}
-                <span>{webnative.value?.username || ''}</span>
+                <span>{webnative.value.username || ''}</span>
             </a>
 
             <nav>
@@ -123,8 +157,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         </div>
 
         <div class="content">
-            <p>the route is: {routeState}</p>
-            <Node login={login} webnative={webnative} />
+            <Node login={login} webnative={webnative} appAvatar={appAvatar} />
         </div>
     </div>)
 }
