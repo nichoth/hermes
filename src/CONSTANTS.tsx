@@ -1,4 +1,4 @@
 export default {
-    avatarPath: 'avatar',
+    avatarPath: 'avatar.jpg',
     profilePath: 'profile.json'
 }

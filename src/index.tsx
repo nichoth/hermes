@@ -29,7 +29,8 @@ const PERMISSIONS = {
         creator: "snail-situation",
     },
     fs: {
-        public: [wn.path.directory("Apps", "snail-situation", "hermes")],
+        public: [wn.path.directory('Apps', 'snail-situation', 'hermes')],
+        private: [wn.path.directory('Apps', 'snail-situation', 'hermes')]
     },
 }
 
@@ -95,7 +96,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         // @ts-ignore
         const { fs } = webnative.value
         if (!fs) return
-        const filename = CONSTANTS.avatarPath + '.jpg'
+        const filename = CONSTANTS.avatarPath
         fs.cat(fs.appPath(wn.path.file(filename)))
             .then(content => {
                 console.log('*catted*', content)
@@ -106,7 +107,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             })
             .catch(err => {
                 // no avatar file, no nothing
-                console.log('**cant read**', err)
+                console.log('**cant read in index**', err)
             })
     }, [webnative.value])
 
@@ -135,7 +136,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 <figure>
                     {/* @ts-ignore */}
                     {/* <img src={`data:image/svg+xml;utf8,${generateFromString(webnative.value.username)}`} /> */}
-                    <img src={appAvatar.value || `data:image/svg+xml;utf8,${generateFromString(webnative.value.username)}`}></img>
+                    <img src={appAvatar.value || `data:image/svg+xml;utf8,${generateFromString(webnative.value.username || '')}`}></img>
                 </figure>
                 {/* @ts-ignore */}
                 <span>{webnative.value.username || ''}</span>

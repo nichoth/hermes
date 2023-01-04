@@ -61,14 +61,20 @@ export const Whoami = function ({ webnative }) {
         const filename = CONSTANTS.avatarPath + '.'+ ext
         // const filename = CONSTANTS.profilePath
         if (!pendingProfile) return
+
         try {
             await fs.write(fs.appPath(wn.path.file(filename)),
                 pendingProfile.image.file)
-            await fs.write(fs.appPath(wn.path.file()))
+            await fs.write(fs.appPath(wn.path.file('profile.json')), JSON.stringify({
+                image: {
+                    type: pendingProfile.image.type,
+                    name: pendingProfile.image.name
+                },
+                username: pendingProfile.username
+            }))
         } catch (err) {
             if (err) console.log('errrrrrrrrrrr', err)
         }
-        
     }
 
     return <div>
