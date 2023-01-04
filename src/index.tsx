@@ -46,9 +46,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     const webnative = useSignal<wn.State | null>(null)
     const isOpen = useSignal(false)
 
-    // console.log('*render routeState*', routeState.value)
-    // console.log('*render webnative*', webnative.value)
-
     function login () {
         wn.redirectToLobby(permissions)
     }

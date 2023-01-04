@@ -23,3 +23,15 @@ https://preactjs.com/guide/v10/signals/#local-state-with-signals
 ```
 0: "private" 1 : "Apps" 2 : "snail-situation" 3 : "hermes" 4 : "avatar.jpg"
 ```
+
+-------------------
+
+the path we couldnt read... 
+```
+(5) ['private', 'Apps', 'snail-situation', 'hermes', 'avatar.jpg']
+```
+
+file path written... 
+```
+(5) ['private', 'Apps', 'snail-situation', 'hermes', 'avatar.jpg']
+```

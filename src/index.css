@@ -31,6 +31,8 @@ body {
 
         & img {
             width: 4rem;
+            height: 4rem;
+            object-fit: cover;
             border-radius: 50%;
             outline: 1px solid;
             transition: outline 0.2s;

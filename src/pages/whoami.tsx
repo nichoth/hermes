@@ -38,12 +38,15 @@ export const Whoami = function ({ webnative, appAvatar }) {
     async function saveImg (ev) {
         ev.preventDefault()
         if (!pendingProfile) return
+        // const image: File = ev.target.files[0]
+        const el = document.getElementById('whoami-avatar') as HTMLInputElement | null
+        if (!el) return
 
         try {
             const filepath = fs.appPath(wn.path.file(CONSTANTS.avatarPath))
             console.log('file path written...', filepath)
             console.log('the pending stuff...', pendingProfile)
-            await fs.write(filepath, pendingProfile.image.file)
+            await fs.write(filepath, pendingProfile.file)
             await fs.write(fs.appPath(wn.path.file('profile.json')), JSON.stringify({
                 image: {
                     type: pendingProfile.image.type,
@@ -56,6 +59,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
             appAvatar.value = URL.createObjectURL(
                 new Blob([content as BlobPart], { type: 'image/jpeg' })
             )
+            setPendingProfile(null)
         } catch (err) {
             if (err) console.log('errrrrrrrrrrr', err)
         }
@@ -68,14 +72,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
                 onSelect={selectImg}
                 name="whoami-avatar"
                 url={pendingProfile?.image.file || appAvatar.value}
-                // url={pendingProfile?.image.file || avatarImg ||
-                //     `data:image/svg+xml;utf8,${generateFromString(username)}`}
                 title="Set your avatar"
             />
-
-            {/* <img class="whoami-avatar"
-                src={`data:image/svg+xml;utf8,${generateFromString("example@test.com")}`}
-            /> */}
 
             <dl class="profile-info">
                 <dt>Your username</dt>
@@ -89,7 +87,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
         <div class="profile-controls">
             <button
-                disabled={!(pendingProfile?.image)}
+                disabled={!(pendingProfile?.image.file) ||
+                    (pendingProfile?.image.file === appAvatar.value)}
                 onClick={saveImg}
             >
                 Save
