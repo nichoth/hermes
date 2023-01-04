@@ -13,11 +13,8 @@
     }
 
     & .whoami-avatar {
-        /* width: 100%; */
-        justify-self: center;
-        height: 100%;
-        max-width: 100%;
-        object-fit: contain;
+        aspect-ratio: 1/1;
+        object-fit: cover;
         border-radius: 50%;
     }
 }

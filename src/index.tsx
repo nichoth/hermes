@@ -12,6 +12,7 @@ import Router from './router.jsx'
 import Route from 'route-event'
 import { navList } from './navigation.js'
 import { generateFromString } from 'generate-avatar'
+import CONSTANTS from './CONSTANTS.jsx'
 import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
@@ -40,6 +41,7 @@ const route = Route()
 
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
+    const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.State | null>(null)
     const isOpen = useSignal(false)
 
@@ -85,6 +87,29 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             })
     }, [permissions])
 
+    //
+    // read the profile, set it in app state
+    //
+    useEffect(() => {
+        if (!webnative.value) return
+        // @ts-ignore
+        const { fs } = webnative.value
+        if (!fs) return
+        const filename = CONSTANTS.avatarPath + '.jpg'
+        fs.cat(fs.appPath(wn.path.file(filename)))
+            .then(content => {
+                console.log('*catted*', content)
+                if (!content) return
+                    appAvatar.value = URL.createObjectURL(
+                        new Blob([content as BlobPart], { type: 'image/jpeg' })
+                    )
+            })
+            .catch(err => {
+                // no avatar file, no nothing
+                console.log('**cant read**', err)
+            })
+    }, [webnative.value])
+
     // find the view for this route
     const match = router.match(routeState.value)
     const Node = match ?
@@ -108,10 +133,12 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 '')}
             >
                 <figure>
-                    <img src={`data:image/svg+xml;utf8,${generateFromString(webnative.value?.username)}`} />
+                    {/* @ts-ignore */}
+                    {/* <img src={`data:image/svg+xml;utf8,${generateFromString(webnative.value.username)}`} /> */}
+                    <img src={appAvatar.value || `data:image/svg+xml;utf8,${generateFromString(webnative.value.username)}`}></img>
                 </figure>
                 {/* @ts-ignore */}
-                <span>{webnative.value?.username || ''}</span>
+                <span>{webnative.value.username || ''}</span>
             </a>
 
             <nav>
