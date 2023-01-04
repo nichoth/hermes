@@ -46,8 +46,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     const webnative = useSignal<wn.State | null>(null)
     const isOpen = useSignal(false)
 
-    console.log('*render routeState*', routeState.value)
-    console.log('*render webnative*', webnative.value)
+    // console.log('*render routeState*', routeState.value)
+    // console.log('*render webnative*', webnative.value)
 
     function login () {
         wn.redirectToLobby(permissions)
@@ -94,10 +94,9 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     useEffect(() => {
         if (!webnative.value) return
         // @ts-ignore
-        const { fs } = webnative.value
+        const { fs, username } = webnative.value
         if (!fs) return
-        const filename = CONSTANTS.avatarPath
-        fs.cat(fs.appPath(wn.path.file(filename)))
+        fs.cat(fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
             .then(content => {
                 console.log('*catted*', content)
                 if (!content) return
@@ -108,6 +107,11 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             .catch(err => {
                 // no avatar file, no nothing
                 console.log('**cant read in index**', err)
+                console.log('the path we couldnt read...',
+                    fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
+                
+                appAvatar.value = 'data:image/svg+xml;utf8,' +
+                    generateFromString(username)
             })
     }, [webnative.value])
 
@@ -136,7 +140,9 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 <figure>
                     {/* @ts-ignore */}
                     {/* <img src={`data:image/svg+xml;utf8,${generateFromString(webnative.value.username)}`} /> */}
-                    <img src={appAvatar.value || `data:image/svg+xml;utf8,${generateFromString(webnative.value.username || '')}`}></img>
+                    {/* <img src={appAvatar.value || ('data:image/svg+xml;utf8,' +
+                        generateFromString(webnative.value.username || ''))}></img> */}
+                    <img src={appAvatar.value}></img>
                 </figure>
                 {/* @ts-ignore */}
                 <span>{webnative.value.username || ''}</span>
@@ -155,7 +161,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         </div>
 
         <div class="content">
-            <Node login={login} webnative={webnative} />
+            <Node login={login} webnative={webnative} appAvatar={appAvatar} />
         </div>
     </div>)
 }

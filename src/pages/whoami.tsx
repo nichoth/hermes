@@ -1,39 +1,19 @@
-import { generateFromString } from 'generate-avatar'
 import * as wn from "webnative"
 import EditableImg from '../components/editable-image.jsx'
-import { useState, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import CONSTANTS from "../CONSTANTS.jsx"
 
-export const Whoami = function ({ webnative }) {
+export const Whoami = function ({ webnative, appAvatar }) {
     const { fs, username } = webnative.value
     interface Profile {
         image: { type: string, name: string, file: string|ArrayBuffer|null };
         file: File;
         username: string | null;
     } 
-    const [avatarImg, setAvatarImg] = useState<string | null>(null)
     const [pendingProfile, setPendingProfile] = useState<Profile | null>(null)
-
-    useEffect(() => {
-        if (!fs) return
-        const filename = CONSTANTS.avatarPath
-        fs.cat(fs.appPath(wn.path.file(filename)))
-            .then(content => {
-                console.log('*catted*', content)
-                if (!content) return
-                    setAvatarImg(URL.createObjectURL(
-                        new Blob([content as BlobPart], { type: 'image/jpeg' })
-                    ))
-            })
-            .catch(err => {
-                // no avatar file, no nothing
-                console.log('**cant read**', err)
-            })
-    }, [webnative.value])
 
     function selectImg (ev) {
         ev.preventDefault()
-        // console.log('on image select', ev)
         const file = ev.target.files[0]
         console.log('*file*', file)
 
@@ -57,21 +37,25 @@ export const Whoami = function ({ webnative }) {
 
     async function saveImg (ev) {
         ev.preventDefault()
-        const ext = pendingProfile?.image.name.split('.').pop()
-        const filename = CONSTANTS.avatarPath + '.'+ ext
-        // const filename = CONSTANTS.profilePath
         if (!pendingProfile) return
 
         try {
-            await fs.write(fs.appPath(wn.path.file(filename)),
-                pendingProfile.image.file)
+            const filepath = fs.appPath(wn.path.file(CONSTANTS.avatarPath))
+            console.log('file path written...', filepath)
+            console.log('the pending stuff...', pendingProfile)
+            await fs.write(filepath, pendingProfile.image.file)
             await fs.write(fs.appPath(wn.path.file('profile.json')), JSON.stringify({
                 image: {
                     type: pendingProfile.image.type,
                     name: pendingProfile.image.name
                 },
-                username: pendingProfile.username
+                username: pendingProfile.username || null
             }))
+
+            const content = await fs.cat(filepath)
+            appAvatar.value = URL.createObjectURL(
+                new Blob([content as BlobPart], { type: 'image/jpeg' })
+            )
         } catch (err) {
             if (err) console.log('errrrrrrrrrrr', err)
         }
@@ -83,8 +67,9 @@ export const Whoami = function ({ webnative }) {
             <EditableImg
                 onSelect={selectImg}
                 name="whoami-avatar"
-                url={pendingProfile?.image.file || avatarImg ||
-                    `data:image/svg+xml;utf8,${generateFromString(username)}`}
+                url={pendingProfile?.image.file || appAvatar.value}
+                // url={pendingProfile?.image.file || avatarImg ||
+                //     `data:image/svg+xml;utf8,${generateFromString(username)}`}
                 title="Set your avatar"
             />
 
