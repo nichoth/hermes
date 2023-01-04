@@ -6,11 +6,17 @@ import CONSTANTS from "../CONSTANTS.jsx"
 export const Whoami = function ({ webnative, appAvatar }) {
     const { fs, username } = webnative.value
     interface Profile {
-        image: { type: string, name: string, file: string|ArrayBuffer|null };
-        file: File;
         username: string | null;
+        description: string | null;
     } 
+
+    interface Avatar {
+        image: { type: string, name: string, blob: string|ArrayBuffer|null };
+        file: File;
+    }
+
     const [pendingProfile, setPendingProfile] = useState<Profile | null>(null)
+    const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
 
     function selectImg (ev) {
         ev.preventDefault()
@@ -20,14 +26,13 @@ export const Whoami = function ({ webnative, appAvatar }) {
         const reader = new FileReader()
 
         reader.onloadend = () => {
-            setPendingProfile({
+            setPendingImage({
                 image: {
-                    file: reader.result,
+                    blob: reader.result,
                     type: file.type,
                     name: file.name
                 },
-                file: file,
-                username: (pendingProfile && pendingProfile.username) || null
+                file: file
             })
         }
 
@@ -37,29 +42,21 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     async function saveImg (ev) {
         ev.preventDefault()
-        if (!pendingProfile) return
-        // const image: File = ev.target.files[0]
+        if (!pendingImage) return
         const el = document.getElementById('whoami-avatar') as HTMLInputElement | null
         if (!el) return
 
         try {
             const filepath = fs.appPath(wn.path.file(CONSTANTS.avatarPath))
             console.log('file path written...', filepath)
-            console.log('the pending stuff...', pendingProfile)
-            await fs.write(filepath, pendingProfile.file)
-            await fs.write(fs.appPath(wn.path.file('profile.json')), JSON.stringify({
-                image: {
-                    type: pendingProfile.image.type,
-                    name: pendingProfile.image.name
-                },
-                username: pendingProfile.username || null
-            }))
+            console.log('the pending stuff...', pendingImage)
+            await fs.write(filepath, pendingImage.file)
 
             const content = await fs.cat(filepath)
             appAvatar.value = URL.createObjectURL(
                 new Blob([content as BlobPart], { type: 'image/jpeg' })
             )
-            setPendingProfile(null)
+            setPendingImage(null)
         } catch (err) {
             if (err) console.log('errrrrrrrrrrr', err)
         }
@@ -71,7 +68,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
             <EditableImg
                 onSelect={selectImg}
                 name="whoami-avatar"
-                url={pendingProfile?.image.file || appAvatar.value}
+                url={pendingImage?.image.blob || appAvatar.value}
                 title="Set your avatar"
             />
 
@@ -87,8 +84,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
         <div class="profile-controls">
             <button
-                disabled={!(pendingProfile?.image.file) ||
-                    (pendingProfile?.image.file === appAvatar.value)}
+                disabled={!(pendingImage?.image.blob) ||
+                    (pendingImage?.image.blob === appAvatar.value)}
                 onClick={saveImg}
             >
                 Save
