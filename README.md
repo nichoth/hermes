@@ -13,7 +13,7 @@ This is an example of using `wnfs` + `preact` & [@preact/signals](https://preact
 
 --------------
 
-Start a local development server:
+### Start a local development server:
 ```
 npm start
 ```
