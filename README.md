@@ -8,6 +8,24 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/f66ada49-9361-4e73-abee-1d538e3b59a3/deploy-status)](https://app.netlify.com/sites/ssc-hermes/deploys)
 
+## develop
+This is an example of using `wnfs` + `preact` & [@preact/signals](https://preactjs.com/blog/introducing-signals/). We are using client side routing via the browser's history API in [route-event](https://github.com/nichoth/route-event), because [the navigation API is chrome only](https://github.com/nichoth/hermes/discussions/10).
+
+--------------
+
+Start a local development server:
+```
+npm start
+```
+
+### About the dev setup
+
+#### [public dir](https://vitejs.dev/guide/assets.html#the-public-directory)
+
+> you can place the asset in a special public directory under your project root
+
+This is [configured as _public](https://github.com/nichoth/hermes/blob/main/vite.config.js#L24)
+
 ## Focus on privacy and sharing data with known people
 
 This project is designed to share images via a social network. It started with using services that are more traditional — a DB and blob host, + UCANs for ID.
@@ -38,22 +56,3 @@ The `events` module is required by our dependencies. It wasn't included so we ha
 * [Fission docs -- sharing private data](https://guide.fission.codes/developers/webnative/sharing-private-data)
 * [discord talk](https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294)
 * [version 1 -- ssc](https://github.com/nichoth/ssc-server)
-
-
-## develop
-This is an example of using `wnfs` + `preact` & [@preact/signals](https://preactjs.com/blog/introducing-signals/). We are using client side routing via the browser's history API in [route-event](https://github.com/nichoth/route-event), because [the navigation API is chrome only](https://github.com/nichoth/hermes/discussions/10).
-
---------------
-
-Start a local development server:
-```
-npm start
-```
-
-### About the dev setup
-
-#### [public dir](https://vitejs.dev/guide/assets.html#the-public-directory)
-
-> you can place the asset in a special public directory under your project root
-
-This is [configured as _public](https://github.com/nichoth/hermes/blob/main/vite.config.js#L24)
