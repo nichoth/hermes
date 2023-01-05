@@ -7,7 +7,6 @@ import './whoami.css'
 export const Whoami = function ({ webnative, appAvatar }) {
     const { fs, username } = webnative.value
     interface Profile {
-        username: string | null;
         description: string | null;
     } 
 
@@ -64,15 +63,16 @@ export const Whoami = function ({ webnative, appAvatar }) {
         }
     }
 
-    return <div>
-        <div class="route-whoami">
+    return <div class="route-whoami">
+        <h1>{username}</h1>
+        <div class="whoami-content">
+            {/* var { url, onChange, title, name, label } = props */}
             <EditableImg
                 onChange={selectImg}
                 name="whoami-avatar"
                 url={pendingImage?.image.blob || appAvatar.value}
                 title="Set your avatar"
             />
-            {/* var { url, onChange, title, name, label } = props */}
 
             <dl class="profile-info">
                 <dt>Your username</dt>
@@ -82,7 +82,6 @@ export const Whoami = function ({ webnative, appAvatar }) {
                 <dd>flob bar bla bla</dd>
             </dl>
         </div>
-
         <div class="profile-controls">
             <button
                 disabled={!(pendingImage?.image.blob) ||
