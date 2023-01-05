@@ -1,10 +1,9 @@
 // @ts-check
 import { h, render } from 'preact'
 import * as wn from "webnative"
-wn.setup.debug({ enabled: true })
 import { useEffect } from 'preact/hooks'
 import { useSignal } from "@preact/signals"
-import { Permissions } from "webnative/ucan/permissions.js"
+import { Permissions } from "webnative/permissions.js"
 import { FunctionComponent } from 'preact'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
@@ -43,11 +42,12 @@ const route = Route()
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const appAvatar = useSignal<string|undefined>(undefined)
-    const webnative = useSignal<wn.State | null>(null)
+    const webnative = useSignal<wn.Program | null>(null)
     const isOpen = useSignal(false)
 
     function login () {
-        wn.redirectToLobby(permissions)
+        if (!webnative.value) return
+        webnative.value.capabilities.request()
     }
 
     //
@@ -66,7 +66,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     //
     useEffect(() => {
         if (!webnative.value) return
-        if (!(webnative.value.authenticated)) {
+        if (!(webnative.value.session)) {
             route.setRoute('/login')
         }
     }, [webnative.value])
@@ -76,24 +76,38 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // if/when permissions change
     //
     useEffect(() => {
-        wn.initialise({ permissions })
-            .then(wnState => {
-                webnative.value = wnState
+        wn.program({
+            namespace: { creator: "snail-situation", name: "hermes" },
+            debug: true,
+            permissions
+        })
+            .then(program => {
+                webnative.value = program
             })
             .catch(err => {
-                console.log('errrrrrrrrrrrr', err)
+                console.log('errrrrrrrrrr', err)
             })
+
+        // wn.initialise({ permissions })
+        //     .then(wnState => {
+        //         webnative.value = wnState
+        //     })
+        //     .catch(err => {
+        //         console.log('errrrrrrrrrrrr', err)
+        //     })
     }, [permissions])
 
     //
     // read the profile, set it in app state
     //
     useEffect(() => {
-        if (!webnative.value) return
-        if (!('fs' in webnative.value) || !('username' in webnative.value)) return
+        if (!webnative.value?.session) return
+        if (!('fs' in webnative.value.session) || !('username' in webnative.value)) return
 
-        const { fs, username } = webnative.value
-        if (!fs || !fs.appPath) return
+        const { fs, username } = webnative.value.session
+        if (!fs) return
+
+        fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
 
         fs.cat(fs.appPath(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
             .then(content => {

@@ -1,6 +1,7 @@
 import * as wn from "webnative"
-import EditableImg from '../components/editable-image.jsx'
 import { useState } from 'preact/hooks'
+import { Pencil } from "../components/pencil-edit-button.jsx"
+import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
 import './whoami.css'
 
@@ -78,10 +79,11 @@ export const Whoami = function ({ webnative, appAvatar }) {
                 <dt>Your username</dt>
                 <dd>{username}</dd>
 
-                <dt>Description</dt>
+                <dt>Description <Pencil /></dt>
                 <dd>flob bar bla bla</dd>
             </dl>
         </div>
+
         <div class="profile-controls">
             <button
                 disabled={!(pendingImage?.image.blob) ||
