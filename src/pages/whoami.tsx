@@ -2,6 +2,7 @@ import * as wn from "webnative"
 import EditableImg from '../components/editable-image.jsx'
 import { useState } from 'preact/hooks'
 import CONSTANTS from "../CONSTANTS.jsx"
+import './whoami.css'
 
 export const Whoami = function ({ webnative, appAvatar }) {
     const { fs, username } = webnative.value
@@ -65,13 +66,13 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     return <div>
         <div class="route-whoami">
-            {/* var { url, onChange, title, name, label } = props */}
             <EditableImg
                 onChange={selectImg}
                 name="whoami-avatar"
                 url={pendingImage?.image.blob || appAvatar.value}
                 title="Set your avatar"
             />
+            {/* var { url, onChange, title, name, label } = props */}
 
             <dl class="profile-info">
                 <dt>Your username</dt>
@@ -80,7 +81,6 @@ export const Whoami = function ({ webnative, appAvatar }) {
                 <dt>Description</dt>
                 <dd>flob bar bla bla</dd>
             </dl>
-
         </div>
 
         <div class="profile-controls">

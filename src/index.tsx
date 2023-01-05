@@ -17,7 +17,6 @@ import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
-import './pages/whoami.css'
 import { FilePath } from 'webnative/path.js'
 
 const router = Router()
