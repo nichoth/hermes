@@ -6,7 +6,7 @@ import CONSTANTS from "../CONSTANTS.jsx"
 import './whoami.css'
 
 export const Whoami = function ({ webnative, appAvatar }) {
-    const { fs, username } = webnative.value
+    const { fs, username } = webnative.value.session
     interface Profile {
         description: string | null;
     } 

@@ -149,7 +149,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     <img src={appAvatar.value}></img>
                 </figure>
                 {/* @ts-ignore */}
-                <span>{webnative.value.username || ''}</span>
+                <span>{webnative.value.session?.username || ''}</span>
             </a>
 
             <nav>
