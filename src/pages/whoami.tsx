@@ -3,13 +3,14 @@ import { useState } from 'preact/hooks'
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
+import PERMISSIONS from '../permissions.js'
 import './whoami.css'
 
 export const Whoami = function ({ webnative, appAvatar }) {
     const { fs, username } = webnative.value.session
     interface Profile {
         description: string | null;
-    } 
+    }
 
     interface Avatar {
         image: { type: string, name: string, blob: string|ArrayBuffer|null };
@@ -43,12 +44,18 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     async function saveImg (ev) {
         ev.preventDefault()
+        console.log('pending...', pendingImage)
         if (!pendingImage) return
 
+        console.log('ok')
+
         try {
-            const filepath = fs.appPath(wn.path.file(CONSTANTS.avatarPath))
-            console.log('file path written...', filepath)
+            const filepath = wn.path.appData(
+                PERMISSIONS.app,
+                wn.path.file(CONSTANTS.avatarPath)
+            )
             await fs.write(filepath, pendingImage.file)
+            console.log('file path written...', filepath)
 
             // read the file we just wrote
             const content = await fs.cat(filepath)
@@ -60,11 +67,10 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
             setPendingImage(null)
         } catch (err) {
+            console.log('could not write file...')
             if (err) console.log('errrrrrrrrrrr', err)
         }
     }
-
-    console.log('hello')
 
     return <div class="route-whoami">
         <h1>{username}</h1>

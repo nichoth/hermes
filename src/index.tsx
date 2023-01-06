@@ -16,21 +16,11 @@ import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
+import PERMISSIONS from './permissions.js'
 
 const router = Router()
 
 console.log('env', import.meta.env)
-
-const PERMISSIONS = {
-    app: {
-        name: "hermes",
-        creator: "snail-situation",
-    },
-    fs: {
-        public: [wn.path.directory('Apps', 'snail-situation', 'hermes')],
-        private: [wn.path.directory('Apps', 'snail-situation', 'hermes')]
-    },
-}
 
 interface Props {
     permissions: Permissions,
@@ -118,8 +108,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     generateFromString(username)
 
                 if (!wn.path.appData) return
-                console.log('the path we couldnt read...',
-                    wn.path.appData(PERMISSIONS.app))
+                console.log('the path we couldnt read...', path)
             })
     }, [webnative.value])
 
