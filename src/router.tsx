@@ -24,8 +24,9 @@ export default function _Router () {
         return loginRoute
     })
 
-    router.addRoute('/whoami', (_, wn) => {
-        if (!wn || !wn.username) return () => null
+    router.addRoute('/whoami', (_, webnative) => {
+        console.log('args', _, webnative)
+        if (!webnative || !webnative.session.username) return () => null
         return Whoami
     })
 

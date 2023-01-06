@@ -64,6 +64,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
         }
     }
 
+    console.log('hello')
+
     return <div class="route-whoami">
         <h1>{username}</h1>
         <div class="whoami-content">

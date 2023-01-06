@@ -22,7 +22,7 @@
     "json-stable-stringify": "^1.0.1",
     "preact": "^10.11.2",
     "route-event": "^4.1.1",
-    "webnative": "^0.35.1"
+    "webnative": "^0.35.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
@@ -41,7 +41,7 @@
     "url": "git+https://github.com/nichoth/hermes.git"
   },
   "author": "nichoth",
-  "license": "ISC",
+  "license": "AGPL",
   "bugs": {
     "url": "https://github.com/nichoth/hermes/issues"
   },

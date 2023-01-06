@@ -93,19 +93,18 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     //
     useEffect(() => {
         if (!webnative.value?.session) return
-        if (!('fs' in webnative.value.session) || !('username' in webnative.value)) return
+        if (!('fs' in webnative.value.session) ||
+            !('username' in webnative.value.session)) return
 
         const { fs, username } = webnative.value.session
         if (!fs) return
 
-        // fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
-        // fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)))
-        fs.cat(wn.path.combine(wn.path.appData(PERMISSIONS.app), CONSTANTS.avatarPath))
-        // fs.cat(wn.path.appData(PERMISSIONS.app, CONSTANTS.avatarPath))
+        const path = wn.path.appData(
+            PERMISSIONS.app,
+            wn.path.file(CONSTANTS.avatarPath)
+        )
 
-        // fs.cat(wn.path.appData(PERMISSIONS.app))
-
-        fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)))
+        fs.cat(path)
             .then(content => {
                 if (!content) return
                 appAvatar.value = URL.createObjectURL(
@@ -113,7 +112,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 )
             })
             .catch(err => {
-                // no avatar file, set it to an auto generated value
+                // no avatar file, so set it to an auto generated value
                 console.log('**cant read in index**', err)
                 appAvatar.value = 'data:image/svg+xml;utf8,' +
                     generateFromString(username)
@@ -121,7 +120,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 if (!wn.path.appData) return
                 console.log('the path we couldnt read...',
                     wn.path.appData(PERMISSIONS.app))
-                    // wn.path.appData(wn.path.file(CONSTANTS.avatarPath)))
             })
     }, [webnative.value])
 
