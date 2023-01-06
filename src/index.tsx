@@ -16,7 +16,6 @@ import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
-import { FilePath } from 'webnative/path.js'
 
 const router = Router()
 
@@ -87,14 +86,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             .catch(err => {
                 console.log('errrrrrrrrrr', err)
             })
-
-        // wn.initialise({ permissions })
-        //     .then(wnState => {
-        //         webnative.value = wnState
-        //     })
-        //     .catch(err => {
-        //         console.log('errrrrrrrrrrrr', err)
-        //     })
     }, [permissions])
 
     //
@@ -107,9 +98,14 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         const { fs, username } = webnative.value.session
         if (!fs) return
 
-        fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
+        // fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
+        // fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)))
+        fs.cat(wn.path.combine(wn.path.appData(PERMISSIONS.app), CONSTANTS.avatarPath))
+        // fs.cat(wn.path.appData(PERMISSIONS.app, CONSTANTS.avatarPath))
 
-        fs.cat(fs.appPath(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
+        // fs.cat(wn.path.appData(PERMISSIONS.app))
+
+        fs.cat(wn.path.appData(wn.path.file(CONSTANTS.avatarPath)))
             .then(content => {
                 if (!content) return
                 appAvatar.value = URL.createObjectURL(
@@ -122,9 +118,10 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 appAvatar.value = 'data:image/svg+xml;utf8,' +
                     generateFromString(username)
 
-                if (!fs.appPath) return
+                if (!wn.path.appData) return
                 console.log('the path we couldnt read...',
-                    fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
+                    wn.path.appData(PERMISSIONS.app))
+                    // wn.path.appData(wn.path.file(CONSTANTS.avatarPath)))
             })
     }, [webnative.value])
 
