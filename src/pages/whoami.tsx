@@ -44,10 +44,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     async function saveImg (ev) {
         ev.preventDefault()
-        console.log('pending...', pendingImage)
         if (!pendingImage) return
-
-        console.log('ok')
 
         try {
             const filepath = wn.path.appData(
@@ -68,7 +65,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
             setPendingImage(null)
         } catch (err) {
             console.log('could not write file...')
-            if (err) console.log('errrrrrrrrrrr', err)
+            console.log('errrrrrrrrrrr', err)
         }
     }
 
