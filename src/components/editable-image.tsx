@@ -3,7 +3,7 @@ import './editable-image.css'
 function EditableImg (props) {
     var { url, onChange, title, name, label } = props
 
-    return <div>
+    return <div class="editable-field">
         <label for={name || 'avatar-input'} class="editable-image"
             id={name+'-label' || 'avatar-label'}
             title={title}
