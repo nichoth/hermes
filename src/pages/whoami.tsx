@@ -103,7 +103,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     async function saveProfile (ev) {
         ev.preventDefault()
-        var els = ev.target.elements
+        const els = ev.target.elements
         const { value } = els.description
         console.log('save profile', value)
 
