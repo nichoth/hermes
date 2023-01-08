@@ -19,19 +19,3 @@ https://preactjs.com/guide/v10/signals/#local-state-with-signals
 > there are many scenarios where components have their own internal state that is specific to that component. Since there is no reason for this state to live as part of the app's global business logic, it should be confined to the component that needs it. In these scenarios, we can create signals as well as computed signals directly within components using the `useSignal()` and `useComputed()` hooks
 
 ----------------
-
-```
-0: "private" 1 : "Apps" 2 : "snail-situation" 3 : "hermes" 4 : "avatar.jpg"
-```
-
--------------------
-
-the path we couldnt read... 
-```
-(5) ['private', 'Apps', 'snail-situation', 'hermes', 'avatar.jpg']
-```
-
-file path written... 
-```
-(5) ['private', 'Apps', 'snail-situation', 'hermes', 'avatar.jpg']
-```

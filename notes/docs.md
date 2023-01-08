@@ -24,3 +24,6 @@ But [this one was more helpful](https://guide.fission.codes/developers/webnative
 There is nothing unique to fission about certain profile data, like a *description* or an avatar picture.
 
 This means we save these as standard 'files' in wnfs. Here we use simple constants to record the file path. Like `CONSTANTS.profilePath`. And this path resolves to a unique file for any user, because `wnfs` is per user.
+
+### how to set your username?
+
