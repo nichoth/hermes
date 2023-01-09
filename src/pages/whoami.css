@@ -21,6 +21,10 @@
             display: flex;
             flex-direction: column;
 
+            & img {
+                max-width: 100%;
+            }
+
             & > .editable-image-wrapper {
                 max-height: calc(100% - 1.5rem);
                 aspect-ratio: 1/1;
