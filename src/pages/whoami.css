@@ -8,7 +8,7 @@
 
     & > .whoami-content {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(345px, 1fr));
         grid-auto-rows: 50vh;
         grid-gap: 1rem;
 
