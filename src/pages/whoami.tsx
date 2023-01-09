@@ -1,5 +1,6 @@
 import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
+import { useSignal } from "@preact/signals"
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
@@ -22,6 +23,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
     const [profile, setProfile] = useState<Profile|null>(null)
     // const [pendingProfile, setPendingProfile] = useState<Profile | null>(null)
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
+    const pendingDesc = useSignal<string|undefined>(undefined)
 
     // componentDidMount
     useEffect(() => {
@@ -104,7 +106,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
     async function saveProfile (ev) {
         ev.preventDefault()
         const els = ev.target.elements
-        const { value } = els.description
+        const value = els.description.value.trim()
         console.log('save profile', value)
 
         const filepath = wn.path.appData(
@@ -115,6 +117,11 @@ export const Whoami = function ({ webnative, appAvatar }) {
         console.log('file path written...', filepath)
         await fs.publish()
         setEditingDesc(false)
+    }
+
+    function setPendingDesc (ev) {
+        ev.preventDefault()
+        pendingDesc.value = ev.target.value
     }
 
     return <div class="route-whoami">
@@ -160,11 +167,19 @@ export const Whoami = function ({ webnative, appAvatar }) {
                     {isEditingDesc ?
                         <div class="editing-text">
                             <form onSubmit={saveProfile}>
-                                <textarea name="description" autoFocus>
-                                    {profile ? profile.description : null}
-                                </textarea> 
+                                <textarea name="description" autoFocus
+                                    value={pendingDesc ?
+                                        pendingDesc :
+                                        null}
+                                    onInput={setPendingDesc}
+                                />
 
-                                <button type="submit">save</button>
+                                <button type="submit"
+                                    disabled={!pendingDesc.value?.trim() ||
+                                        (pendingDesc.value.trim() == profile?.description)}
+                                >
+                                    save
+                                </button>
                             </form>
                         </div> :
                         <p>{profile ? profile.description : <em>none</em>}</p>
