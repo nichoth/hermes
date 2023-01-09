@@ -173,7 +173,10 @@ export const Whoami = function ({ webnative, appAvatar }) {
                                 <textarea name="description" autoFocus
                                     value={pendingDesc ?
                                         pendingDesc :
-                                        null}
+                                        (profile ?
+                                            profile.description :
+                                            null)
+                                    }
                                     onInput={setPendingDesc}
                                 />
 
