@@ -154,6 +154,9 @@ export const Whoami = function ({ webnative, appAvatar }) {
                 <dt>
                     Description
                     <button class={'edit-btn' + (isEditingDesc ? ' is-editing' : '')}
+                        aria-label={isEditingDesc ?
+                            'Stop editing your description' :
+                            'Edit your description'}
                         onClick={editDescription}
                         title={isEditingDesc ?
                             'Stop editing' :

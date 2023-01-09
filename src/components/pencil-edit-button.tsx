@@ -3,7 +3,7 @@ import './pencil-edit-button.css'
 export const Pencil = function () {
     return <span class="icon-pencil">
         <svg fill="#000000" version="1.1" id="Capa_1" width="800px" height="800px"
-            viewBox="0 0 528.899 528.899"
+            viewBox="0 0 528.899 528.899" aria-hidden="true" focusable="false"
         >
             <g>
             <path d="M328.883,89.125l107.59,107.589l-272.34,272.34L56.604,361.465L328.883,89.125z M518.113,63.177l-47.981-47.981
