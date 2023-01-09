@@ -146,7 +146,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
                 <dt>
                     Description
-                    <button class="edit-btn" onClick={editDescription}
+                    <button class={'edit-btn' + (isEditingDesc ? ' is-editing' : '')}
+                        onClick={editDescription}
                         title={isEditingDesc ?
                             'Stop editing' :
                             'Edit description'}
@@ -160,13 +161,13 @@ export const Whoami = function ({ webnative, appAvatar }) {
                         <div class="editing-text">
                             <form onSubmit={saveProfile}>
                                 <textarea name="description" autoFocus>
-                                    {profile || null}
+                                    {profile ? profile.description : null}
                                 </textarea> 
 
                                 <button type="submit">save</button>
                             </form>
                         </div> :
-                        <p><em>none</em></p>
+                        <p>{profile ? profile.description : <em>none</em>}</p>
                     }
                 </dd>
             </dl>
