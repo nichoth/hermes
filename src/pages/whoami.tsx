@@ -21,9 +21,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     const [isEditingDesc, setEditingDesc] = useState<boolean>(false)
     const [profile, setProfile] = useState<Profile|null>(null)
-    // const [pendingProfile, setPendingProfile] = useState<Profile | null>(null)
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
-    const pendingDesc = useSignal<string|undefined>(undefined)
+    const pendingDesc = useSignal<string|null>(null)
 
     // componentDidMount
     useEffect(() => {
@@ -38,13 +37,14 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
         const profilePath = wn.path.appData(
             PERMISSIONS.app,
-            wn.path.file(CONSTANTS.avatarPath)
+            wn.path.file(CONSTANTS.profilePath)
         )
 
         fs.cat(profilePath)
             .then(content => {
                 if (!content) return
-                setProfile(JSON.parse(content))
+                const str = new TextDecoder().decode(content)
+                setProfile(JSON.parse(str))
             }).catch(err => {
                 console.log('errrrr reading file', err)
             })
@@ -129,6 +129,10 @@ export const Whoami = function ({ webnative, appAvatar }) {
         pendingDesc.value = ev.target.value
     }
 
+    console.log('**profile**', profile)
+    console.log('**profile description**', profile?.description)
+    console.log('**pending**', pendingDesc)
+
     return <div class="route-whoami">
         <h1>{username}</h1>
         <div class="whoami-content">
@@ -176,11 +180,9 @@ export const Whoami = function ({ webnative, appAvatar }) {
                         <div class="editing-text">
                             <form onSubmit={saveProfile}>
                                 <textarea name="description" autoFocus
-                                    value={pendingDesc ?
-                                        pendingDesc :
-                                        (profile ?
-                                            profile.description :
-                                            null)
+                                    value={pendingDesc.value === null ?
+                                        (profile && profile.description || null) :
+                                        pendingDesc.value
                                     }
                                     onInput={setPendingDesc}
                                 />

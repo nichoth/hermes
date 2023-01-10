@@ -16,6 +16,7 @@ import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
+import './z-index.css'
 import PERMISSIONS from './permissions.js'
 
 const router = Router()

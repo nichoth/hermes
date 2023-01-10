@@ -98,12 +98,12 @@ nav {
             grid-auto-rows: 50vh;
             grid-gap: 1rem;
 
-            & > * {
+            /* & > * { */
                 /* @XXX -- bad css hack
                 I don't understand this.
                 maybe a bug in chrome dev tools */
-                width: 74%;
-            }
+                /* width: 74%; */
+            /* } */
         }
     }
 }
@@ -119,6 +119,16 @@ nav {
 ******************/
 
 .hamburger-wrapper {
-    width: 95%;
-    position: fixed;
+    /* width: 95%;
+    position: fixed; */
+
+    padding-right: 1rem;
+    position: absolute;
+    margin-left: auto;
+    width: 50%;
+    float: right;
+    display: block;
+    z-index: 222;
+    justify-self: right;
+    right: 0;
 }
