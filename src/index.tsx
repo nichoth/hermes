@@ -73,9 +73,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             .then(program => {
                 webnative.value = program
             })
-            .catch(err => {
-                console.log('errrrrrrrrrr', err)
-            })
     }, [permissions])
 
     //

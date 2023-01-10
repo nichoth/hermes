@@ -1,4 +1,6 @@
 .route-whoami {
+    width: 100%;
+
     & h1 {
         border-bottom: 1px solid;
         margin-bottom: 2rem;
@@ -8,7 +10,7 @@
 
     & > .whoami-content {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(345px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
         grid-auto-rows: 50vh;
         grid-gap: 1rem;
 
