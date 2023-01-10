@@ -36,7 +36,12 @@ export const Whoami = function ({ webnative, appAvatar }) {
             wn.path.file(CONSTANTS.avatarPath)
         )
 
-        fs.cat(filepath)
+        const profilePath = wn.path.appData(
+            PERMISSIONS.app,
+            wn.path.file(CONSTANTS.avatarPath)
+        )
+
+        fs.cat(profilePath)
             .then(content => {
                 if (!content) return
                 setProfile(JSON.parse(content))
