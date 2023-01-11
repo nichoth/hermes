@@ -24,7 +24,6 @@ export const Whoami = function ({ webnative, appAvatar }) {
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
     const pendingDesc = useSignal<string|null>(null)
 
-    // componentDidMount
     useEffect(() => {
         if (!fs) return
         if (!('fs' in webnative.value.session) ||
@@ -48,7 +47,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
             }).catch(err => {
                 console.log('errrrr reading file', err)
             })
-    }, [])
+    }, [fs])
 
     function selectImg (ev) {
         ev.preventDefault()
@@ -104,7 +103,6 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     function editDescription (ev) {
         ev.preventDefault()
-        console.log('editing')
         setEditingDesc(!isEditingDesc)
     }
 
@@ -128,10 +126,6 @@ export const Whoami = function ({ webnative, appAvatar }) {
         ev.preventDefault()
         pendingDesc.value = ev.target.value
     }
-
-    console.log('**profile**', profile)
-    console.log('**profile description**', profile?.description)
-    console.log('**pending**', pendingDesc)
 
     return <div class="route-whoami">
         <h1>{username}</h1>
@@ -189,7 +183,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
                                 <button type="submit"
                                     disabled={!pendingDesc.value?.trim() ||
-                                        (pendingDesc.value.trim() == profile?.description)}
+                                        (pendingDesc.value.trim() ==
+                                            profile?.description)}
                                 >
                                     save
                                 </button>

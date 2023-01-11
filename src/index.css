@@ -22,6 +22,7 @@ body {
 .head-part {
     display: flex;
     border-bottom: 1px solid black;
+    padding-left: 0.5rem;
 
     & .avatar {
         display: flex;
