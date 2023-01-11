@@ -1,3 +1,7 @@
+html {
+    width: 100%;
+}
+
 body {
     background-color: pink;
     margin: 0;
@@ -18,20 +22,22 @@ body {
 .head-part {
     display: flex;
     border-bottom: 1px solid black;
+    padding-left: 0.5rem;
 
     & .avatar {
         display: flex;
+        flex-direction: column;
         align-items: baseline;
         text-decoration: none;
         width: 4rem;
 
-        &:hover {
+        &:hover, &.active {
             text-decoration: underline;
         }
 
         & img {
-            width: 4rem;
-            height: 4rem;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             border-radius: 50%;
             outline: 1px solid;
@@ -53,6 +59,8 @@ body {
 
     & figure {
         margin: 0.4rem 0.5rem 0.2rem 0.5rem;
+        width: 4rem;
+        height: 4rem;
     }
 }
 
@@ -83,6 +91,22 @@ nav {
     .head-part .avatar {
         align-items: center;
     }
+
+    .route-whoami {
+        & > .whoami-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            grid-auto-rows: 50vh;
+            grid-gap: 1rem;
+
+            /* & > * { */
+                /* @XXX -- bad css hack
+                I don't understand this.
+                maybe a bug in chrome dev tools */
+                /* width: 74%; */
+            /* } */
+        }
+    }
 }
 
 .route-whoami {
@@ -96,6 +120,16 @@ nav {
 ******************/
 
 .hamburger-wrapper {
-    width: 95%;
-    position: fixed;
+    /* width: 95%;
+    position: fixed; */
+
+    padding-right: 1rem;
+    position: absolute;
+    margin-left: auto;
+    width: 50%;
+    float: right;
+    display: block;
+    z-index: 222;
+    justify-self: right;
+    right: 0;
 }

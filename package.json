@@ -14,7 +14,7 @@
     "cypress-test": "concurrently --kill-others \"npx vite\" \"npx cypress open\""
   },
   "dependencies": {
-    "@nichoth/components": "^0.0.4",
+    "@nichoth/components": "^0.0.5",
     "@nichoth/routes": "^3.0.4",
     "@preact/signals": "^1.1.2",
     "events": "^3.3.0",
@@ -22,8 +22,7 @@
     "json-stable-stringify": "^1.0.1",
     "preact": "^10.11.2",
     "route-event": "^4.1.1",
-    "ruta3": "^2.0.1",
-    "webnative": "^0.34.2"
+    "webnative": "^0.35.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
@@ -42,7 +41,7 @@
     "url": "git+https://github.com/nichoth/hermes.git"
   },
   "author": "nichoth",
-  "license": "ISC",
+  "license": "AGPL",
   "bugs": {
     "url": "https://github.com/nichoth/hermes/issues"
   },

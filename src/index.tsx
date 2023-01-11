@@ -1,10 +1,9 @@
 // @ts-check
 import { h, render } from 'preact'
 import * as wn from "webnative"
-wn.setup.debug({ enabled: true })
 import { useEffect } from 'preact/hooks'
 import { useSignal } from "@preact/signals"
-import { Permissions } from "webnative/ucan/permissions.js"
+import { Permissions } from "webnative/permissions.js"
 import { FunctionComponent } from 'preact'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
@@ -17,22 +16,12 @@ import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
-import { FilePath } from 'webnative/path.js'
+import './z-index.css'
+import PERMISSIONS from './permissions.js'
 
 const router = Router()
 
 console.log('env', import.meta.env)
-
-const PERMISSIONS = {
-    app: {
-        name: "hermes",
-        creator: "snail-situation",
-    },
-    fs: {
-        public: [wn.path.directory('Apps', 'snail-situation', 'hermes')],
-        private: [wn.path.directory('Apps', 'snail-situation', 'hermes')]
-    },
-}
 
 interface Props {
     permissions: Permissions,
@@ -43,11 +32,12 @@ const route = Route()
 const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const appAvatar = useSignal<string|undefined>(undefined)
-    const webnative = useSignal<wn.State | null>(null)
+    const webnative = useSignal<wn.Program | null>(null)
     const isOpen = useSignal(false)
 
     function login () {
-        wn.redirectToLobby(permissions)
+        if (!webnative.value) return
+        webnative.value.capabilities.request()
     }
 
     //
@@ -66,7 +56,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     //
     useEffect(() => {
         if (!webnative.value) return
-        if (!(webnative.value.authenticated)) {
+        if (!(webnative.value.session)) {
             route.setRoute('/login')
         }
     }, [webnative.value])
@@ -76,12 +66,13 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // if/when permissions change
     //
     useEffect(() => {
-        wn.initialise({ permissions })
-            .then(wnState => {
-                webnative.value = wnState
-            })
-            .catch(err => {
-                console.log('errrrrrrrrrrrr', err)
+        wn.program({
+            namespace: { creator: "snail-situation", name: "hermes" },
+            debug: true,
+            permissions
+        })
+            .then(program => {
+                webnative.value = program
             })
     }, [permissions])
 
@@ -89,13 +80,19 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // read the profile, set it in app state
     //
     useEffect(() => {
-        if (!webnative.value) return
-        if (!('fs' in webnative.value) || !('username' in webnative.value)) return
+        if (!webnative.value?.session) return
+        if (!('fs' in webnative.value.session) ||
+            !('username' in webnative.value.session)) return
 
-        const { fs, username } = webnative.value
-        if (!fs || !fs.appPath) return
+        const { fs, username } = webnative.value.session
+        if (!fs) return
 
-        fs.cat(fs.appPath(wn.path.file(CONSTANTS.avatarPath)) as FilePath)
+        const path = wn.path.appData(
+            PERMISSIONS.app,
+            wn.path.file(CONSTANTS.avatarPath)
+        )
+
+        fs.cat(path)
             .then(content => {
                 if (!content) return
                 appAvatar.value = URL.createObjectURL(
@@ -103,14 +100,13 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 )
             })
             .catch(err => {
-                // no avatar file, set it to an auto generated value
+                // no avatar file, so set it to an auto generated value
                 console.log('**cant read in index**', err)
                 appAvatar.value = 'data:image/svg+xml;utf8,' +
                     generateFromString(username)
 
-                if (!fs.appPath) return
-                console.log('the path we couldnt read...',
-                    fs.appPath(wn.path.file(CONSTANTS.avatarPath)))
+                if (!wn.path.appData) return
+                console.log('the path we couldnt read...', path)
             })
     }, [webnative.value])
 
@@ -140,7 +136,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     <img src={appAvatar.value}></img>
                 </figure>
                 {/* @ts-ignore */}
-                <span>{webnative.value.username || ''}</span>
+                <span>{webnative.value.session?.username || ''}</span>
             </a>
 
             <nav>

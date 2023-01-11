@@ -1,26 +1,115 @@
 .route-whoami {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    grid-auto-rows: 50vh;
-    grid-gap: 1rem;
-    height: fit-content;
+    width: 100%;
 
-    & > div {
-        height: fit-content;
-        max-height: 100%;
-        display: flex;
-        justify-content: center;
+    & h1 {
+        border-bottom: 1px solid;
+        margin-bottom: 2rem;
+        font-size: 1.5rem;
+        font-weight: normal;
     }
 
-    & .whoami-avatar {
-        aspect-ratio: 1/1;
-        object-fit: cover;
-        border-radius: 50%;
+    & > .whoami-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+        grid-auto-rows: 50vh;
+        grid-gap: 1rem;
+
+        & > * {
+            border: 1px solid;
+            padding: 0.5rem;
+        }
+
+        & > .image-input {
+            display: flex;
+            flex-direction: column;
+
+            & img {
+                max-width: 100%;
+            }
+
+            & > .editable-image-wrapper {
+                max-height: calc(100% - 1.5rem);
+                aspect-ratio: 1/1;
+                display: flex;
+                justify-content: center;
+            }
+
+            & label {
+                width: 100%;
+                margin: 0;
+            }
+
+            & .image-controls {
+                align-self: start;
+            }
+        }
+
+        & .whoami-avatar {
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    }
+}
+
+.edit-btn {
+    margin-left: 0.5rem;
+    background-color: transparent;
+    border: none;
+
+    &.is-editing {
+        & svg {
+            fill: gray;
+        }
+    }
+
+    &:hover {
+        & svg {
+            fill: cyan;
+        }
+    }
+}
+
+.editing-text {
+    height: 100%;
+
+    & form {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        & button {
+            margin-top: 0.5rem;
+            width: 4rem;
+        }
+    }
+
+    & textarea {
+        width: 100%;
+        height: 100%;
+        padding: 1rem;
+        max-width: calc(100% - 2rem);
     }
 }
 
 .profile-info {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+
+    & .editing-dd {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        height: 100%;
+    }
+
     & dt {
         margin-top: 1rem;
+        /* color: #575757; */
+        font-weight: lighter;
+    }
+
+    & p {
+        margin: 0;
     }
 }
