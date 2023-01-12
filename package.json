@@ -17,6 +17,7 @@
     "@nichoth/components": "^0.0.5",
     "@nichoth/routes": "^3.0.4",
     "@preact/signals": "^1.1.2",
+    "drag-drop": "^7.2.0",
     "events": "^3.3.0",
     "generate-avatar": "^1.4.10",
     "json-stable-stringify": "^1.0.1",
