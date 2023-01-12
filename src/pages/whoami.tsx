@@ -138,6 +138,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
                     name="whoami-avatar"
                     url={pendingImage?.image.blob || appAvatar.value}
                     title="Set your avatar"
+                    capture="user"
                 />
 
                 <div class="image-controls">
