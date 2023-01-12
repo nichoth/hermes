@@ -92,7 +92,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             )
             // write the file as the `file` element that is submitted with
             //   the form -- `ev.target.files[0]`
-            await fs.write(filepath, pendingImage.file as File)
+            await fs.write(filepath, pendingImage.image.blob as Uint8Array)
             console.log('file path written...', filepath)
 
             await fs.publish()
@@ -130,11 +130,11 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             PERMISSIONS.app,
             wn.path.file(CONSTANTS.profilePath)
         )
-        await fs.write(filepath, JSON.stringify({ description: value }))
-        // await fs.write(
-        //     filepath,
-        //     new TextEncoder().encode(JSON.stringify({ description: value }))
-        // )
+        // await fs.write(filepath, JSON.stringify({ description: value }))
+        await fs.write(
+            filepath,
+            new TextEncoder().encode(JSON.stringify({ description: value }))
+        )
         console.log('file path written...', filepath)
         await fs.publish()
         setEditingDesc(false)
