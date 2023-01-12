@@ -7,6 +7,8 @@ import Button from '../components/button.jsx'
 import './new.css'
 import { Signal } from '@preact/signals'
 import { PERMISSIONS } from '../permissions.js'
+import CONSTANTS from '../CONSTANTS.jsx'
+const { logDirPath, blobDirPath } = CONSTANTS
 
 function NewPost (props) {
     return <div class="route new-post">
@@ -37,6 +39,7 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
     }
 
     // setup drag & drop
+    // componentDidMount
     useEffect(function didMount () {
         const cleanup = dragDrop('.file-inputs', (files, _, fileList) => {
             const input = document.getElementById('image-input') as HTMLInputElement
@@ -60,65 +63,76 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
     async function handleSubmit (ev) {
         if (!fs) return
         ev.preventDefault()
-        // const file = ev.target.elements.image.files[0]
-        const text = ev.target.elements.text.value
-
-        // const reader = new FileReader()
+        const file:File = ev.target.elements.image.files[0]
+        const text:string = ev.target.elements.text.value
 
         setResolving(true)
 
         // __@TODO__
         //
-        // write the JSON post
-        //
         // need to read the files & find your latest sequence number
         //
 
-        //
-        // write the image
-        //
-        // const filepath = 'foo'
+        // find latest sequence number
+        const logPath = wn.path.appData(
+            PERMISSIONS.app,
+            wn.path.directory(logDirPath)
+        )
+        await fs.mkdir(logPath)
+        const posts = await fs.ls(logPath)
+        console.log('posts', posts)
+
+        // posts are like `1.json`
+        const ns = (Object.keys(posts) || [])
+            .map(key => parseInt(key.split('.')[0]))
+            .sort((a,b) => b - a) // sort descending order
+        
+        const n = ns.length ? (ns[0] + 1) : 0
+
+        console.log('ns', ns)
+
+        // get filepath for the post JSON
+        // let filepath = wn.path.file(logDirPath, '0.json')
         const filepath = wn.path.appData(
             PERMISSIONS.app,
-            wn.path.file('foo')
+            wn.path.file(logDirPath, n + '.json')
         )
-        await fs.write(filepath, pendingImage as File)
-        console.log('file path written...', filepath)
+
+        // __@TODO__
+        // * [ ] `createPostFromContent` takes a sequence number, which is
+        //        used to make the filename of the related image
+
+        const newPost = createPostFromContent(text, { sequence: n })
+
+        // write the JSON
+        const res = await fs.write(
+            filepath,
+            new TextEncoder().encode(JSON.stringify(newPost))
+        )
+
         await fs.publish()
 
-        
-        // pendingImage
+        setResolving(false)
+        console.log('wrote the JSON file', res)
 
-        // reader.onloadend = () => {
-        //     // const prev = feed.posts.length ?
-        //     //     (feed.posts[0]).value :
-        //     //     null
+        // __@TODO__
+        // should redirect to your profile view after posting
 
-
-        //     //
-        //     // @TODO -- write files to wnfs
-        //     //
-        //     console.log('load end', reader.result)
-
-
-        //     // client.createPost({
-        //     //     files: [reader.result],
-        //     //     content: { text },
-        //     //     prev
-        //     // })
-        //     //     .then(res => {
-        //     //         emit(evs.post.new, res)
-        //     //         setResolving(false)
-        //     //         setRoute('/post/' + encodeURIComponent(res.key))
-        //     //     })
-        //     //     .catch(err => {
-        //     //         // @TODO -- show error to user
-        //     //         console.log('err', err)
-        //     //     })
+        // __@TODO__
+        // write the image
+        // const filepath = wn.path.appData(
+        //     PERMISSIONS.app,
+        //     wn.path.file(blobDirPath, '0-0.jpg')
+        // )
+        // const reader = new FileReader()
+        // reader.onloadend = async () => {
+        //     reader.result
+        //     await fs.write(filepath, reader.result as Uint8Array)
+        //     console.log('file path written...', filepath)
+        //     await fs.publish()
         // }
 
-        // // this gives us base64
-        // reader.readAsDataURL(file)
+        // reader.readAsArrayBuffer(file)
     }
 
     function chooseFile (ev) {
@@ -145,7 +159,7 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
                     <img src={URL.createObjectURL(pendingImage)} />
                 </div>) :
                 (<div>
-                    <p>Drop pictures here</p>
+                    <p>Drop images here</p>
                     <label for="image-input">Choose a picture</label>
                 </div>)
                 
@@ -170,6 +184,20 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
         </div>
 
     </form>
+}
+
+function createPostFromContent (content, { sequence }) {
+    return {
+        value: {
+            sequence,
+            content: {
+                type: 'post',
+                text: content,
+                // handle 1 image per post
+                mentions: [sequence + '-0.jpg']
+            }
+        }
+    }
 }
 
 export { NewPost }

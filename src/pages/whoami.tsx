@@ -93,6 +93,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             // write the file as the `file` element that is submitted with
             //   the form -- `ev.target.files[0]`
             await fs.write(filepath, pendingImage.image.blob as Uint8Array)
+            // await fs.write(filepath, pendingImage.file)
             console.log('file path written...', filepath)
 
             await fs.publish()
