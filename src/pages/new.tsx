@@ -1,12 +1,16 @@
 import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import dragDrop from 'drag-drop'
+import { FunctionComponent } from 'preact'
+import * as wn from "webnative"
 import Button from '../components/button.jsx'
 import './new.css'
+import { Signal } from '@preact/signals'
+import { PERMISSIONS } from '../permissions.js'
 
 function NewPost (props) {
     return <div class="route new-post">
-        <FilePicker {...props} />
+        <PostInput {...props} />
     </div>
 
     // use
@@ -16,11 +20,15 @@ function NewPost (props) {
     // </form>
 }
 
-function FilePicker (props) {
+interface Props {
+    webnative: Signal<wn.Program>
+}
+
+const PostInput:FunctionComponent<Props> = function PostInput (props) {
     const [pendingImage, setPendingImage] = useState<File|null>(null)
     const [isValid, setValid] = useState<Boolean>(false)
     const [isResolving, setResolving] = useState<Boolean>(false)
-    const { fs } = props.webnative
+    const { fs } = (props.webnative.value.session || {})
 
     function checkIsValid () {
         var el = document.getElementById('new-post-form') as HTMLFormElement
@@ -50,6 +58,7 @@ function FilePicker (props) {
     }
 
     async function handleSubmit (ev) {
+        if (!fs) return
         ev.preventDefault()
         // const file = ev.target.elements.image.files[0]
         const text = ev.target.elements.text.value
@@ -58,17 +67,22 @@ function FilePicker (props) {
 
         setResolving(true)
 
+        // __@TODO__
         //
         // write the JSON post
         //
-
         // need to read the files & find your latest sequence number
+        //
 
         //
         // write the image
         //
-        const filepath = 'foo'
-        await fs.write(filepath, pendingImage)
+        // const filepath = 'foo'
+        const filepath = wn.path.appData(
+            PERMISSIONS.app,
+            wn.path.file('foo')
+        )
+        await fs.write(filepath, pendingImage as File)
         console.log('file path written...', filepath)
         await fs.publish()
 
