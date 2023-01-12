@@ -80,6 +80,8 @@ export const Whoami = function ({ webnative, appAvatar }) {
                 PERMISSIONS.app,
                 wn.path.file(CONSTANTS.avatarPath)
             )
+            // write the file as the `file` element that is submitted with
+            //   the form -- `ev.target.files[0]`
             await fs.write(filepath, pendingImage.file)
             console.log('file path written...', filepath)
 

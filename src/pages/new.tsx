@@ -4,9 +4,9 @@ import dragDrop from 'drag-drop'
 import Button from '../components/button.jsx'
 import './new.css'
 
-function NewPost () {
+function NewPost (props) {
     return <div class="route new-post">
-        <FilePicker />
+        <FilePicker {...props} />
     </div>
 
     // use
@@ -17,11 +17,10 @@ function NewPost () {
 }
 
 function FilePicker (props) {
-    const [pendingImage, setPendingImage] = useState(null)
-    const [isValid, setValid] = useState(false)
-    const [isResolving, setResolving] = useState(false)
-    // const { me, feeds, client, emit, setRoute } = props
-    // const feed = feeds[me.did]
+    const [pendingImage, setPendingImage] = useState<File|null>(null)
+    const [isValid, setValid] = useState<Boolean>(false)
+    const [isResolving, setResolving] = useState<Boolean>(false)
+    const { fs } = props.webnative
 
     function checkIsValid () {
         var el = document.getElementById('new-post-form') as HTMLFormElement
@@ -50,40 +49,62 @@ function FilePicker (props) {
         checkIsValid()
     }
 
-    function handleSubmit (ev) {
+    async function handleSubmit (ev) {
         ev.preventDefault()
-        const file = ev.target.elements.image.files[0]
+        // const file = ev.target.elements.image.files[0]
         const text = ev.target.elements.text.value
 
-        const reader = new FileReader()
+        // const reader = new FileReader()
 
         setResolving(true)
 
-        reader.onloadend = () => {
-            // const prev = feed.posts.length ?
-            //     (feed.posts[0]).value :
-            //     null
+        //
+        // write the JSON post
+        //
 
-            console.log('log end', reader.result)
+        // need to read the files & find your latest sequence number
 
-            // client.createPost({
-            //     files: [reader.result],
-            //     content: { text },
-            //     prev
-            // })
-            //     .then(res => {
-            //         emit(evs.post.new, res)
-            //         setResolving(false)
-            //         setRoute('/post/' + encodeURIComponent(res.key))
-            //     })
-            //     .catch(err => {
-            //         // @TODO -- show error to user
-            //         console.log('err', err)
-            //     })
-        }
+        //
+        // write the image
+        //
+        const filepath = 'foo'
+        await fs.write(filepath, pendingImage)
+        console.log('file path written...', filepath)
+        await fs.publish()
 
-        // this gives us base64
-        reader.readAsDataURL(file)
+        
+        // pendingImage
+
+        // reader.onloadend = () => {
+        //     // const prev = feed.posts.length ?
+        //     //     (feed.posts[0]).value :
+        //     //     null
+
+
+        //     //
+        //     // @TODO -- write files to wnfs
+        //     //
+        //     console.log('load end', reader.result)
+
+
+        //     // client.createPost({
+        //     //     files: [reader.result],
+        //     //     content: { text },
+        //     //     prev
+        //     // })
+        //     //     .then(res => {
+        //     //         emit(evs.post.new, res)
+        //     //         setResolving(false)
+        //     //         setRoute('/post/' + encodeURIComponent(res.key))
+        //     //     })
+        //     //     .catch(err => {
+        //     //         // @TODO -- show error to user
+        //     //         console.log('err', err)
+        //     //     })
+        // }
+
+        // // this gives us base64
+        // reader.readAsDataURL(file)
     }
 
     function chooseFile (ev) {
