@@ -131,10 +131,10 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             wn.path.file(CONSTANTS.profilePath)
         )
         await fs.write(filepath, JSON.stringify({ description: value }))
-        await fs.write(
-            filepath,
-            new TextEncoder().encode(JSON.stringify({ description: value }))
-        )
+        // await fs.write(
+        //     filepath,
+        //     new TextEncoder().encode(JSON.stringify({ description: value }))
+        // )
         console.log('file path written...', filepath)
         await fs.publish()
         setEditingDesc(false)
