@@ -77,7 +77,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     }, [permissions])
 
     //
-    // read the profile, set it in app state
+    // read the avatar, set it in app state
     //
     useEffect(() => {
         if (!webnative.value?.session) return

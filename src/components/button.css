@@ -1,37 +1,33 @@
-/* $button-color: #4281CB; */
-/* :root {
+:root {
     --button-color: #4281CB;
-} */
+}
 
 @keyframes spinner {
     to {transform: rotate(360deg);}
 }
 
 .form-stuff {
-    button {
+    & button {
         margin-right: 1rem;
         position: relative;
         color: white;
-        /* background-color: $button-color; */
-        background-color: #4281CB;
+        background-color: var(--button-color);
         padding: 0.5rem 2rem;
         font-size: 1rem;
         border: none;
 
         &:hover {
-            cursor: pointer;
             opacity: 0.6;
         }
 
         &:disabled {
-            cursor: not-allowed;
             opacity: 0.6;
         }
 
         &.spinning {
             opacity: 0.6;
 
-            .btn-content {
+            & .btn-content {
                 visibility: hidden;
             }
 

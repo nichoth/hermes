@@ -24,15 +24,16 @@ export const Whoami = function ({ webnative, appAvatar }) {
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
     const pendingDesc = useSignal<string|null>(null)
 
+    // set profile
     useEffect(() => {
         if (!fs) return
         if (!('fs' in webnative.value.session) ||
             !('username' in webnative.value.session)) return
 
-        const filepath = wn.path.appData(
-            PERMISSIONS.app,
-            wn.path.file(CONSTANTS.avatarPath)
-        )
+        // const filepath = wn.path.appData(
+        //     PERMISSIONS.app,
+        //     wn.path.file(CONSTANTS.avatarPath)
+        // )
 
         const profilePath = wn.path.appData(
             PERMISSIONS.app,

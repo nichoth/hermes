@@ -120,7 +120,7 @@ function FilePicker (props) {
                 accept="image/png,image/jpeg,image/jpg;capture=camera"
                 onChange={chooseFile}
                 required={true}
-                capture="true"
+                capture="environment"
             />
         </div>
 
@@ -128,9 +128,7 @@ function FilePicker (props) {
         <textarea name="text" placeholder=" " id="caption" />
 
         <div class="controls">
-            <Button isSpinning={isResolving} type="submit"
-                disabled={!isValid}
-            >
+            <Button isSpinning={isResolving} type="submit" disabled={!isValid}>
                 Save
             </Button>
             <Button onClick={nevermind}>Nevermind</Button>

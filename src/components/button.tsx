@@ -1,4 +1,5 @@
 import { h } from 'preact'
+import './button.css'
 
 export function Button (props) {
     return <span class="form-stuff">
