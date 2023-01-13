@@ -14,17 +14,16 @@ function Home ({ webnative }) {
     )
 
     useEffect(() => {
-        fs.ls(logPath).then(async posts => {
-            console.log('posts', posts)
-
-            const _files = Object.keys(posts).map(async (filename) => {
+        fs.ls(logPath).then(async _posts => {
+            const _files = Object.keys(_posts).map(async (filename) => {
                 const fullPath = wn.path.appData(
                     PERMISSIONS.app,
-                    wn.path.file(filename)
+                    wn.path.file(CONSTANTS.logDirPath, filename)
                 )
-                console.log('full path', fullPath)
                 const content = await fs.cat(fullPath)
-                return content
+                // console.log('content', content)
+                return JSON.parse(new TextDecoder().decode(content))
+                // return content
             })
 
             const files = await Promise.all(_files)
@@ -33,6 +32,7 @@ function Home ({ webnative }) {
         })
     }, [fs])
 
+    console.log('posts', posts)
 
     return [
         <h2>hello, this is the app</h2>,
@@ -42,7 +42,9 @@ function Home ({ webnative }) {
         <ul>
             {Object.keys(posts).map(key => {
                 const post = posts[key]
-                return <li></li>
+                return <li>
+                    {post.value?.content.text || post.content.text}
+                </li>
             })}
         </ul>
     ]
