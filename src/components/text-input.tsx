@@ -1,14 +1,29 @@
+import { FunctionComponent } from 'preact'
 import './text-input.css'
 
-function TextInput (props) {
-    var { name, displayName } = props
-    var _props = {...props}
+interface Props {
+    name: string,
+    displayName: string,
+    required?: boolean,
+    type?: string,
+    minLength?: string,
+    maxLength?: string,
+    minlength?: string,
+    maxlength?: string,
+    defaultValue?: string
+}
+
+const TextInput:FunctionComponent<Props> = function (props) {
+    const { name, displayName } = props
+    const _props:Partial<Props> = {...props}
     delete _props.displayName
 
     return <div className="form-stuff">
         <div className={'input-group ' + name}>
-            <input {..._props} name={name} type={props.type || 'text'}
-                placeholder=" " required={props.required}
+            <input {..._props} name={name}
+                type={props.type || 'text'}
+                placeholder=" "
+                required={props.required}
                 minLength={props.minlength || props.minLength}
                 maxLength={props.maxlength || props.maxLength}
                 id={name}

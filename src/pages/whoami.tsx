@@ -1,13 +1,21 @@
 import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
-import { useSignal } from "@preact/signals"
+import { FunctionComponent } from 'preact'
+import { Signal, useSignal } from "@preact/signals"
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
 import PERMISSIONS from '../permissions.js'
+
 import './whoami.css'
 
-export const Whoami = function ({ webnative, appAvatar }) {
+interface Props {
+    webnative: Signal<wn.Program>,
+    appAvatar: Signal<File|string|null>
+}
+
+export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar }) {
+    if (!webnative.value.session) return null
     const { fs, username } = webnative.value.session
 
     interface Profile {
@@ -24,15 +32,17 @@ export const Whoami = function ({ webnative, appAvatar }) {
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
     const pendingDesc = useSignal<string|null>(null)
 
+    // set profile
     useEffect(() => {
         if (!fs) return
+        if (!webnative.value.session) return
         if (!('fs' in webnative.value.session) ||
             !('username' in webnative.value.session)) return
 
-        const filepath = wn.path.appData(
-            PERMISSIONS.app,
-            wn.path.file(CONSTANTS.avatarPath)
-        )
+        // const filepath = wn.path.appData(
+        //     PERMISSIONS.app,
+        //     wn.path.file(CONSTANTS.avatarPath)
+        // )
 
         const profilePath = wn.path.appData(
             PERMISSIONS.app,
@@ -51,7 +61,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     function selectImg (ev) {
         ev.preventDefault()
-        const file = ev.target.files[0]
+        const file:File = ev.target.files[0]
 
         const reader = new FileReader()
 
@@ -73,13 +83,17 @@ export const Whoami = function ({ webnative, appAvatar }) {
     async function saveImg (ev) {
         ev.preventDefault()
         if (!pendingImage) return
+        if (!fs) return
 
         try {
             const filepath = wn.path.appData(
                 PERMISSIONS.app,
                 wn.path.file(CONSTANTS.avatarPath)
             )
-            await fs.write(filepath, pendingImage.file)
+            // write the file as the `file` element that is submitted with
+            //   the form -- `ev.target.files[0]`
+            await fs.write(filepath, pendingImage.image.blob as Uint8Array)
+            // await fs.write(filepath, pendingImage.file)
             console.log('file path written...', filepath)
 
             await fs.publish()
@@ -108,6 +122,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
 
     async function saveProfile (ev) {
         ev.preventDefault()
+        if (!fs) return
         const els = ev.target.elements
         const value = els.description.value.trim()
         console.log('save profile', value)
@@ -116,7 +131,11 @@ export const Whoami = function ({ webnative, appAvatar }) {
             PERMISSIONS.app,
             wn.path.file(CONSTANTS.profilePath)
         )
-        await fs.write(filepath, JSON.stringify({ description: value }))
+        // await fs.write(filepath, JSON.stringify({ description: value }))
+        await fs.write(
+            filepath,
+            new TextEncoder().encode(JSON.stringify({ description: value }))
+        )
         console.log('file path written...', filepath)
         await fs.publish()
         setEditingDesc(false)
@@ -137,6 +156,7 @@ export const Whoami = function ({ webnative, appAvatar }) {
                     name="whoami-avatar"
                     url={pendingImage?.image.blob || appAvatar.value}
                     title="Set your avatar"
+                    capture="user"
                 />
 
                 <div class="image-controls">

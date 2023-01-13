@@ -1,7 +1,7 @@
 import './editable-image.css'
 
 function EditableImg (props) {
-    var { url, onChange, title, name, label } = props
+    var { url, onChange, title, name, label, capture } = props
 
     return <div class="editable-image-wrapper">
         <label for={name || 'avatar-input'} class="editable-image"
@@ -13,9 +13,10 @@ function EditableImg (props) {
         </label>
 
         <input type="file" id={(name || 'avatar-input')} name={name}
-            accept="image/png, image/jpeg"
+            accept="image/*"
             class="avatar-input"
             onchange={onChange}
+            capture={capture}
         />
     </div>
 }

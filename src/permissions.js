@@ -1,6 +1,6 @@
 import { path } from "webnative"
 
-const PERMISSIONS = {
+export const PERMISSIONS = {
     app: {
         name: "hermes",
         creator: "snail-situation",
