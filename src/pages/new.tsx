@@ -94,7 +94,10 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
         )
 
         // write the JSON
-        const newPost = createPostFromString(text, { sequence: n })
+        const newPost = createPostFromString(text, {
+            sequence: n,
+            alt: ev.target.elements['alt-text'].value
+        })
         const res = await fs.write(
             postPath,
             new TextEncoder().encode(JSON.stringify(newPost))
@@ -174,12 +177,13 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
     </form>
 }
 
-function createPostFromString (content, { sequence }) {
+function createPostFromString (content, { sequence, alt }) {
     return {
         sequence,
         content: {
             type: 'post',
             text: content,
+            alt: alt || '',
             // handle 1 image per post
             mentions: [sequence + '-0.jpg']
         }

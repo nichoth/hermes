@@ -4,6 +4,10 @@
     & form {
         max-width: 40rem;
 
+        & .alt-text {
+            margin-top: 0.2rem;
+        }
+
         & .image-preview {
             height: 80%;
             margin-bottom: 1rem;
