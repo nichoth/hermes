@@ -2,13 +2,13 @@ import { h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import dragDrop from 'drag-drop'
 import { FunctionComponent } from 'preact'
+import { Signal } from '@preact/signals'
 import * as wn from "webnative"
 import Button from '../components/button.jsx'
+import TextInput from '../components/text-input.jsx'
 import './new.css'
-import { Signal } from '@preact/signals'
 import { PERMISSIONS } from '../permissions.js'
 import CONSTANTS from '../CONSTANTS.jsx'
-const { logDirPath, blobDirPath } = CONSTANTS
 
 function NewPost (props) {
     return <div class="route new-post">
@@ -68,21 +68,17 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
 
         setResolving(true)
 
-        // __@TODO__
-        //
-        // need to read the files & find your latest sequence number
-        //
-
         // find latest sequence number
         const logPath = wn.path.appData(
             PERMISSIONS.app,
-            wn.path.directory(logDirPath)
+            wn.path.directory(CONSTANTS.logDirPath)
         )
+        // @NOTE -- this is like `mkdir -p` -- doesn't throw if the dir exists
         await fs.mkdir(logPath)
         const posts = await fs.ls(logPath)
         console.log('posts', posts)
 
-        // posts are like `1.json`
+        // posts names are like `1.json`
         const ns = (Object.keys(posts) || [])
             .map(key => parseInt(key.split('.')[0]))
             .sort((a,b) => b - a) // sort descending order
@@ -92,47 +88,38 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
         console.log('ns', ns)
 
         // get filepath for the post JSON
-        // let filepath = wn.path.file(logDirPath, '0.json')
-        const filepath = wn.path.appData(
+        const postPath = wn.path.appData(
             PERMISSIONS.app,
-            wn.path.file(logDirPath, n + '.json')
+            wn.path.file(CONSTANTS.logDirPath, n + '.json')
         )
 
-        // __@TODO__
-        // * [ ] `createPostFromContent` takes a sequence number, which is
-        //        used to make the filename of the related image
-
-        const newPost = createPostFromContent(text, { sequence: n })
-
         // write the JSON
+        const newPost = createPostFromString(text, { sequence: n })
         const res = await fs.write(
-            filepath,
+            postPath,
             new TextEncoder().encode(JSON.stringify(newPost))
         )
 
-        await fs.publish()
-
-        setResolving(false)
         console.log('wrote the JSON file', res)
 
-        // __@TODO__
-        // should redirect to your profile view after posting
-
-        // __@TODO__
         // write the image
-        // const filepath = wn.path.appData(
-        //     PERMISSIONS.app,
-        //     wn.path.file(blobDirPath, '0-0.jpg')
-        // )
-        // const reader = new FileReader()
-        // reader.onloadend = async () => {
-        //     reader.result
-        //     await fs.write(filepath, reader.result as Uint8Array)
-        //     console.log('file path written...', filepath)
-        //     await fs.publish()
-        // }
+        const imgFilepath = wn.path.appData(
+            PERMISSIONS.app,
+            // __@TODO__ -- handle other file extensions
+            wn.path.file(CONSTANTS.blobDirPath, n + '-0.jpg')
+            // ^ we are only supporting single image per post for now
+        )
+        const reader = new FileReader()
+        reader.onloadend = async () => {
+            await fs.write(imgFilepath, reader.result as Uint8Array)
+            console.log('img path written...', imgFilepath)
+            await fs.publish()
+            setResolving(false)
+            // __@TODO__
+            // should redirect to your profile view after posting
+        }
 
-        // reader.readAsArrayBuffer(file)
+        reader.readAsArrayBuffer(file)
     }
 
     function chooseFile (ev) {
@@ -152,7 +139,6 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
     return <form class="file-preview" id="new-post-form"
         onInput={formInput} onSubmit={handleSubmit}
     >
-
         <div class="file-inputs">
             {pendingImage ?
                 (<div class="image-preview">
@@ -176,6 +162,8 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
         <label for="caption">caption</label>
         <textarea name="text" placeholder=" " id="caption" />
 
+        <TextInput name="alt-text" required={true} displayName="Alt Text" />
+
         <div class="controls">
             <Button isSpinning={isResolving} type="submit" disabled={!isValid}>
                 Save
@@ -186,16 +174,14 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
     </form>
 }
 
-function createPostFromContent (content, { sequence }) {
+function createPostFromString (content, { sequence }) {
     return {
-        value: {
-            sequence,
-            content: {
-                type: 'post',
-                text: content,
-                // handle 1 image per post
-                mentions: [sequence + '-0.jpg']
-            }
+        sequence,
+        content: {
+            type: 'post',
+            text: content,
+            // handle 1 image per post
+            mentions: [sequence + '-0.jpg']
         }
     }
 }
