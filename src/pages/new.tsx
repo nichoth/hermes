@@ -4,11 +4,12 @@ import dragDrop from 'drag-drop'
 import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import * as wn from "webnative"
+import timestamp from 'monotonic-timestamp'
 import Button from '../components/button.jsx'
 import TextInput from '../components/text-input.jsx'
-import './new.css'
 import { PERMISSIONS } from '../permissions.js'
 import CONSTANTS from '../CONSTANTS.jsx'
+import './new.css'
 
 function NewPost (props) {
     return <div class="route new-post">
@@ -178,6 +179,7 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
 function createPostFromString (content, { sequence, alt }) {
     return {
         sequence,
+        timestamp: +timestamp(),
         content: {
             type: 'post',
             text: content,

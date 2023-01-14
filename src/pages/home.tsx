@@ -52,7 +52,6 @@ function Home ({ webnative }) {
             })
 
             const files = await Promise.all(_files)
-
             setPosts(files)
         })
     }, [fs])
@@ -67,7 +66,7 @@ function Home ({ webnative }) {
             {Object.keys(posts).map((key) => {
                 const item = posts[key]
                 return <li>
-                    <img src={item.imgUrl} alt={item.post.alt} />
+                    <img src={item.imgUrl} alt={item.post.content.alt} />
                     <p>{item.post.value?.content.text || item.post.content.text}</p>
                 </li>
             })}

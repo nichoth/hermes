@@ -21,6 +21,7 @@
     "events": "^3.3.0",
     "generate-avatar": "^1.4.10",
     "json-stable-stringify": "^1.0.1",
+    "monotonic-timestamp": "^0.0.9",
     "preact": "^10.11.2",
     "route-event": "^4.1.1",
     "webnative": "^0.35.2"
