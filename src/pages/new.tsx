@@ -103,8 +103,6 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
             new TextEncoder().encode(JSON.stringify(newPost))
         )
 
-        console.log('wrote the JSON file', res)
-
         // write the image
         const imgFilepath = wn.path.appData(
             PERMISSIONS.app,

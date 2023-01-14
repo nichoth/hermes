@@ -3,6 +3,7 @@ import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
 import CONSTANTS from '../CONSTANTS.jsx'
 import { PERMISSIONS } from '../permissions.js'
+import './home.css'
 
 function Home ({ webnative }) {
     const { fs } = webnative.value.session
@@ -15,15 +16,39 @@ function Home ({ webnative }) {
 
     useEffect(() => {
         fs.ls(logPath).then(async _posts => {
-            const _files = Object.keys(_posts).map(async (filename) => {
+            const _files = Object.keys(_posts).map(async (filename, i) => {
+                // read the post JSON
                 const fullPath = wn.path.appData(
                     PERMISSIONS.app,
                     wn.path.file(CONSTANTS.logDirPath, filename)
                 )
+
                 const content = await fs.cat(fullPath)
-                // console.log('content', content)
-                return JSON.parse(new TextDecoder().decode(content))
-                // return content
+                const post = JSON.parse(new TextDecoder().decode(content))
+
+                // get img URL
+                const n = post.sequence
+                const imgPath = wn.path.appData(
+                    PERMISSIONS.app,
+                    // @TODO -- file extensions
+                    wn.path.file(CONSTANTS.blobDirPath, n + '-0.jpg')
+                )
+
+                let imgBlob
+                try {
+                    imgBlob = await fs.cat(imgPath)
+                } catch (err) {
+                    // do nothing, just for development
+                    console.log('caught error err')
+                }
+                const imgUrl = URL.createObjectURL(
+                    new Blob([imgBlob as BlobPart], { type: 'image/jpeg' })
+                )
+
+                return ({
+                    post,
+                    imgUrl
+                })
             })
 
             const files = await Promise.all(_files)
@@ -34,20 +59,20 @@ function Home ({ webnative }) {
 
     console.log('posts', posts)
 
-    return [
-        <h2>hello, this is the app</h2>,
-        <p id="route-home">this is the home route!</p>,
-        <a href="/fooo">fooo</a>,
+    return <div class="route home">
+        <h2>hello, this is the app</h2>
+        <p id="route-home">this is the home route!</p>
 
-        <ul>
-            {Object.keys(posts).map(key => {
-                const post = posts[key]
+        <ul class="main-feed">
+            {Object.keys(posts).map((key) => {
+                const item = posts[key]
                 return <li>
-                    {post.value?.content.text || post.content.text}
+                    <img src={item.imgUrl} alt={item.post.alt} />
+                    <p>{item.post.value?.content.text || item.post.content.text}</p>
                 </li>
             })}
         </ul>
-    ]
+    </div>
 }
 
 export { Home }
