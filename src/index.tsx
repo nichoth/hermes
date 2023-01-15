@@ -33,11 +33,17 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.Program | null>(null)
-    const isOpen = useSignal(false)
+    const mobileNavOpen = useSignal(false)
 
     function login () {
         if (!webnative.value) return
         webnative.value.capabilities.request()
+    }
+
+    function logout (ev) {
+        ev.preventDefault()
+        if (!webnative.value) return
+        webnative.value.session?.destroy()
     }
 
     //
@@ -96,7 +102,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             .then(content => {
                 if (!content) return
                 appAvatar.value = URL.createObjectURL(
-                    new Blob([content as BlobPart], { type: 'image/jpeg' })
+                    new Blob([content as BlobPart], { type: 'image/*' })
                 )
             })
             .catch(err => {
@@ -113,19 +119,19 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // find the view for this route
     const match = router.match(routeState.value)
     const Node = match ?
-        match.action({ login }, webnative.value) :
+        match.action() :
         () => (<p class="404">missing route</p>)
 
     function mobileNavHandler (ev) {
         ev.preventDefault()
-        isOpen.value = !isOpen.value
+        mobileNavOpen.value = !mobileNavOpen.value
     }
 
     if (!webnative.value) return null
 
     return (<div class="shell">
-        <HamburgerWrapper isOpen={isOpen} onClick={mobileNavHandler} />
-        <MobileNav isOpen={isOpen} navList={navList} />
+        <HamburgerWrapper isOpen={mobileNavOpen} onClick={mobileNavHandler} />
+        <MobileNav isOpen={mobileNavOpen} navList={navList} />
 
         <div class="head-part">
             <a href="/whoami" class={'avatar' + (routeState.value === '/whoami' ?
@@ -135,7 +141,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 <figure>
                     <img src={appAvatar.value}></img>
                 </figure>
-                {/* @ts-ignore */}
                 <span>{webnative.value.session?.username || ''}</span>
             </a>
 
@@ -149,6 +154,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     </a>
                 })}
             </nav>
+
+            <button onClick={logout} class="logout">Logout</button>
         </div>
 
         <div class="content">

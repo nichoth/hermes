@@ -62,6 +62,35 @@ body {
         width: 4rem;
         height: 4rem;
     }
+
+    & .logout {
+        --gradient-from: #f65a8e;
+        --gradient-to: #7e22ce;
+        --gradient-stops:
+            var(--gradient-from),
+            var(--gradient-to, rgb(246 90 142/0));
+
+        min-width: 8rem;
+        border: 3px solid;
+        border-image: linear-gradient(to right, var(--gradient-from), var(--gradient-to)) 1;
+        padding: 0.5rem;
+        font-weight: 900;
+        font-size: 1.2rem;
+        transition: border-width 0.4s ease;
+        align-self: center;
+        margin-right: 1rem;
+
+        &:hover {
+            border-width: 6px;
+            /* filter: invert(1); */
+        }
+
+
+        color: transparent;
+        background-image: linear-gradient(to right, var(--gradient-stops));
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
 }
 
 nav {
