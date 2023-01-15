@@ -14,7 +14,7 @@
     "cypress-test": "concurrently --kill-others \"npx vite\" \"npx cypress open\""
   },
   "dependencies": {
-    "@nichoth/components": "^0.0.5",
+    "@nichoth/components": "^0.1.0",
     "@nichoth/routes": "^3.0.4",
     "@preact/signals": "^1.1.2",
     "drag-drop": "^7.2.0",

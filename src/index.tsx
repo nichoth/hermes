@@ -131,7 +131,16 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
     return (<div class="shell">
         <HamburgerWrapper isOpen={mobileNavOpen} onClick={mobileNavHandler} />
-        <MobileNav isOpen={mobileNavOpen} navList={navList} />
+        <MobileNav isOpen={mobileNavOpen}>
+            {navList.map(item => {
+                return <a className={'app-nav' + (routeState.value === item.href ?
+                    ' active' : '')}
+                    href={item.href}
+                >
+                    {item.body}
+                </a>
+            }).concat([<button onClick={logout}>Logout</button>])}
+        </MobileNav>
 
         <div class="head-part">
             <a href="/whoami" class={'avatar' + (routeState.value === '/whoami' ?

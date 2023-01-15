@@ -15,6 +15,15 @@ body {
     }
 }
 
+.mobile-nav-list {
+    & button {
+        background: none;
+        border: 1px solid white;
+        color: white;
+        padding: 0.5rem 1rem;
+    }
+}
+
 .content {
     margin: 0.5rem;
 }
@@ -114,6 +123,10 @@ nav {
 
 @media (max-width: 600px) {
     nav {
+        display: none;
+    }
+
+    .logout {
         display: none;
     }
 
