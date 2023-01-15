@@ -1,0 +1,10 @@
+.route-post {
+    width: fit-content;
+    margin: 0 auto;
+    max-width: 80vw;
+
+    & img {
+        max-height: 80vh;
+        max-width: 80vw;
+    }
+}

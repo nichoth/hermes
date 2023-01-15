@@ -4,6 +4,7 @@ import { loginRoute } from './pages/login.jsx'
 import { Home } from './pages/home.jsx'
 import { Whoami } from './pages/whoami.jsx'
 import { NewPost } from './pages/new.jsx'
+import { Post } from './pages/post.jsx'
 
 export default function _Router () {
     const router = Router()
@@ -33,6 +34,10 @@ export default function _Router () {
 
     router.addRoute('/new', () => {
         return NewPost
+    })
+
+    router.addRoute('/@:username/:sequence', () => {
+        return Post
     })
 
     return router

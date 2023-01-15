@@ -66,7 +66,7 @@ function Home ({ webnative }) {
             {Object.keys(posts).map((key) => {
                 const item = posts[key]
                 return <li>
-                    <a href={'/@' + item.post.author}>
+                    <a href={'/@' + item.post.author + '/' + item.post.sequence}>
                         <img src={item.imgUrl} alt={item.post.content.alt} />
                         <p>{item.post.value?.content.text || item.post.content.text}</p>
                     </a>

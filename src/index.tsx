@@ -119,7 +119,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // find the view for this route
     const match = router.match(routeState.value)
     const Node = match ?
-        match.action() :
+        match.action(match.params) :
         () => (<p class="404">missing route</p>)
 
     function mobileNavHandler (ev) {
@@ -168,7 +168,9 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         </div>
 
         <div class="content">
-            <Node login={login} webnative={webnative} appAvatar={appAvatar} />
+            <Node login={login} webnative={webnative} appAvatar={appAvatar}
+                params={match.params}
+            />
         </div>
     </div>)
 }
