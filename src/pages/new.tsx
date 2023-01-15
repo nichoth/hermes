@@ -31,7 +31,7 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
     const [pendingImage, setPendingImage] = useState<File|null>(null)
     const [isValid, setValid] = useState<Boolean>(false)
     const [isResolving, setResolving] = useState<Boolean>(false)
-    const { fs } = (props.webnative.value.session || {})
+    const { fs, username } = (props.webnative.value.session || {})
 
     function checkIsValid () {
         var el = document.getElementById('new-post-form') as HTMLFormElement
@@ -97,7 +97,8 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
         // write the JSON
         const newPost = createPostFromString(text, {
             sequence: n,
-            alt: ev.target.elements['alt-text'].value
+            alt: ev.target.elements['alt-text'].value,
+            author: username // @TODO -- should use the user's DID
         })
         const res = await fs.write(
             postPath,
@@ -176,10 +177,11 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
     </form>
 }
 
-function createPostFromString (content, { sequence, alt }) {
+function createPostFromString (content, { sequence, alt, author }) {
     return {
         sequence,
         timestamp: +timestamp(),
+        author,
         content: {
             type: 'post',
             text: content,

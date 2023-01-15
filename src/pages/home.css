@@ -8,8 +8,24 @@
         grid-auto-rows: 42vh;
         row-gap: 2rem;
 
+        & li {
+            & a {
+                height: 100%;
+                display: block;
+
+                &:hover {
+                    & img {
+                        outline: 3px double blue;
+                    }
+                }
+            }
+        }
+
         & img {
             max-width: 100%;
+            max-height: 87%;
+            width: 100%;
+            object-fit: cover;
         }
 
         & p {
