@@ -43,6 +43,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     function logout (ev) {
         ev.preventDefault()
         if (!webnative.value) return
+        console.log('*logout*')
         webnative.value.session?.destroy()
     }
 

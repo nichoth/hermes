@@ -6,6 +6,8 @@ import { PERMISSIONS } from '../permissions.js'
 import './home.css'
 
 function Home ({ webnative }) {
+    if (!webnative.value?.session) return null
+    console.log('*webnative*', webnative.value)
     const { fs } = webnative.value.session
     const [posts, setPosts] = useState<object[]>([])
 
