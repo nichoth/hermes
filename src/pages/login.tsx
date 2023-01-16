@@ -1,18 +1,52 @@
 import { h } from 'preact'
+import { useState } from 'preact/hooks'
+import TextInput from '../components/text-input.jsx'
+import Button from '../components/button.jsx'
 import './login.css'
 
-function loginRoute ({ login }) {
-    return (<div class="route-login">
-        <button onClick={login} className="btn login">
-            <svg height="100%" width="100%" viewBox="0 0 98 94">
-                <path
-                d="M30 76a12 12 0 110 11H18a18 18 0 010-37h26l-4-6H18a18 18 0 010-37c6 0 11 2 15 7l3 5 10 14h33a8 8 0 000-15H68a12 12 0 110-11h11a18 18 0 010 37H53l4 6h22a18 18 0 11-14 30l-3-4-10-15H18a8 8 0 000 15h12zm41-6l2 4 6 2a8 8 0 000-15H65l6 9zM27 25l-3-5-6-2a8 8 0 000 15h15l-6-8z"
-                fill="currentColor"
-                fillRule="nonzero"
-                ></path>
-            </svg>
-            <span>Sign in with Fission</span>
-        </button>
+// function loginRoute ({ login }) {
+function loginRoute () {
+    const [usernameAvailable, setAvailable] = useState<boolean>(false)
+    const [isValid, setValid] = useState<Boolean>(false)
+    // const [postContent, setPostContent] = useState<Post|null>(null)
+
+    function handleSubmit (ev) {
+        ev.preventDefault()
+        console.log('submit', ev.target.value)
+    }
+
+    function nevermind (ev) {
+        ev.preventDefault()
+        const form = document.getElementById('login-form') as HTMLFormElement
+        form.elements['username'].value = ''
+        if (form.checkValidity() !== isValid) setValid(form.checkValidity())
+        console.log('nevermind')
+    }
+
+    function formInput (ev) {
+        const { form, value } = ev.target
+        const _isValid = form.checkValidity()
+        if (_isValid !== isValid) setValid(_isValid)
+    }
+
+    const isResolving = false
+
+    return (<div class="route route-login">
+        <form onSubmit={handleSubmit} className="choose-username" id="login-form"
+            onInput={formInput}
+        >
+            <h2>Login</h2>
+            <TextInput name="username" required={true} displayName="Username"
+                minLength='3'
+            />
+
+            <Button isSpinning={isResolving} type="submit" disabled={!isValid}>
+                Login
+            </Button>
+            <Button onClick={nevermind}>Nevermind</Button>
+        </form>
+
+        {/* <a href="/create-account">Create an account</a> */}
     </div>)
 }
 

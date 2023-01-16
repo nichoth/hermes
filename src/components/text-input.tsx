@@ -20,7 +20,8 @@ const TextInput:FunctionComponent<Props> = function (props) {
 
     return <div className="form-stuff">
         <div className={'input-group ' + name}>
-            <input {..._props} name={name}
+            <input {..._props}
+                name={name}
                 type={props.type || 'text'}
                 placeholder=" "
                 required={props.required}
