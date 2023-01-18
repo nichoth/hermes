@@ -34,3 +34,13 @@ const usernameValidLocal = await isUsernameValid(encodedUsernameLocal);
 // isUsernameValid
 /* => */ session.authStrategy.isUsernameValid(username);
 ```
+
+
+---------------------------------------------
+
+
+## 1-18-2023
+
+### login screen
+
+You can either link a device, or you are already logged in, or you can create a new account

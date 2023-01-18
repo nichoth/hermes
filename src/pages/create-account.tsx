@@ -14,7 +14,7 @@ interface Props {
 }
 
 // function loginRoute ({ login }) {
-const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
+const CreateAccount:FunctionComponent<Props> = function ({ webnative }) {
     const [usernameAvailable, setAvailable] = useState<boolean>(false)
     const [isValid, setValid] = useState<boolean>(false)
 
@@ -55,11 +55,11 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
 
     const isResolving = false
 
-    return (<div class="route route-login centered">
+    return (<div class="route route-create-account centered">
         <form onSubmit={handleSubmit} className="choose-username" id="login-form"
             onInput={onFormInput}
         >
-            <h2>Login</h2>
+            <h2>Create a new account</h2>
             <TextInput name="username" required={true} displayName="Username"
                 minlength={'3'}
                 autoFocus
@@ -68,13 +68,13 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
             <Button isSpinning={isResolving} type="submit"
                 disabled={!isValid || !usernameAvailable}
             >
-                Link account
+                Create
             </Button>
             <Button onClick={nevermind}>Nevermind</Button>
         </form>
 
-        <a href="/create-account">Create an account</a>
+        <a href="/login">login to an existing account</a>
     </div>)
 }
 
-export { LoginRoute }
+export { CreateAccount }

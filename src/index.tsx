@@ -85,8 +85,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
             .then(async program => {
                 webnative.value = program
 
-                console.log('aaaaa')
-
                 // __not authed__
                 if (!program.session) return
 
