@@ -39,8 +39,10 @@ const LoginRoute:FunctionComponent<Props> = function loginRoute ({ webnative }) 
         const { form, value } = ev.target
 
         // check is valid
-        const usernameValid = await isUsernameValid(value, webnative.value)
-        const _isValid = (form.checkValidity() && usernameValid)
+        const _isValid = (
+            form.checkValidity() &&
+            await isUsernameValid(value, webnative.value)
+        )
         if (_isValid !== isValid) setValid(_isValid)
 
         // check is available

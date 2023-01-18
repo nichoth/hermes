@@ -7,6 +7,7 @@ import { Permissions } from "webnative/permissions.js"
 import { FunctionComponent } from 'preact'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
+import { USERNAME_STORAGE_KEY, createDID } from './username.js'
 import Router from './router.jsx'
 import Route from 'route-event'
 import { navList } from './navigation.js'
@@ -61,8 +62,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     }, [])
 
     //
-    // when webnative changes
     // check the `authenticated` status, and redirect to `/login` if necessary
+    // when webnative changes
     //
     useEffect(() => {
         if (!webnative.value) return
@@ -79,10 +80,19 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         wn.program({
             namespace: { creator: "snail-situation", name: "hermes" },
             debug: true,
-            permissions
+            // permissions
         })
-            .then(program => {
+            .then(async program => {
                 webnative.value = program
+                if (!program.session) return
+
+                const fullUsername = await program.components.storage.getItem(
+                    USERNAME_STORAGE_KEY
+                ) as string
+
+                if (!fullUsername) {
+                    const did = await createDID(program.components.crypto);
+                }
             })
     }, [permissions])
 
