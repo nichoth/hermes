@@ -1,14 +1,26 @@
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
+import { FunctionComponent } from 'preact'
+import { Signal } from '@preact/signals'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
+import { isUsernameValid } from '../username.js'
+import * as wn from 'webnative'
 import './login.css'
 
+interface Props {
+    webnative: Signal<wn.Program>
+}
+
 // function loginRoute ({ login }) {
-function loginRoute () {
+const LoginRoute:FunctionComponent<Props> = function loginRoute ({ webnative }) {
     const [usernameAvailable, setAvailable] = useState<boolean>(false)
-    const [isValid, setValid] = useState<Boolean>(false)
+    const [isValid, setValid] = useState<boolean>(false)
     // const [postContent, setPostContent] = useState<Post|null>(null)
+
+    console.log('in login', webnative.value.auth)
+
+    console.log('valid???', isValid)
 
     function handleSubmit (ev) {
         ev.preventDefault()
@@ -19,25 +31,31 @@ function loginRoute () {
         ev.preventDefault()
         const form = document.getElementById('login-form') as HTMLFormElement
         form.elements['username'].value = ''
-        if (form.checkValidity() !== isValid) setValid(form.checkValidity())
+        setValid(false)
         console.log('nevermind')
     }
 
-    function formInput (ev) {
+    async function onFormInput (ev) {
         const { form, value } = ev.target
-        const _isValid = form.checkValidity()
+
+        // check is valid
+        const usernameValid = await isUsernameValid(value, webnative.value)
+        const _isValid = (form.checkValidity() && usernameValid)
         if (_isValid !== isValid) setValid(_isValid)
+
+        // check is available
     }
 
     const isResolving = false
 
     return (<div class="route route-login">
         <form onSubmit={handleSubmit} className="choose-username" id="login-form"
-            onInput={formInput}
+            onInput={onFormInput}
         >
             <h2>Login</h2>
             <TextInput name="username" required={true} displayName="Username"
-                minLength='3'
+                minlength={'3'}
+                autoFocus
             />
 
             <Button isSpinning={isResolving} type="submit" disabled={!isValid}>
@@ -50,5 +68,4 @@ function loginRoute () {
     </div>)
 }
 
-export { loginRoute }
-export default loginRoute
+export { LoginRoute }

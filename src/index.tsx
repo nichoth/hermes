@@ -35,6 +35,9 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     const webnative = useSignal<wn.Program | null>(null)
     const mobileNavOpen = useSignal(false)
 
+    // @ts-ignore
+    window.wn = webnative
+
     function login () {
         if (!webnative.value) return
         webnative.value.capabilities.request()

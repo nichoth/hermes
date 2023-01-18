@@ -1,6 +1,6 @@
 import { h } from 'preact'
 import Router from '@nichoth/routes'
-import { loginRoute } from './pages/login.jsx'
+import { LoginRoute } from './pages/login.jsx'
 import { Home } from './pages/home.jsx'
 import { Whoami } from './pages/whoami.jsx'
 import { NewPost } from './pages/new.jsx'
@@ -23,7 +23,7 @@ export default function _Router () {
     })
 
     router.addRoute('/login', () => {
-        return loginRoute
+        return LoginRoute
     })
 
     router.addRoute('/whoami', (_, webnative) => {
