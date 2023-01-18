@@ -80,19 +80,28 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         wn.program({
             namespace: { creator: "snail-situation", name: "hermes" },
             debug: true,
-            // permissions
+            permissions
         })
             .then(async program => {
                 webnative.value = program
+
+                console.log('aaaaa')
+
+                // __not authed__
                 if (!program.session) return
 
+                // __are authed__
+                // get username from storage
                 const fullUsername = await program.components.storage.getItem(
                     USERNAME_STORAGE_KEY
                 ) as string
 
-                if (!fullUsername) {
-                    const did = await createDID(program.components.crypto);
-                }
+                console.log('___username___', fullUsername)
+
+                // save the username, b/c they are a new user
+                // if (!fullUsername) {
+                //     const did = await createDID(program.components.crypto)
+                // }
             })
     }, [permissions])
 

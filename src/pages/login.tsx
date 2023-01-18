@@ -4,27 +4,27 @@ import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
-import { isUsernameValid } from '../username.js'
+import { isUsernameValid, isUsernameAvailable } from '../username.js'
 import * as wn from 'webnative'
 import './login.css'
+import { TargetedEvent } from 'preact/compat'
 
 interface Props {
     webnative: Signal<wn.Program>
 }
 
 // function loginRoute ({ login }) {
-const LoginRoute:FunctionComponent<Props> = function loginRoute ({ webnative }) {
+const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
     const [usernameAvailable, setAvailable] = useState<boolean>(false)
     const [isValid, setValid] = useState<boolean>(false)
-    // const [postContent, setPostContent] = useState<Post|null>(null)
 
-    console.log('in login', webnative.value.auth)
+    console.log('states...', usernameAvailable, isValid)
 
-    console.log('valid???', isValid)
-
-    function handleSubmit (ev) {
+    function handleSubmit (ev:TargetedEvent) {
         ev.preventDefault()
-        console.log('submit', ev.target.value)
+        const target = ev.target as HTMLFormElement
+        const username = target.elements['username'].value
+        console.log('new username', username)
     }
 
     function nevermind (ev) {
@@ -46,6 +46,8 @@ const LoginRoute:FunctionComponent<Props> = function loginRoute ({ webnative }) 
         if (_isValid !== isValid) setValid(_isValid)
 
         // check is available
+        const isAvailable = await isUsernameAvailable(value, webnative.value)
+        if (isAvailable !== usernameAvailable) setAvailable(isAvailable)
     }
 
     const isResolving = false
@@ -54,14 +56,16 @@ const LoginRoute:FunctionComponent<Props> = function loginRoute ({ webnative }) 
         <form onSubmit={handleSubmit} className="choose-username" id="login-form"
             onInput={onFormInput}
         >
-            <h2>Login</h2>
+            <h2>Register</h2>
             <TextInput name="username" required={true} displayName="Username"
                 minlength={'3'}
                 autoFocus
             />
 
-            <Button isSpinning={isResolving} type="submit" disabled={!isValid}>
-                Login
+            <Button isSpinning={isResolving} type="submit"
+                disabled={!isValid || !usernameAvailable}
+            >
+                Register
             </Button>
             <Button onClick={nevermind}>Nevermind</Button>
         </form>
