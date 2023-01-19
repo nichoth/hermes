@@ -44,3 +44,28 @@ const usernameValidLocal = await isUsernameValid(encodedUsernameLocal);
 ### login screen
 
 You can either link a device, or you are already logged in, or you can create a new account
+
+--------------------
+
+Use the username that is entered in `/login` page to link to an existing account
+
+* take the entered username, and convert that to the 'real' username, used in Fission backend
+* then we show a URL, and you have to go to that URL on the other device
+
+for example:
+- on your phone, go to a device linking page, and that authenticates the computer app on the library computer you are using
+
+Or you can show a code on the primary device (the phone), then you have to enter the same code in the library computer.
+
+[See the template app for device linking](https://github.com/webnative-examples/webnative-app-template-react/blob/main/src/routes/LinkDeviceRoute.tsx)
+
+
+
+----------------------
+
+
+in template repo,
+call `register` with `prepare(fullUsername)`
+
+
+

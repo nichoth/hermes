@@ -1,11 +1,12 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
-import { isUsernameValid, isUsernameAvailable } from '../username.js'
+import { isUsernameValid, createAccountLinkingConsumer,
+    prepareUsername } from '../username.js'
 import * as wn from 'webnative'
 import './centered.css'
 
@@ -13,18 +14,29 @@ interface Props {
     webnative: Signal<wn.Program>
 }
 
-// function loginRoute ({ login }) {
 const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
-    const [usernameAvailable, setAvailable] = useState<boolean>(false)
     const [isValid, setValid] = useState<boolean>(false)
+    const [authenticating, setAuthenticating] = useState<boolean>(false)
+    const [displayPin, setDisplayPin] = useState<string>('');
 
-    console.log('states -- available, valid...', usernameAvailable, isValid)
 
-    function handleSubmit (ev:TargetedEvent) {
+    console.log('states -- valid...', isValid)
+
+    async function handleSubmit (ev:TargetedEvent) {
         ev.preventDefault()
         const target = ev.target as HTMLFormElement
         const username = target.elements['username'].value
         console.log('new username', username)
+
+        const hashedUsername = await prepareUsername(username)
+        const linkConsumer = await createAccountLinkingConsumer(
+            hashedUsername,
+            webnative.value
+        )
+
+        linkConsumer.on('challenge', ({ pin }) => {
+            setDisplayPin(pin.join(''))
+        })
     }
 
     function nevermind (ev) {
@@ -32,7 +44,6 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
         const form = document.getElementById('login-form') as HTMLFormElement
         form.elements['username'].value = ''
         setValid(false)
-        console.log('nevermind')
     }
 
     async function onFormInput (ev) {
@@ -44,19 +55,10 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
             await isUsernameValid(value, webnative.value)
         )
         if (_isValid !== isValid) setValid(_isValid)
-
-        // check is available
-        // @TODO -- need to check the hashed name + DID
-        // see format in the template repo
-        const isAvailable = await isUsernameAvailable(value, webnative.value)
-        console.log('is avail', isAvailable)
-        if (isAvailable !== usernameAvailable) setAvailable(isAvailable)
     }
 
-    const isResolving = false
-
     return (<div class="route route-login centered">
-        <form onSubmit={handleSubmit} className="choose-username" id="login-form"
+        <form onSubmit={handleSubmit} className="link-form" id="link-form"
             onInput={onFormInput}
         >
             <h2>Login</h2>
@@ -65,15 +67,18 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
                 autoFocus
             />
 
-            <Button isSpinning={isResolving} type="submit"
-                disabled={!isValid || !usernameAvailable}
-            >
+            <Button isSpinning={false} type="submit" disabled={!isValid}>
                 Link account
             </Button>
             <Button onClick={nevermind}>Nevermind</Button>
         </form>
 
         <a href="/create-account">Create an account</a>
+
+        {displayPin ?
+            <div class="pin">{displayPin}</div> :
+            null
+        }
     </div>)
 }
 

@@ -34,6 +34,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     const routeState = useSignal<string>(location.pathname)
     const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.Program | null>(null)
+    const session = useSignal<wn.Session | null>(null)
     const mobileNavOpen = useSignal(false)
 
     // @ts-ignore
@@ -95,11 +96,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 ) as string
 
                 console.log('___username___', fullUsername)
-
-                // save the username, b/c they are a new user
-                // if (!fullUsername) {
-                //     const did = await createDID(program.components.crypto)
-                // }
             })
     }, [permissions])
 
@@ -108,8 +104,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     //
     useEffect(() => {
         if (!webnative.value?.session) return
-        if (!('fs' in webnative.value.session) ||
-            !('username' in webnative.value.session)) return
 
         const { fs, username } = webnative.value.session
         if (!fs) return
@@ -143,7 +137,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         match.action(match.params) :
         () => (<p class="404">missing route</p>)
 
-    function mobileNavHandler (ev) {
+    function mobileNavHandler (ev:Event) {
         ev.preventDefault()
         mobileNavOpen.value = !mobileNavOpen.value
     }
@@ -190,7 +184,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
         <div class="content">
             <Node login={login} webnative={webnative} appAvatar={appAvatar}
-                params={match.params}
+                params={match.params} session={session}
             />
         </div>
     </div>)

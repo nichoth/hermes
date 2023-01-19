@@ -36,3 +36,30 @@ export const createDID = async (
     const ksAlg = await crypto.keystore.getAlgorithm()
     return publicKeyToDid(crypto, pubKey, ksAlg)
 }
+
+export const createAccountLinkingConsumer = async (
+    username: string,
+    webnative: wn.Program
+): Promise<wn.AccountLinkingConsumer> => {
+    return webnative.auth.accountConsumer(username)
+
+    // if (webnative.auth) return webnative.auth.accountConsumer(username)
+  
+    // // Wait for program to be initialised
+    // return new Promise(function (resolve) {
+    //     (function waitForAuthStrategy() {
+    //         if (webnative.auth) {
+    //             return resolve(webnative.auth.accountConsumer(username))
+    //         }
+    
+    //         setTimeout(waitForAuthStrategy, 30);
+    //     })()
+    // })
+}
+
+export const createAccountLinkingProducer = async (
+    username: string,
+    webnative: wn.Program
+): Promise<wn.AccountLinkingProducer> => {
+    return webnative.auth.accountProducer(username)
+};
