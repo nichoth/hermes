@@ -65,7 +65,6 @@ Or you can show a code on the primary device (the phone), then you have to enter
 
 
 in template repo,
-call `register` with `prepare(fullUsername)`
-
+[call `program.auth.register` with `prepare(fullUsername)`](https://github.com/webnative-examples/webnative-app-template-react/blob/0930e1b3e7ae2e7ee32d68852e56f8f268b27089/src/components/auth/register/Register.tsx#L64)
 
 

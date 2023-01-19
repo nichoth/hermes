@@ -184,7 +184,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
         <div class="content">
             <Node login={login} webnative={webnative} appAvatar={appAvatar}
-                params={match.params} session={session}
+                params={match.params} session={session} setRoute={route.setRoute}
             />
         </div>
     </div>)

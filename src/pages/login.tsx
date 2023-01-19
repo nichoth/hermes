@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'

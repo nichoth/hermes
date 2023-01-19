@@ -11,13 +11,21 @@ import * as wn from 'webnative'
 import './centered.css'
 
 interface Props {
-    webnative: Signal<wn.Program>
-    session: Signal<wn.Session>
+    webnative: Signal<wn.Program>,
+    session: Signal<wn.Session>,
+    setRoute: Function
 }
 
-const CreateAccount:FunctionComponent<Props> = function ({ webnative, session }) {
+const CreateAccount:FunctionComponent<Props> = function ({
+    webnative,
+    session,
+    setRoute
+}) {
     const [usernameAvailable, setAvailable] = useState<boolean>(true)
     const [isValid, setValid] = useState<boolean>(false)
+
+    // @ts-ignore
+    window.states = [usernameAvailable, isValid]
 
     console.log('states -- available, valid...', usernameAvailable, isValid)
 
@@ -30,15 +38,20 @@ const CreateAccount:FunctionComponent<Props> = function ({ webnative, session })
         const fullUsername = `${username}#${did}`
         const preppedUsername = await prepareUsername(fullUsername)
 
+        console.log('full username', fullUsername)
+        console.log('prepped name', preppedUsername)
+
         const isVal = await isUsernameValid(preppedUsername, webnative.value)
+        console.log('is valid', isVal)
         if (!isVal) return
 
         // probably don't need to check isAvailable, because the
-        // username for fission *must* be unique
+        // username for fission *is always* unique
         const isAvailable = await isUsernameAvailable(
             preppedUsername,
             webnative.value
         )
+        console.log('is available', isAvailable)
         if (!isAvailable) return
 
         console.log('new username', fullUsername)
@@ -48,8 +61,10 @@ const CreateAccount:FunctionComponent<Props> = function ({ webnative, session })
             username: preppedUsername
         })
         if (success) {
+            console.log('success!!!!!!!!!!!')
             const _session = await webnative.value.auth.session()
             if (_session) session.value = _session
+            setRoute('/')
         }
     }
 
@@ -78,12 +93,20 @@ const CreateAccount:FunctionComponent<Props> = function ({ webnative, session })
 
         // check is available
         // @TODO -- need to check the hashed name + DID
+
         // see format in the template repo
+        // isUsernameAvailable(encodedUsernameLocal, webnative.value).then(avail => {
+        //     console.log('is avail', avail)
+        //     console.log('is avail in state', usernameAvailable)
+        //     if (avail !== usernameAvailable) setAvailable(avail)
+        // })
+
         const isAvailable = await isUsernameAvailable(
             encodedUsernameLocal,
             webnative.value
         )
         console.log('is avail', isAvailable)
+        console.log('is avail in state', usernameAvailable)
         if (isAvailable !== usernameAvailable) setAvailable(isAvailable)
     }
 

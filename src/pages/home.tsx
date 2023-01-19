@@ -8,11 +8,11 @@ import './home.css'
 
 interface Props {
     webnative: Signal<wn.Program>
-    session: Signal<wn.Session>
+    session: Signal<wn.Session|null>
 }
 
 const Home:FunctionComponent<Props> = function ({ webnative, session }) {
-    if (!session.value.fs) return null
+    if (!session.value?.fs) return null
     console.log('*webnative*', webnative.value)
 
     const { fs } = session.value
