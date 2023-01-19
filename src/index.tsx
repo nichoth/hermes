@@ -38,12 +38,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     const mobileNavOpen = useSignal(false)
 
     // @ts-ignore
-    window.wn = webnative
-
-    function login () {
-        if (!webnative.value) return
-        webnative.value.capabilities.request()
-    }
+    window.webnative = webnative
 
     function logout (ev) {
         ev.preventDefault()
@@ -66,12 +61,12 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // check the `authenticated` status, and redirect to `/login` if necessary
     // when webnative changes
     //
-    useEffect(() => {
-        if (!webnative.value) return
-        if (!(webnative.value.session)) {
-            route.setRoute('/login')
-        }
-    }, [webnative.value])
+    // useEffect(() => {
+    //     if (!webnative.value) return
+    //     if (!(webnative.value.session)) {
+    //         route.setRoute('/login')
+    //     }
+    // }, [webnative.value])
 
     //
     // initialize webnative
@@ -85,9 +80,18 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         })
             .then(async program => {
                 webnative.value = program
+                session.value = program.session
 
-                // __not authed__
-                if (!program.session) return
+                console.log('program', program)
+
+                // __not authed__ -- redirect to login
+                if (!program.session) {
+                    console.log('...not session...')
+                    // create-account is ok if you don't have a name
+                    if (location.pathname === '/create-account') return
+                    route.setRoute('/login')
+                    return
+                }
 
                 // __are authed__
                 // get username from storage
@@ -183,7 +187,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         </div>
 
         <div class="content">
-            <Node login={login} webnative={webnative} appAvatar={appAvatar}
+            <Node webnative={webnative} appAvatar={appAvatar}
                 params={match.params} session={session} setRoute={route.setRoute}
             />
         </div>

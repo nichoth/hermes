@@ -63,6 +63,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
         if (success) {
             console.log('success!!!!!!!!!!!')
             const _session = await webnative.value.auth.session()
+            console.log('__session__', _session)
             if (_session) session.value = _session
             setRoute('/')
         }

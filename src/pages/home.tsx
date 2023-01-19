@@ -14,6 +14,7 @@ interface Props {
 const Home:FunctionComponent<Props> = function ({ webnative, session }) {
     if (!session.value?.fs) return null
     console.log('*webnative*', webnative.value)
+    console.log('*session*', session.value)
 
     const { fs } = session.value
     const [posts, setPosts] = useState<object[]>([])
