@@ -23,7 +23,7 @@ export const Whoami:FunctionComponent<Props> = function ({
 }) {
     if (!session.value) return null
     const { fs } = session.value
-    const humanName = getHumanName(fullUsername.value)
+    const humanName = getHumanName(fullUsername?.value || '')
 
     interface Profile {
         description: string | null;
