@@ -5,7 +5,7 @@
   "version": "0.0.0",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "vite",
+    "start": "mkdir -p ./dist && rm -rf ./dist/* && vite",
     "build": "vite build",
     "serve": "vite preview",
     "preversion": "npm test",
