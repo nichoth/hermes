@@ -145,7 +145,7 @@ export const Whoami:FunctionComponent<Props> = function ({
         pendingDesc.value = ev.target.value
     }
 
-    return <div class="route-whoami">
+    return <div class="route route-whoami">
         <h1>{humanName}</h1>
         <div class="whoami-content">
             {/* var { url, onChange, title, name, label } = props */}

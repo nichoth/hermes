@@ -27,7 +27,7 @@ export default function _Router () {
         return LoginRoute
     })
 
-    router.addRoute('/whoami', (_, webnative) => {
+    router.addRoute('/whoami', () => {
         return Whoami
     })
 
