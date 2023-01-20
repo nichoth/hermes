@@ -8,7 +8,6 @@ import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
     USERNAME_STORAGE_KEY, prepareUsername } from '../username.js'
-import PERMISSIONS from '../permissions.js'
 import './centered.css'
 
 interface Props {

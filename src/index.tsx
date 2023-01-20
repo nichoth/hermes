@@ -76,23 +76,27 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 // session.value = program.session
 
                 // Do we have an existing session?
-                if (program.session) {
-                    console.log('**program.session**', program.session)
-                    session.value = program.session
+                // if (program.session) {
+                //     console.log('**program.session**', program.session)
+                //     session.value = program.session
 
-                    // __are authed__
-                    // get username from storage
-                    const _fullUsername = await program.components.storage.getItem(
-                        USERNAME_STORAGE_KEY
-                    ) as string
-                    fullUsername.value = _fullUsername
+                //     // __are authed__
+                //     // get username from storage
+                //     const _fullUsername = await program.components.storage.getItem(
+                //         USERNAME_STORAGE_KEY
+                //     ) as string
+                //     fullUsername.value = _fullUsername
 
-                    // return
-                }
-
-                // session.value = await program.auth.session()
+                //     return
+                // }
 
                 console.log('**program**', program)
+
+                session.value = await program.auth.session()
+                const _fullUsername = await program.components.storage.getItem(
+                    USERNAME_STORAGE_KEY
+                ) as string
+                fullUsername.value = _fullUsername
 
                 // __not authed__ -- redirect to login
                 if (!session.value) {
@@ -100,7 +104,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     // create-account is ok if you don't have a name
                     if (location.pathname === '/create-account') return
                     route.setRoute('/login')
-                    return
                 }
             })
     }, [permissions])
