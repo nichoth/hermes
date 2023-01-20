@@ -79,6 +79,14 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 if (program.session) {
                     console.log('**program.session**', program.session)
                     session.value = program.session
+
+                    // __are authed__
+                    // get username from storage
+                    const _fullUsername = await program.components.storage.getItem(
+                        USERNAME_STORAGE_KEY
+                    ) as string
+                    fullUsername.value = _fullUsername
+
                     return
                 }
 
@@ -94,14 +102,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     route.setRoute('/login')
                     return
                 }
-
-                // __are authed__
-                // get username from storage
-                const _fullUsername = await program.components.storage.getItem(
-                    USERNAME_STORAGE_KEY
-                ) as string
-                
-                fullUsername.value = _fullUsername
             })
     }, [permissions])
 
