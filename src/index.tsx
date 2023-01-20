@@ -7,9 +7,9 @@ import { Permissions } from "webnative/permissions.js"
 import { FunctionComponent } from 'preact'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
+import Route from 'route-event'
 import { USERNAME_STORAGE_KEY, getHumanName } from './username.js'
 import Router from './router.jsx'
-import Route from 'route-event'
 import { navList } from './navigation.js'
 import { generateFromString } from 'generate-avatar'
 import CONSTANTS from './CONSTANTS.jsx'
@@ -68,13 +68,21 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     useEffect(() => {
         wn.program({
             namespace: { creator: "snail-situation", name: "hermes" },
-            debug: true,
-            permissions
+            debug: true
+            // permissions
         })
             .then(async program => {
                 webnative.value = program
                 // session.value = program.session
-                session.value = await program.auth.session()
+
+                // Do we have an existing session?
+                if (program.session) {
+                    console.log('**program.session**', program.session)
+                    session.value = program.session
+                    return
+                }
+
+                // session.value = await program.auth.session()
 
                 console.log('program', program)
 

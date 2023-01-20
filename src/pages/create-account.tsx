@@ -61,17 +61,19 @@ const CreateAccount:FunctionComponent<Props> = function ({
         const { success } = await webnative.value.auth.register({
             username: preppedUsername
         })
+
         if (success) {
             console.log('success!!!!!!!!!!!')
-            const _session = await webnative.value.auth.session()
+            // const _session = await webnative.value.auth.session()
             const program = await wn.program({
                 namespace: { creator: "snail-situation", name: "hermes" },
                 debug: true,
-                permissions: PERMISSIONS
+                // permissions: PERMISSIONS
             })
             console.log('*program*', program)
             webnative.value = program
 
+            const _session = program.session
             console.log('__session__', _session)
             if (_session) session.value = _session
             setRoute('/')

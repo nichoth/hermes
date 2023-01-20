@@ -39,9 +39,9 @@ export const createDID = async (
 
 export const createAccountLinkingConsumer = async (
     username: string,
-    webnative: wn.Program
+    program: wn.Program
 ): Promise<wn.AccountLinkingConsumer> => {
-    return webnative.auth.accountConsumer(username)
+    return program.auth.accountConsumer(username)
 
     // if (webnative.auth) return webnative.auth.accountConsumer(username)
   
