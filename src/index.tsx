@@ -60,19 +60,9 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     }, [])
 
     //
-    // check the `authenticated` status, and redirect to `/login` if necessary
-    // when webnative changes
-    //
-    // useEffect(() => {
-    //     if (!webnative.value) return
-    //     if (!(webnative.value.session)) {
-    //         route.setRoute('/login')
-    //     }
-    // }, [webnative.value])
-
-    //
-    // initialize webnative
-    // if/when permissions change
+    // * initialize webnative
+    //   if/when permissions change
+    // * redirect to '/login' if not authd
     //
     useEffect(() => {
         wn.program({
@@ -101,8 +91,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 const fullUsername = await program.components.storage.getItem(
                     USERNAME_STORAGE_KEY
                 ) as string
-
-                console.log('___username___', fullUsername)
+                // ...
             })
     }, [permissions])
 
@@ -110,7 +99,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // read the avatar, set it in app state
     //
     useEffect(() => {
-        // if (!webnative.value?.session) return
         if (!session.value) return
 
         const { fs, username } = session.value
