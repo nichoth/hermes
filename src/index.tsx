@@ -82,12 +82,13 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         })
             .then(async program => {
                 webnative.value = program
-                session.value = program.session
+                // session.value = program.session
+                session.value = await program.auth.session()
 
                 console.log('program', program)
 
                 // __not authed__ -- redirect to login
-                if (!program.session) {
+                if (!session.value) {
                     console.log('...not session...', program)
                     // create-account is ok if you don't have a name
                     if (location.pathname === '/create-account') return
@@ -109,9 +110,10 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     // read the avatar, set it in app state
     //
     useEffect(() => {
-        if (!webnative.value?.session) return
+        // if (!webnative.value?.session) return
+        if (!session.value) return
 
-        const { fs, username } = webnative.value.session
+        const { fs, username } = session.value
         if (!fs) return
 
         const path = wn.path.appData(
@@ -135,7 +137,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 if (!wn.path.appData) return
                 console.log('the path we couldnt read...', path)
             })
-    }, [webnative.value])
+    }, [session.value])
 
     // find the view for this route
     const match = router.match(routeState.value)
