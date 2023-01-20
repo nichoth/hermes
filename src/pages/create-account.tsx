@@ -3,11 +3,12 @@ import { useState } from 'preact/hooks'
 import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
+import * as wn from 'webnative'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
     USERNAME_STORAGE_KEY, prepareUsername } from '../username.js'
-import * as wn from 'webnative'
+import PERMISSIONS from '../permissions.js'
 import './centered.css'
 
 interface Props {
@@ -63,6 +64,14 @@ const CreateAccount:FunctionComponent<Props> = function ({
         if (success) {
             console.log('success!!!!!!!!!!!')
             const _session = await webnative.value.auth.session()
+            const program = await wn.program({
+                namespace: { creator: "snail-situation", name: "hermes" },
+                debug: true,
+                permissions: PERMISSIONS
+            })
+            console.log('*program*', program)
+            webnative.value = program
+
             console.log('__session__', _session)
             if (_session) session.value = _session
             setRoute('/')

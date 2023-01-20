@@ -39,6 +39,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
     // @ts-ignore
     window.webnative = webnative
+    // @ts-ignore
+    window.wn = wn
 
     function logout (ev) {
         ev.preventDefault()
@@ -86,7 +88,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
                 // __not authed__ -- redirect to login
                 if (!program.session) {
-                    console.log('...not session...')
+                    console.log('...not session...', program)
                     // create-account is ok if you don't have a name
                     if (location.pathname === '/create-account') return
                     route.setRoute('/login')
