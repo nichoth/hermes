@@ -11,7 +11,6 @@ import PERMISSIONS from '../permissions.js'
 import './whoami.css'
 
 interface Props {
-    webnative: Signal<wn.Program>,
     appAvatar: Signal<File|string|null>,
     session: Signal<wn.Session>,
     fullUsername: Signal<string>
@@ -22,7 +21,7 @@ export const Whoami:FunctionComponent<Props> = function ({
     appAvatar,
     fullUsername
 }) {
-    if (!session) return null
+    if (!session.value) return null
     const { fs } = session.value
     const humanName = getHumanName(fullUsername.value)
 

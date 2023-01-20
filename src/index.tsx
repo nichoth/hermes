@@ -90,7 +90,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     return
                 }
 
-                // session.value = await program.auth.session()
+                session.value = await program.auth.session()
 
                 console.log('program', program)
 
@@ -147,8 +147,6 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         ev.preventDefault()
         mobileNavOpen.value = !mobileNavOpen.value
     }
-
-    console.log('bbbbb', Node)
 
     if (!webnative.value) return null
 
