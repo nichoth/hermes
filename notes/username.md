@@ -68,3 +68,21 @@ in template repo,
 [call `program.auth.register` with `prepare(fullUsername)`](https://github.com/webnative-examples/webnative-app-template-react/blob/0930e1b3e7ae2e7ee32d68852e56f8f268b27089/src/components/auth/register/Register.tsx#L64)
 
 
+
+------------------
+
+
+
+https://guide.fission.codes/developers/webnative/requesting-capabilities
+
+> Authentication strategies are designed for use within a single web app across multiple devices.
+
+> Capabilities are an API for linking between apps. One app requests permission to access some set of resources from a second app with capability equal to or greater than the requested permissions. On user approval, the second app returns capability to the first app in the form of UCANs and file system secrets. On user approval, the second app returns capability to the first app in the form of UCANs and file system secrets.
+
+
+## session
+> A session is an authenticated interaction between a user and a Webnative program. Sessions are typically long-lived and are based on a user controlling a key pair.
+
+
+> An authentication strategy is a set of functions for registering and linking a user's account across devices. 
+

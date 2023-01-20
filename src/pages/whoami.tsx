@@ -2,6 +2,7 @@ import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
 import { FunctionComponent } from 'preact'
 import { Signal, useSignal } from "@preact/signals"
+import { getHumanName } from "../username.js"
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
@@ -11,12 +12,19 @@ import './whoami.css'
 
 interface Props {
     webnative: Signal<wn.Program>,
-    appAvatar: Signal<File|string|null>
+    appAvatar: Signal<File|string|null>,
+    session: Signal<wn.Session>,
+    fullUsername: Signal<string>
 }
 
-export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar }) {
-    if (!webnative.value.session) return null
-    const { fs, username } = webnative.value.session
+export const Whoami:FunctionComponent<Props> = function ({
+    session,
+    appAvatar,
+    fullUsername
+}) {
+    if (!session) return null
+    const { fs } = session.value
+    const humanName = getHumanName(fullUsername.value)
 
     interface Profile {
         description: string | null;
@@ -34,15 +42,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
 
     // set profile
     useEffect(() => {
-        if (!fs) return
-        if (!webnative.value.session) return
-        if (!('fs' in webnative.value.session) ||
-            !('username' in webnative.value.session)) return
-
-        // const filepath = wn.path.appData(
-        //     PERMISSIONS.app,
-        //     wn.path.file(CONSTANTS.avatarPath)
-        // )
+        if (!fs || !session) return
 
         const profilePath = wn.path.appData(
             PERMISSIONS.app,
@@ -76,8 +76,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             })
         }
 
-        // this gives us base64
-        reader.readAsDataURL(file)
+        reader.readAsArrayBuffer(file)
     }
 
     async function saveImg (ev) {
@@ -147,7 +146,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
     }
 
     return <div class="route-whoami">
-        <h1>{username}</h1>
+        <h1>{humanName}</h1>
         <div class="whoami-content">
             {/* var { url, onChange, title, name, label } = props */}
             <div class="image-input">
@@ -172,7 +171,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
 
             <dl class="profile-info">
                 <dt>Your username</dt>
-                <dd>{username}</dd>
+                <dd>{humanName}</dd>
 
                 <dt>
                     Description

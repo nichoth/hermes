@@ -148,6 +148,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         mobileNavOpen.value = !mobileNavOpen.value
     }
 
+    console.log('bbbbb', Node)
+
     if (!webnative.value) return null
 
     return (<div class="shell">
@@ -191,6 +193,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         <div class="content">
             <Node webnative={webnative} appAvatar={appAvatar}
                 params={match.params} session={session} setRoute={route.setRoute}
+                fullUsername={fullUsername}
             />
         </div>
     </div>)
