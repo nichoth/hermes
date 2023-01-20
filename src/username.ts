@@ -62,4 +62,8 @@ export const createAccountLinkingProducer = async (
     webnative: wn.Program
 ): Promise<wn.AccountLinkingProducer> => {
     return webnative.auth.accountProducer(username)
-};
+}
+
+export const getHumanName = (fullUsername:string) => {
+    return fullUsername.split('#')[0]
+}

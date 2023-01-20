@@ -7,7 +7,7 @@ import { Permissions } from "webnative/permissions.js"
 import { FunctionComponent } from 'preact'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
-import { USERNAME_STORAGE_KEY, createDID } from './username.js'
+import { USERNAME_STORAGE_KEY, getHumanName } from './username.js'
 import Router from './router.jsx'
 import Route from 'route-event'
 import { navList } from './navigation.js'
@@ -36,6 +36,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     const webnative = useSignal<wn.Program | null>(null)
     const session = useSignal<wn.Session | null>(null)
     const mobileNavOpen = useSignal(false)
+    const fullUsername = useSignal<string|null>(null)
 
     // @ts-ignore
     window.webnative = webnative
@@ -88,10 +89,11 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
 
                 // __are authed__
                 // get username from storage
-                const fullUsername = await program.components.storage.getItem(
+                const _fullUsername = await program.components.storage.getItem(
                     USERNAME_STORAGE_KEY
                 ) as string
-                // ...
+                
+                fullUsername.value = _fullUsername
             })
     }, [permissions])
 
@@ -161,7 +163,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 <figure>
                     <img src={appAvatar.value}></img>
                 </figure>
-                <span>{webnative.value.session?.username || ''}</span>
+                <span>{getHumanName(fullUsername.value || '')}</span>
             </a>
 
             <nav>

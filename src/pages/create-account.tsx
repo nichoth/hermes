@@ -55,7 +55,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
         console.log('is available', isAvailable)
         if (!isAvailable) return
 
-        console.log('new username', fullUsername)
+        console.log('new username', preppedUsername)
 
         await storage.setItem(USERNAME_STORAGE_KEY, fullUsername)
         const { success } = await webnative.value.auth.register({
