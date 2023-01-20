@@ -63,8 +63,6 @@ const Home:FunctionComponent<Props> = function ({ webnative, session }) {
         })
     }, [fs])
 
-    console.log('posts', posts)
-
     return <div class="route home">
         <h2>hello, this is the app</h2>
         <p id="route-home">this is the home route!</p>

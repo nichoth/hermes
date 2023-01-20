@@ -87,12 +87,12 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     ) as string
                     fullUsername.value = _fullUsername
 
-                    return
+                    // return
                 }
 
-                session.value = await program.auth.session()
+                // session.value = await program.auth.session()
 
-                console.log('program', program)
+                console.log('**program**', program)
 
                 // __not authed__ -- redirect to login
                 if (!session.value) {
