@@ -5,13 +5,13 @@ import { useEffect } from 'preact/hooks'
 import { useSignal } from "@preact/signals"
 import { Permissions } from "webnative/permissions.js"
 import { FunctionComponent } from 'preact'
+import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
 import { USERNAME_STORAGE_KEY, getHumanName } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-import { generateFromString } from 'generate-avatar'
 import CONSTANTS from './CONSTANTS.jsx'
 import './index.css'
 import '@nichoth/components/hamburger.css'
@@ -30,7 +30,8 @@ interface Props {
 
 const route = Route()
 
-const App: FunctionComponent<Props> = function App ({ permissions }) {
+// const App: FunctionComponent<Props> = function App ({ permissions }) {
+const App: FunctionComponent<Props> = function App () {
     const routeState = useSignal<string>(location.pathname)
     const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.Program | null>(null)
@@ -75,30 +76,20 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 webnative.value = program
                 // session.value = program.session
 
-                // Do we have an existing session?
-                // if (program.session) {
-                //     console.log('**program.session**', program.session)
-                //     session.value = program.session
-
-                //     // __are authed__
-                //     // get username from storage
-                //     const _fullUsername = await program.components.storage.getItem(
-                //         USERNAME_STORAGE_KEY
-                //     ) as string
-                //     fullUsername.value = _fullUsername
-
-                //     return
-                // }
-
                 console.log('**program**', program)
+                console.log('program.session', program.session)
 
-                session.value = await program.auth.session()
+                // session.value = await program.auth.session()
+                session.value = program.session
+
                 const _fullUsername = await program.components.storage.getItem(
                     USERNAME_STORAGE_KEY
                 ) as string
                 fullUsername.value = _fullUsername
 
+                //
                 // __not authed__ -- redirect to login
+                //
                 if (!session.value) {
                     console.log('...not session...', program)
                     // create-account is ok if you don't have a name
@@ -106,7 +97,8 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     route.setRoute('/login')
                 }
             })
-    }, [permissions])
+    }, [])
+    // }, [permissions])
 
     //
     // read the avatar, set it in app state
@@ -117,12 +109,12 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         const { fs, username } = session.value
         if (!fs) return
 
-        const path = wn.path.appData(
+        const avatarPath = wn.path.appData(
             PERMISSIONS.app,
             wn.path.file(CONSTANTS.avatarPath)
         )
 
-        fs.cat(path)
+        fs.cat(avatarPath)
             .then(content => {
                 if (!content) return
                 appAvatar.value = URL.createObjectURL(
@@ -136,7 +128,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     generateFromString(username)
 
                 if (!wn.path.appData) return
-                console.log('the path we couldnt read...', path)
+                console.log('the path we couldnt read...', avatarPath)
             })
     }, [session.value])
 

@@ -100,7 +100,7 @@ export const Whoami:FunctionComponent<Props> = function ({
             try {
                 const content = await fs.cat(filepath)
                 appAvatar.value = URL.createObjectURL(
-                    new Blob([content as BlobPart], { type: 'image/jpeg' })
+                    new Blob([content as BlobPart], { type: 'image/*' })
                 )
 
                 setPendingImage(null)
