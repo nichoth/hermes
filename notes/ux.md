@@ -14,7 +14,7 @@ User shares a Hermes-only link to a user through text or email asking others to 
 
 The invite link is a URL containing a query string of inviter’s profile. Once user is directed and not a Hermes user, it would prompt them to create an account. Thereafter, it redirects user to profile of inviter.
 
-- Problem: URLs are browser-dependent, so this would entail designing for desktop, too.The potential user wouldn’t be able to see all functionalities.
+- Problem: URLs are browser-dependent, so this would entail designing for desktop, too. The potential new user wouldn’t be able to see all functionalities.
 
 - Problem: Defeats the purpose of privacy and encryption, since the online data has no way of encryption.
 
