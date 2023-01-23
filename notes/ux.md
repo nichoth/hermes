@@ -8,7 +8,7 @@ Hermes asks permission for access to user’s phone contacts. This allows the us
 
 User shares a Hermes-only link to a user through text or email asking others to join or to be a friend through the platform.
 - Onus is on the user to share though text/email, and invite friends one-by-one.
-- Problem: If the invitee isn't on platform, they would have to first download the app, sign up, and then go back to the original invite link to then befriend.
+- If the invitee isn't on platform, they would have to first download the app, sign up, and then go back to the original invite link to then befriend.
 
 ## Invite Link ##
 
