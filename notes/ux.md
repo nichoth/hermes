@@ -24,7 +24,7 @@ First, a text or email is sent with a URL. The URL would contain a query string,
     Also “going public” will have a different meaning. Here it would means that anyone who has the URL can see your photos and profile, as opposed to anyone could see your profile through their friends or a general internet search.
 
 - Problem: URLs are not encrypted
-   - There would need to be two coded Hermes: one that's an encrypted app, and one without for the browser. This opens up new risk, since gaining access to text and email isn't too difficult. It also defeats the purpose of privacy and encryption of the platform, in the first place.
+   - Having a public profile through a URL opens up risk, since gaining access to text and email isn't difficult. It also defeats the purpose of privacy and encryption of the platform, in the first place.
 
 - Problem: The original problem of how to send invite still exists
 
