@@ -75,8 +75,10 @@ const CreateAccount:FunctionComponent<Props> = function ({
             const _session = program.session
             console.log('__session__', _session)
             if (_session) session.value = _session
-            setRoute('/')
+            return setRoute('/')
         }
+
+        console.log('not sucess...')
     }
 
     function nevermind (ev) {

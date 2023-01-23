@@ -86,3 +86,22 @@ https://guide.fission.codes/developers/webnative/requesting-capabilities
 
 > An authentication strategy is a set of functions for registering and linking a user's account across devices. 
 
+
+
+--------------------------------
+
+https://guide.fission.codes/developers/webnative/authentication-strategies#device-linking
+
+> When a user links a device, they should open a linking page on the authed device and the device they would like to link
+
+> During device linking, interfaces must present the user with a PIN challenge. 
+
+> An account producer emits challenge and link events. The challenge is a PIN sent by the consumer.
+
+----------------
+
+> account producer (an authed device) 
+
+> account consumer (a device that would like to be linked)
+
+> During device linking, interfaces must present the user with a PIN challenge

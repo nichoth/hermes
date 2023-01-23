@@ -74,7 +74,6 @@ const App: FunctionComponent<Props> = function App () {
         })
             .then(async program => {
                 webnative.value = program
-                // session.value = program.session
 
                 console.log('**program**', program)
                 console.log('program.session', program.session)
@@ -82,10 +81,9 @@ const App: FunctionComponent<Props> = function App () {
                 // session.value = await program.auth.session()
                 session.value = program.session
 
-                const _fullUsername = await program.components.storage.getItem(
+                fullUsername.value = await program.components.storage.getItem(
                     USERNAME_STORAGE_KEY
                 ) as string
-                fullUsername.value = _fullUsername
 
                 //
                 // __not authed__ -- redirect to login
@@ -106,6 +104,7 @@ const App: FunctionComponent<Props> = function App () {
     useEffect(() => {
         if (!session.value) return
 
+        // username here is the preppedUsername
         const { fs, username } = session.value
         if (!fs) return
 
