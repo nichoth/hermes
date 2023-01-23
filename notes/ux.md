@@ -1,30 +1,22 @@
 ## Inviting Others (Option 1) ##
 
-Hermes asks permission for gaining access to the user's phone contacts. This would allow the showing of who in the user's contacts has Hermes, and they could then have the option to send those contacts a friend request. Having access would also allow for the user to invites their contacts to the platform.
-
+Hermes asks permission for access to user’s phone contacts: allows user to send a friend request to those on the platform, as well as invite those who are not.
 - Problem: Is this a privacy risk? Can we assure the user that we will delete or not store the info after? This would become an issue of trust.
 
 
 ## Inviting Others (Option 2) ##
 
-User would have the option to share a Hermes-only link to a user through their phone's share options. It could be through text message or email, for example. The invite is maybe precomposed by Hermes (editable) asking others to join or to be the user's friend through the platform. 
-- Problem: The onus would be on the user to send invites manually though messages or email.
-- Problem: The user is inviting friends one-by-one, which isn’t super efficient or timely.
-- Problem: If the invitee isn't already on Hermes, they would then need to download the app, sign up, and then go back to the original invite link to find the person that originally invited them.
+User shares a Hermes-only link to a user through text or email asking others to join or to be a friend through the platform.
+- Problem: Onus on the user to share though text/email, and invite friends one-by-one.
+- Problem: If the invitee isn't on platform, they would have to first download the app, sign up, and then go back to the original invite link to then befriend.
 
 ## Inviting Others (Option 3) ##
 
-First, a text or email is sent with a URL. The URL would contain a query string, including the inviter’s profile URL. After the user is directed to the URL, if not a Hermes user, it would prompt them to create an account. Then thereafter, directs user to the user who invited you.
+The invite link is a URL containing a query string of inviter’s profile. Once user is directed and not a Hermes user, it would prompt them to create an account. Thereafter, it redirects user to profile of inviter.
 
-- Problem: URLs are browser-dependent
-  - This would mean designing for desktop, if the invitee were to be directed while on a desktop.
-  - The potential user would not be able to see the entire landscape of Hermes, like the feed and other functionalities since they don't have an account. They just see the profile, would could be obscure what Hermes is.
-  - Users could only send URL link if they had a "public" profile or account. If not, it would just prompt the other user to download the app.
-    What’s the reason someone would use an encrypted app and then make their profile public, if not for just finding and inviting their friends?
-    Also “going public” will have a different meaning. Here it would means that anyone who has the URL can see your photos and profile, as opposed to anyone could see your profile through their friends or a general internet search.
+- Problem: URLs are browser-dependent, so this would entail designing for desktop, too.The potential user wouldn’t be able to see all functionalities.
 
-- Problem: URLs are not encrypted
-  - This defeats the purpose of privacy and encryption of the platform in the first place. Also, having public profile through a URL opens up risk, since gaining access to text and email isn't difficult for those the URL wasn't intended for.
+- Problem: Defeats the purpose of privacy and encryption, since the online data has no way of encryption.
 
-- Problem: The original problem of how to send invite still exists
+- Problem: The original problem of how to send invite still exists.
 
