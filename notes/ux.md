@@ -8,7 +8,7 @@ Hermes asks permission for gaining access to the user's phone contacts. This wou
 ## Inviting Others (Option 2) ##
 
 User would have the option to share a Hermes-only link to a user through their phone's share options. It could be through text message or email, for example. The invite is maybe precomposed by Hermes (editable) asking others to join or to be the user's friend through the platform. 
-- Problem: The onus would then be on the user to copy that text to their messages/email and invites people manually.
+- Problem: The onus would be on the user to send invites manually though messages or email.
 - Problem: The user is inviting friends one-by-one, which isn’t super efficient or timely.
 - Problem: If the invitee isn't already on Hermes, they would then need to download the app, sign up, and then go back to the original invite link to find the person that originally invited them.
 
