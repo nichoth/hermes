@@ -1,6 +1,6 @@
 ## Inviting Others (Option 1) ##
 
-Hermes asks permission for gaining access to your phone contacts. This would allow to show who in your contacts has Hermes, and you could then have the option to send those contacts a friend request. Having access would also allow for you to invites your contacts to the platform.
+Hermes asks permission for gaining access to the user's phone contacts. This would allow the showing of who in the user's contacts has Hermes, and they could then have the option to send those contacts a friend request. Having access would also allow for the user to invites their contacts to the platform.
 
 - Problem: Is this a privacy risk? Can we assure the user that we will delete or not store the info after? This would become an issue of trust.
 
@@ -24,7 +24,7 @@ First, a text or email is sent with a URL. The URL would contain a query string,
     Also “going public” will have a different meaning. Here it would means that anyone who has the URL can see your photos and profile, as opposed to anyone could see your profile through their friends or a general internet search.
 
 - Problem: URLs are not encrypted
-   - Having a public profile through a URL opens up risk, since gaining access to text and email isn't difficult. It also defeats the purpose of privacy and encryption of the platform, in the first place.
+  - This defeats the purpose of privacy and encryption of the platform in the first place. Also, having public profile through a URL opens up risk, since gaining access to text and email isn't difficult for those the URL wasn't intended for.
 
 - Problem: The original problem of how to send invite still exists
 
