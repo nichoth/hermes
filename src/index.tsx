@@ -78,8 +78,9 @@ const App: FunctionComponent<Props> = function App () {
                 console.log('**program**', program)
                 console.log('program.session', program.session)
 
-                // session.value = await program.auth.session()
-                session.value = program.session
+                session.value = program.session ?
+                    program.session :
+                    await program.auth.session()
 
                 fullUsername.value = await program.components.storage.getItem(
                     USERNAME_STORAGE_KEY
