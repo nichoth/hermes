@@ -13,12 +13,14 @@ import { USERNAME_STORAGE_KEY, getHumanName } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
 import CONSTANTS from './CONSTANTS.jsx'
+import PERMISSIONS from './permissions.js'
 import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
 import './z-index.css'
-import PERMISSIONS from './permissions.js'
+
+const APP_INFO = { name: "hermes", creator: "snail-situation", }
 
 const router = Router()
 
@@ -36,7 +38,7 @@ const App: FunctionComponent<Props> = function App () {
     const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.Program | null>(null)
     const session = useSignal<wn.Session | null>(null)
-    const mobileNavOpen = useSignal(false)
+    const mobileNavOpen = useSignal<boolean>(false)
     const fullUsername = useSignal<string|null>(null)
 
     // @ts-ignore
@@ -62,9 +64,8 @@ const App: FunctionComponent<Props> = function App () {
     }, [])
 
     //
-    // * initialize webnative
-    //   if/when permissions change
-    // * redirect to '/login' if not authd
+    // * initialize webnative,
+    // * redirect to '/login' if not authed
     //
     useEffect(() => {
         wn.program({
@@ -78,9 +79,7 @@ const App: FunctionComponent<Props> = function App () {
                 console.log('**program**', program)
                 console.log('program.session', program.session)
 
-                session.value = program.session ?
-                    program.session :
-                    await program.auth.session()
+                session.value = (program.session ?? await program.auth.session())
 
                 fullUsername.value = await program.components.storage.getItem(
                     USERNAME_STORAGE_KEY
@@ -110,7 +109,7 @@ const App: FunctionComponent<Props> = function App () {
         if (!fs) return
 
         const avatarPath = wn.path.appData(
-            PERMISSIONS.app,
+            APP_INFO,
             wn.path.file(CONSTANTS.avatarPath)
         )
 
