@@ -209,7 +209,7 @@ export const Whoami:FunctionComponent<Props> = function ({
                     />
                 </dt>
 
-                <dd>
+                <dd className={"username-value"}>
                     {!isEditingUsername ?
                         humanName :
                         (<form onSubmit={saveUsername} onInput={checkValidUsername}>
