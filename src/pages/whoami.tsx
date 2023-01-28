@@ -40,12 +40,12 @@ export const Whoami:FunctionComponent<Props> = function ({
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
     const pendingDesc = useSignal<string|null>(null)
     const [isEditingUsername, setEditingUsername] = useState<boolean>(false)
-    const [usernameValid, setUsernameValid] = useState<boolean>(false)
+    const usernameValid = useSignal<boolean>(false)
 
     function checkValidUsername (ev:InputEvent) {
         const form = ev.target as HTMLFormElement
         const isValid = form.checkValidity()
-        if (usernameValid !== isValid) setUsernameValid(isValid)
+        if (usernameValid.value !== isValid) usernameValid.value = isValid
     }
 
     // set profile
@@ -222,7 +222,7 @@ export const Whoami:FunctionComponent<Props> = function ({
                             />
 
                             <button type="submit"
-                                disabled={!usernameValid}
+                                disabled={!(usernameValid.value)}
                             >
                                 save
                             </button>
