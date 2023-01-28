@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent, JSX } from 'preact'
 import './text-input.css'
 
 interface Props {
@@ -13,14 +13,15 @@ interface Props {
     defaultValue?: string
 }
 
-const TextInput:FunctionComponent<Props> = function (props) {
+const TextInput:FunctionComponent<Props & JSX.HTMLAttributes> = function (props) {
     const { name, displayName } = props
     const _props:Partial<Props> = {...props}
     delete _props.displayName
 
     return <div className="form-stuff">
         <div className={'input-group ' + name}>
-            <input {..._props} name={name}
+            <input {..._props}
+                name={name}
                 type={props.type || 'text'}
                 placeholder=" "
                 required={props.required}

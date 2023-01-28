@@ -1,0 +1,8 @@
+.centered {
+    max-width: 40rem;
+    margin: 0 auto;
+
+    & form {
+        margin-bottom: 1rem;
+    }
+}

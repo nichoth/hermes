@@ -1,20 +1,85 @@
 import { h } from 'preact'
-import './login.css'
+import { useState } from 'preact/hooks'
+import { FunctionComponent } from 'preact'
+import { Signal } from '@preact/signals'
+import { TargetedEvent } from 'preact/compat'
+import TextInput from '../components/text-input.jsx'
+import Button from '../components/button.jsx'
+import { isUsernameValid, createAccountLinkingConsumer,
+    prepareUsername } from '../username.js'
+import * as wn from 'webnative'
+import './centered.css'
 
-function loginRoute ({ login }) {
-    return (<div class="route-login">
-        <button onClick={login} className="btn login">
-            <svg height="100%" width="100%" viewBox="0 0 98 94">
-                <path
-                d="M30 76a12 12 0 110 11H18a18 18 0 010-37h26l-4-6H18a18 18 0 010-37c6 0 11 2 15 7l3 5 10 14h33a8 8 0 000-15H68a12 12 0 110-11h11a18 18 0 010 37H53l4 6h22a18 18 0 11-14 30l-3-4-10-15H18a8 8 0 000 15h12zm41-6l2 4 6 2a8 8 0 000-15H65l6 9zM27 25l-3-5-6-2a8 8 0 000 15h15l-6-8z"
-                fill="currentColor"
-                fillRule="nonzero"
-                ></path>
-            </svg>
-            <span>Sign in with Fission</span>
-        </button>
+interface Props {
+    webnative: Signal<wn.Program>
+}
+
+const LoginRoute:FunctionComponent<Props> = function ({ webnative }) {
+    const [isValid, setValid] = useState<boolean>(false)
+    const [authenticating, setAuthenticating] = useState<boolean>(false)
+    const [displayPin, setDisplayPin] = useState<string>('');
+
+
+    console.log('states -- valid...', isValid)
+
+    async function handleSubmit (ev:TargetedEvent) {
+        ev.preventDefault()
+        const target = ev.target as HTMLFormElement
+        const username = target.elements['username'].value
+        console.log('new username', username)
+
+        const hashedUsername = await prepareUsername(username)
+        const linkConsumer = await createAccountLinkingConsumer(
+            hashedUsername,
+            webnative.value
+        )
+
+        linkConsumer.on('challenge', ({ pin }) => {
+            setDisplayPin(pin.join(''))
+        })
+    }
+
+    function nevermind (ev) {
+        ev.preventDefault()
+        const form = document.getElementById('login-form') as HTMLFormElement
+        form.elements['username'].value = ''
+        setValid(false)
+    }
+
+    async function onFormInput (ev) {
+        const { form, value } = ev.target
+
+        // check is valid
+        const _isValid = (
+            form.checkValidity() &&
+            await isUsernameValid(value, webnative.value)
+        )
+        if (_isValid !== isValid) setValid(_isValid)
+    }
+
+    return (<div class="route route-login centered">
+        <form onSubmit={handleSubmit} className="link-form" id="link-form"
+            onInput={onFormInput}
+        >
+            <h2>Login</h2>
+            <TextInput name="username" required={true} displayName="Username"
+                minlength={'3'}
+                autoFocus
+            />
+
+            <Button isSpinning={false} type="submit" disabled={!isValid}>
+                Link account
+            </Button>
+            <Button onClick={nevermind}>Nevermind</Button>
+        </form>
+
+        <a href="/create-account">Create an account</a>
+
+        {displayPin ?
+            <div class="pin">{displayPin}</div> :
+            null
+        }
     </div>)
 }
 
-export { loginRoute }
-export default loginRoute
+export { LoginRoute }

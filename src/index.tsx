@@ -5,19 +5,22 @@ import { useEffect } from 'preact/hooks'
 import { useSignal } from "@preact/signals"
 import { Permissions } from "webnative/permissions.js"
 import { FunctionComponent } from 'preact'
+import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
-import Router from './router.jsx'
 import Route from 'route-event'
+import { USERNAME_STORAGE_KEY, getHumanName } from './username.js'
+import Router from './router.jsx'
 import { navList } from './navigation.js'
-import { generateFromString } from 'generate-avatar'
 import CONSTANTS from './CONSTANTS.jsx'
+import PERMISSIONS from './permissions.js'
 import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
 import './z-index.css'
-import PERMISSIONS from './permissions.js'
+
+const APP_INFO = { name: "hermes", creator: "snail-situation", }
 
 const router = Router()
 
@@ -29,16 +32,19 @@ interface Props {
 
 const route = Route()
 
-const App: FunctionComponent<Props> = function App ({ permissions }) {
+// const App: FunctionComponent<Props> = function App ({ permissions }) {
+const App: FunctionComponent<Props> = function App () {
     const routeState = useSignal<string>(location.pathname)
     const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.Program | null>(null)
-    const mobileNavOpen = useSignal(false)
+    const session = useSignal<wn.Session | null>(null)
+    const mobileNavOpen = useSignal<boolean>(false)
+    const fullUsername = useSignal<string|null>(null)
 
-    function login () {
-        if (!webnative.value) return
-        webnative.value.capabilities.request()
-    }
+    // @ts-ignore
+    window.webnative = webnative
+    // @ts-ignore
+    window.wn = wn
 
     function logout (ev) {
         ev.preventDefault()
@@ -58,48 +64,56 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
     }, [])
 
     //
-    // when webnative changes
-    // check the `authenticated` status, and redirect to `/login` if necessary
-    //
-    useEffect(() => {
-        if (!webnative.value) return
-        if (!(webnative.value.session)) {
-            route.setRoute('/login')
-        }
-    }, [webnative.value])
-
-    //
-    // initialize webnative
-    // if/when permissions change
+    // * initialize webnative,
+    // * redirect to '/login' if not authed
     //
     useEffect(() => {
         wn.program({
             namespace: { creator: "snail-situation", name: "hermes" },
-            debug: true,
-            permissions
+            debug: true
+            // permissions
         })
-            .then(program => {
+            .then(async program => {
                 webnative.value = program
+
+                console.log('**program**', program)
+                console.log('program.session', program.session)
+
+                session.value = (program.session ?? await program.auth.session())
+
+                fullUsername.value = await program.components.storage.getItem(
+                    USERNAME_STORAGE_KEY
+                ) as string
+
+                //
+                // __not authed__ -- redirect to login
+                //
+                if (!session.value) {
+                    console.log('...not session...', program)
+                    // create-account is ok if you don't have a name
+                    if (location.pathname === '/create-account') return
+                    route.setRoute('/login')
+                }
             })
-    }, [permissions])
+    }, [])
+    // }, [permissions])
 
     //
     // read the avatar, set it in app state
     //
     useEffect(() => {
-        if (!webnative.value?.session) return
-        if (!('fs' in webnative.value.session) ||
-            !('username' in webnative.value.session)) return
+        if (!session.value) return
 
-        const { fs, username } = webnative.value.session
+        // username here is the preppedUsername
+        const { fs, username } = session.value
         if (!fs) return
 
-        const path = wn.path.appData(
-            PERMISSIONS.app,
+        const avatarPath = wn.path.appData(
+            APP_INFO,
             wn.path.file(CONSTANTS.avatarPath)
         )
 
-        fs.cat(path)
+        fs.cat(avatarPath)
             .then(content => {
                 if (!content) return
                 appAvatar.value = URL.createObjectURL(
@@ -113,9 +127,9 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                     generateFromString(username)
 
                 if (!wn.path.appData) return
-                console.log('the path we couldnt read...', path)
+                console.log('the path we couldnt read...', avatarPath)
             })
-    }, [webnative.value])
+    }, [session.value])
 
     // find the view for this route
     const match = router.match(routeState.value)
@@ -123,7 +137,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         match.action(match.params) :
         () => (<p class="404">missing route</p>)
 
-    function mobileNavHandler (ev) {
+    function mobileNavHandler (ev:Event) {
         ev.preventDefault()
         mobileNavOpen.value = !mobileNavOpen.value
     }
@@ -151,7 +165,7 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
                 <figure>
                     <img src={appAvatar.value}></img>
                 </figure>
-                <span>{webnative.value.session?.username || ''}</span>
+                <span>{getHumanName(fullUsername.value || '')}</span>
             </a>
 
             <nav>
@@ -169,8 +183,9 @@ const App: FunctionComponent<Props> = function App ({ permissions }) {
         </div>
 
         <div class="content">
-            <Node login={login} webnative={webnative} appAvatar={appAvatar}
-                params={match.params}
+            <Node webnative={webnative} appAvatar={appAvatar}
+                params={match.params} session={session} setRoute={route.setRoute}
+                fullUsername={fullUsername}
             />
         </div>
     </div>)

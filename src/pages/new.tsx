@@ -11,16 +11,15 @@ import { PERMISSIONS } from '../permissions.js'
 import CONSTANTS from '../CONSTANTS.jsx'
 import './new.css'
 
-function NewPost (props) {
+interface Props {
+    webnative: Signal<wn.Program>,
+    session: Signal<wn.Session>
+}
+
+const NewPost:FunctionComponent<Props> = function (props) {
     return <div class="route new-post">
         <PostInput {...props} />
     </div>
-
-    // use
-    // <form>
-    //   <FilePicker />
-    //   <caption input />
-    // </form>
 }
 
 interface Props {

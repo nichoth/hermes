@@ -2,21 +2,29 @@ import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
 import { FunctionComponent } from 'preact'
 import { Signal, useSignal } from "@preact/signals"
+import { getHumanName } from "../username.js"
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
 import PERMISSIONS from '../permissions.js'
+import TextInput from '../components/text-input.jsx'
 
 import './whoami.css'
 
 interface Props {
-    webnative: Signal<wn.Program>,
-    appAvatar: Signal<File|string|null>
+    appAvatar: Signal<File|string|null>,
+    session: Signal<wn.Session>,
+    fullUsername: Signal<string>
 }
 
-export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar }) {
-    if (!webnative.value.session) return null
-    const { fs, username } = webnative.value.session
+export const Whoami:FunctionComponent<Props> = function ({
+    session,
+    appAvatar,
+    fullUsername
+}) {
+    if (!session.value) return null
+    const { fs } = session.value
+    const humanName = getHumanName(fullUsername?.value || '')
 
     interface Profile {
         description: string | null;
@@ -31,18 +39,18 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
     const [profile, setProfile] = useState<Profile|null>(null)
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
     const pendingDesc = useSignal<string|null>(null)
+    const [isEditingUsername, setEditingUsername] = useState<boolean>(false)
+    const [usernameValid, setUsernameValid] = useState<boolean>(false)
+
+    function checkValidUsername (ev:InputEvent) {
+        const form = ev.target as HTMLFormElement
+        const isValid = form.checkValidity()
+        if (usernameValid !== isValid) setUsernameValid(isValid)
+    }
 
     // set profile
     useEffect(() => {
-        if (!fs) return
-        if (!webnative.value.session) return
-        if (!('fs' in webnative.value.session) ||
-            !('username' in webnative.value.session)) return
-
-        // const filepath = wn.path.appData(
-        //     PERMISSIONS.app,
-        //     wn.path.file(CONSTANTS.avatarPath)
-        // )
+        if (!fs || !session) return
 
         const profilePath = wn.path.appData(
             PERMISSIONS.app,
@@ -76,8 +84,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             })
         }
 
-        // this gives us base64
-        reader.readAsDataURL(file)
+        reader.readAsArrayBuffer(file)
     }
 
     async function saveImg (ev) {
@@ -93,7 +100,6 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             // write the file as the `file` element that is submitted with
             //   the form -- `ev.target.files[0]`
             await fs.write(filepath, pendingImage.image.blob as Uint8Array)
-            // await fs.write(filepath, pendingImage.file)
             console.log('file path written...', filepath)
 
             await fs.publish()
@@ -102,7 +108,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             try {
                 const content = await fs.cat(filepath)
                 appAvatar.value = URL.createObjectURL(
-                    new Blob([content as BlobPart], { type: 'image/jpeg' })
+                    new Blob([content as BlobPart], { type: 'image/*' })
                 )
 
                 setPendingImage(null)
@@ -120,6 +126,16 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
         setEditingDesc(!isEditingDesc)
     }
 
+    function editUsername (ev) {
+        ev.preventDefault()
+        setEditingUsername(!isEditingUsername)
+    }
+
+    async function saveUsername (ev) {
+        ev.preventDefault()
+        if (!fs) return
+    }
+
     async function saveProfile (ev) {
         ev.preventDefault()
         if (!fs) return
@@ -131,7 +147,6 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             PERMISSIONS.app,
             wn.path.file(CONSTANTS.profilePath)
         )
-        // await fs.write(filepath, JSON.stringify({ description: value }))
         await fs.write(
             filepath,
             new TextEncoder().encode(JSON.stringify({ description: value }))
@@ -146,15 +161,21 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
         pendingDesc.value = ev.target.value
     }
 
-    return <div class="route-whoami">
-        <h1>{username}</h1>
+    return <div class="route route-whoami">
+        <h1>{humanName}</h1>
         <div class="whoami-content">
-            {/* var { url, onChange, title, name, label } = props */}
             <div class="image-input">
                 <EditableImg
                     onChange={selectImg}
                     name="whoami-avatar"
-                    url={pendingImage?.image.blob || appAvatar.value}
+                    url={pendingImage ?
+                        URL.createObjectURL(
+                            new Blob([pendingImage.image.blob as BlobPart], {
+                                type: 'image/*'
+                            })
+                        ) :
+                        appAvatar.value
+                    }
                     title="Set your avatar"
                     capture="user"
                 />
@@ -171,12 +192,49 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
             </div>
 
             <dl class="profile-info">
-                <dt>Your username</dt>
-                <dd>{username}</dd>
+                <dt>
+                    Your username
+                    
+                    <EditBtn
+                        isEditing={isEditingUsername}
+                        onClick={editUsername}
+                        aria-label={isEditingUsername ?
+                            'Stop editing your username' :
+                            'Edit your username'
+                        }
+                        title={isEditingDesc ?
+                            'Stop editing' :
+                            'Edit username'
+                        }
+                    />
+                </dt>
+
+                <dd>
+                    {!isEditingUsername ?
+                        humanName :
+                        (<form onSubmit={saveUsername} onInput={checkValidUsername}>
+                            <TextInput
+                                name="username"
+                                required={true}
+                                displayName="Username"
+                                minlength={'3'}
+                                autoFocus={true}
+                            />
+
+                            <button type="submit"
+                                disabled={!usernameValid}
+                            >
+                                save
+                            </button>
+                        </form>)
+                    }
+                </dd>
 
                 <dt>
                     Description
-                    <button class={'edit-btn' + (isEditingDesc ? ' is-editing' : '')}
+
+                    <EditBtn
+                        isEditing={isEditingDesc}
                         aria-label={isEditingDesc ?
                             'Stop editing your description' :
                             'Edit your description'}
@@ -184,9 +242,7 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
                         title={isEditingDesc ?
                             'Stop editing' :
                             'Edit description'}
-                    >
-                        <Pencil />
-                    </button>
+                    />
                 </dt>
 
                 <dd class={isEditingDesc ? 'editing-dd' : null}>
@@ -217,4 +273,15 @@ export const Whoami:FunctionComponent<Props> = function ({ webnative, appAvatar 
         </div>
 
     </div>
+}
+
+function EditBtn (props) {
+    const { isEditing, onClick } = props
+
+    return <button {...props}
+        class={'edit-btn' + (isEditing ? ' is-editing' : '')}
+        onClick={onClick}
+    >
+        <Pencil />
+    </button>
 }

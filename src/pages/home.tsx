@@ -1,14 +1,19 @@
-import { h } from 'preact'
+import { FunctionComponent, h } from 'preact'
+import { Signal } from '@preact/signals'
 import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
 import CONSTANTS from '../CONSTANTS.jsx'
 import { PERMISSIONS } from '../permissions.js'
 import './home.css'
 
-function Home ({ webnative }) {
-    if (!webnative.value?.session) return null
-    console.log('*webnative*', webnative.value)
-    const { fs } = webnative.value.session
+interface Props {
+    webnative: Signal<wn.Program>
+    session: Signal<wn.Session|null>
+}
+
+const Home:FunctionComponent<Props> = function ({ webnative, session }) {
+    if (!session.value?.fs) return null
+    const { fs } = session.value
     const [posts, setPosts] = useState<object[]>([])
 
     const logPath = wn.path.appData(
@@ -57,8 +62,6 @@ function Home ({ webnative }) {
             setPosts(files)
         })
     }, [fs])
-
-    console.log('posts', posts)
 
     return <div class="route home">
         <h2>hello, this is the app</h2>

@@ -1,10 +1,11 @@
 import { h } from 'preact'
 import Router from '@nichoth/routes'
-import { loginRoute } from './pages/login.jsx'
+import { LoginRoute } from './pages/login.jsx'
 import { Home } from './pages/home.jsx'
 import { Whoami } from './pages/whoami.jsx'
 import { NewPost } from './pages/new.jsx'
 import { Post } from './pages/post.jsx'
+import { CreateAccount } from './pages/create-account.jsx'
 
 export default function _Router () {
     const router = Router()
@@ -23,16 +24,19 @@ export default function _Router () {
     })
 
     router.addRoute('/login', () => {
-        return loginRoute
+        return LoginRoute
     })
 
-    router.addRoute('/whoami', (_, webnative) => {
-        if (!webnative || !webnative.session?.username) return () => null
+    router.addRoute('/whoami', () => {
         return Whoami
     })
 
     router.addRoute('/new', () => {
         return NewPost
+    })
+
+    router.addRoute('/create-account', () => {
+        return CreateAccount
     })
 
     router.addRoute('/@:username/:sequence', () => {
