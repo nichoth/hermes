@@ -8,17 +8,21 @@ import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
 import PERMISSIONS from '../permissions.js'
 import TextInput from '../components/text-input.jsx'
+import { createDID, prepareUsername, isUsernameValid,
+    USERNAME_STORAGE_KEY } from '../username.js'
 
 import './whoami.css'
 
 interface Props {
     appAvatar: Signal<File|string|null>,
     session: Signal<wn.Session>,
-    fullUsername: Signal<string>
+    fullUsername: Signal<string>,
+    webnative: Signal<wn.Program>
 }
 
 export const Whoami:FunctionComponent<Props> = function ({
     session,
+    webnative,
     appAvatar,
     fullUsername
 }) {
@@ -121,27 +125,41 @@ export const Whoami:FunctionComponent<Props> = function ({
         }
     }
 
-    function editDescription (ev) {
+    function editDescription (ev:MouseEvent) {
         ev.preventDefault()
         setEditingDesc(!isEditingDesc)
     }
 
-    function editUsername (ev) {
+    function editUsername (ev:MouseEvent) {
         ev.preventDefault()
         setEditingUsername(!isEditingUsername)
     }
 
-    async function saveUsername (ev) {
+    async function saveUsername (ev:SubmitEvent) {
         ev.preventDefault()
+        if (!ev.target) return
         if (!fs) return
+        const { crypto, storage } = webnative.value.components
+        const username = ev.target['username'].value
+        console.log('set username to...', username)
+        const did = await createDID(crypto)
+        const newFullUsername = `${username}#${did}`
+        const preppedUsername = await prepareUsername(newFullUsername)
+        const isVal = await isUsernameValid(preppedUsername, webnative.value)
+        if (!isVal) {
+            // @TODO -- show the user invalidness
+            console.log('**invalid**')
+            return
+        }
+        await storage.setItem(USERNAME_STORAGE_KEY, fullUsername)
     }
 
-    async function saveProfile (ev) {
+    async function saveDescription (ev) {
         ev.preventDefault()
         if (!fs) return
         const els = ev.target.elements
-        const value = els.description.value.trim()
-        console.log('save profile', value)
+        const description = els.description.value.trim()
+        console.log('save profile', description)
 
         const filepath = wn.path.appData(
             PERMISSIONS.app,
@@ -149,7 +167,7 @@ export const Whoami:FunctionComponent<Props> = function ({
         )
         await fs.write(
             filepath,
-            new TextEncoder().encode(JSON.stringify({ description: value }))
+            new TextEncoder().encode(JSON.stringify({ description }))
         )
         console.log('file path written...', filepath)
         await fs.publish()
@@ -248,7 +266,7 @@ export const Whoami:FunctionComponent<Props> = function ({
                 <dd class={isEditingDesc ? 'editing-dd' : null}>
                     {isEditingDesc ?
                         <div class="editing-text">
-                            <form onSubmit={saveProfile}>
+                            <form onSubmit={saveDescription}>
                                 <textarea name="description" autoFocus
                                     value={pendingDesc.value === null ?
                                         (profile && profile.description || null) :
