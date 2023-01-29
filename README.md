@@ -5,7 +5,7 @@
         title="Hermes logo"
     >
 </div>
-[![Netlify Status](https://api.netlify.com/api/v1/badges/f66ada49-9361-4e73-abee-1d538e3b59a3/deploy-status)](https://app.netlify.com/sites/ssc-hermes/deploys)
+![Netlify Status](https://api.netlify.com/api/v1/badges/f66ada49-9361-4e73-abee-1d538e3b59a3/deploy-status)](https://app.netlify.com/sites/ssc-hermes/deploys)
 
 ## develop
 This is an example of using `wnfs` + `preact` & [@preact/signals](https://preactjs.com/blog/introducing-signals/). We are using client side routing via the browser's history API in [route-event](https://github.com/nichoth/route-event), because [the navigation API is chrome only](https://github.com/nichoth/hermes/discussions/10).
