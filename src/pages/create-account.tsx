@@ -13,13 +13,15 @@ import './centered.css'
 interface Props {
     webnative: Signal<wn.Program>,
     session: Signal<wn.Session>,
-    setRoute: Function
+    setRoute: Function,
+    fullUsername: Signal<string>
 }
 
 const CreateAccount:FunctionComponent<Props> = function ({
     webnative,
     session,
-    setRoute
+    setRoute,
+    fullUsername
 }) {
     const [usernameAvailable, setAvailable] = useState<boolean>(true)
     const [isValid, setValid] = useState<boolean>(false)
@@ -35,10 +37,10 @@ const CreateAccount:FunctionComponent<Props> = function ({
         const username = target.elements['username'].value
         const { crypto, storage } = webnative.value.components
         const did = await createDID(crypto)
-        const fullUsername = `${username}#${did}`
-        const preppedUsername = await prepareUsername(fullUsername)
+        const _fullUsername = `${username}#${did}`
+        const preppedUsername = await prepareUsername(_fullUsername)
 
-        console.log('full username', fullUsername)
+        console.log('full username', _fullUsername)
         console.log('prepped name', preppedUsername)
 
         const isVal = await isUsernameValid(preppedUsername, webnative.value)
@@ -56,14 +58,13 @@ const CreateAccount:FunctionComponent<Props> = function ({
 
         console.log('new username', preppedUsername)
 
-        await storage.setItem(USERNAME_STORAGE_KEY, fullUsername)
+        await storage.setItem(USERNAME_STORAGE_KEY, _fullUsername)
         const { success } = await webnative.value.auth.register({
             username: preppedUsername
         })
 
         if (success) {
             console.log('success!!!!!!!!!!!')
-            // const _session = await webnative.value.auth.session()
             const program = await wn.program({
                 namespace: { creator: "snail-situation", name: "hermes" },
                 debug: true,
@@ -71,6 +72,8 @@ const CreateAccount:FunctionComponent<Props> = function ({
             })
             console.log('*program*', program)
             webnative.value = program
+            fullUsername.value = _fullUsername
+            
 
             const _session = program.session
             console.log('__session__', _session)

@@ -77,7 +77,7 @@ const App: FunctionComponent<Props> = function App () {
                 webnative.value = program
 
                 console.log('**program**', program)
-                console.log('program.session', program.session)
+                console.log('**program.session**', program.session)
 
                 session.value = (program.session ?? await program.auth.session())
 
