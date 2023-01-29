@@ -8,7 +8,7 @@
         font-weight: normal;
     }
 
-    & .username-value {
+    & .username-value.editing {
         margin: 0;
 
         & .input-group {

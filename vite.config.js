@@ -31,7 +31,12 @@ export default defineConfig({
     },
     server: {
         port: 8888,
-        host: true
+        host: true,
+        // this is b/c we were getting an odd error about module resolution
+        // in dev, but it doesn't seem to affect the app at all
+        hmr: {
+            overlay: false
+        }
     },
     build: {
         minify: false,

@@ -135,25 +135,6 @@ export const Whoami:FunctionComponent<Props> = function ({
         setEditingUsername(!isEditingUsername)
     }
 
-    async function saveUsername (ev:SubmitEvent) {
-        ev.preventDefault()
-        if (!ev.target) return
-        if (!fs) return
-        const { crypto, storage } = webnative.value.components
-        const username = ev.target['username'].value
-        console.log('set username to...', username)
-        const did = await createDID(crypto)
-        const newFullUsername = `${username}#${did}`
-        const preppedUsername = await prepareUsername(newFullUsername)
-        const isVal = await isUsernameValid(preppedUsername, webnative.value)
-        if (!isVal) {
-            // @TODO -- show the user invalidness
-            console.log('**invalid**')
-            return
-        }
-        await storage.setItem(USERNAME_STORAGE_KEY, fullUsername)
-    }
-
     async function saveDescription (ev) {
         ev.preventDefault()
         if (!fs) return
@@ -172,6 +153,27 @@ export const Whoami:FunctionComponent<Props> = function ({
         console.log('file path written...', filepath)
         await fs.publish()
         setEditingDesc(false)
+        setProfile({ description })
+    }
+
+    async function saveUsername (ev:SubmitEvent) {
+        ev.preventDefault()
+        if (!ev.target) return
+        if (!fs) return
+        const { crypto, storage } = webnative.value.components
+        const username = ev.target['username'].value
+        const did = await createDID(crypto)
+        const newFullUsername = `${username}#${did}`
+        const preppedUsername = await prepareUsername(newFullUsername)
+        const isVal = await isUsernameValid(preppedUsername, webnative.value)
+        if (!isVal) {
+            // @TODO -- show the user invalidness
+            console.log('**invalid**')
+            return
+        }
+        await storage.setItem(USERNAME_STORAGE_KEY, newFullUsername)
+        setEditingUsername(false)
+        fullUsername.value = newFullUsername
     }
 
     function setPendingDesc (ev) {
@@ -227,7 +229,7 @@ export const Whoami:FunctionComponent<Props> = function ({
                     />
                 </dt>
 
-                <dd className={"username-value"}>
+                <dd className={'username-value' + (isEditingUsername ? ' editing' : '')}>
                     {!isEditingUsername ?
                         humanName :
                         (<form onSubmit={saveUsername} onInput={checkValidUsername}>
