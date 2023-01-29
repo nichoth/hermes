@@ -1,6 +1,7 @@
 {
   "name": "hermes",
   "type": "module",
+  "private": true,
   "description": "Private by default social networking",
   "version": "0.0.0",
   "main": "src/index.tsx",
