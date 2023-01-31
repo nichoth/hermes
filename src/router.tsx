@@ -28,6 +28,10 @@ export default function _Router () {
         return Link
     })
 
+    router.addRoute('/login?:query', () => {
+        return LoginRoute
+    })
+
     router.addRoute('/login', () => {
         return LoginRoute
     })

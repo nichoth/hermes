@@ -12,12 +12,15 @@ import './centered.css'
 interface Props {
     webnative: Signal<wn.Program>
     session: Signal<wn.Session>
+    params: { query:string }
 }
 
-const LoginRoute:FunctionComponent<Props> = function ({ webnative, session }) {
+const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, params }) {
     const [isValid, setValid] = useState<boolean>(false)
     const [authenticating, setAuthenticating] = useState<boolean>(false)
-    const [displayPin, setDisplayPin] = useState<string>('');
+    const [displayPin, setDisplayPin] = useState<string>('')
+    const query = Object.fromEntries(new URLSearchParams(params.query))
+    console.log('queryyyy', query)
 
     // **this is us**
     // On device without session:
@@ -30,6 +33,11 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session }) {
     //   your phone. This URL is `/link` in our case.
     // * the logged in device will detect the linking request and know the PIN
     // * on the already logged-in device, enter the PIN shown on the new device
+
+    //
+    // need to pass the username as a query param, because we are not able to
+    // type the username b/c it is hashed with a DID
+    //
 
     console.log('isValid...', isValid)
 

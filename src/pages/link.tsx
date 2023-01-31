@@ -1,8 +1,11 @@
 import { FunctionComponent, h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import { Signal } from '@preact/signals'
-import * as wn from "webnative"
 import { TargetedEvent } from 'preact/compat'
+import * as wn from "webnative"
+import clipboardCopy from "clipboard-copy";
+import './link.css'
+
 
 interface Props {
     webnative: Signal<wn.Program>
@@ -27,10 +30,12 @@ interface Challenge {
 
 export const Link:FunctionComponent<Props> = function ({ webnative }) {
     const [challenge, setChallenge] = useState<Challenge|null>(null)
+    const [hasCopied, setCopied] = useState<boolean>(false)
 
     useEffect(() => {
         const { session } = webnative.value
         if (!session) return
+        console.log('*username*', session.username)
 
         webnative.value.auth.accountProducer(session.username)
             .then(producer => {
@@ -40,10 +45,12 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                 producer.on('challenge', challenge => {
                     // Either show `challenge.pin` or have the user input a PIN
                     //   and see if they're equal.
+                    console.log('challenge', arguments)
                     setChallenge(challenge)
                 })
 
                 producer.on('link', ({ approved }) => {
+                    console.log('link', arguments)
                     if (!approved) return
                     console.log('Device linked successfully')
                 })
@@ -53,6 +60,7 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
     function submitPin (ev:TargetedEvent) {
         ev.preventDefault()
         if (!ev.target || !challenge) return
+        console.log('aaaaaaaaaa', ev)
 
         // have the user input a PIN and see if they're equal.
         const userInput = (ev.target as HTMLFormElement).elements['pin']
@@ -61,11 +69,32 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         else challenge.rejectPin()
     }
 
+    const username = webnative.value.session?.username
+
+    function copyLink (ev:MouseEvent) {
+        ev.preventDefault()
+        console.log('copy', username)
+        clipboardCopy(location.origin + '/login?u=' + username)
+        setCopied(true)
+    }
+
     // show an input for a PIN number
     //   user types the PIN from new device,
     //   then we check if it is ok
     return <div className={'route link'}>
-        account linking
+        <p>
+            <span>Visit this link on the new device: </span>
+            <pre>
+                <code>{location.origin + '/login?u=' + username}</code>
+            </pre>
+        </p>
+
+        <p>
+            <button className={'copy-btn'} onClick={copyLink}>
+                {hasCopied ? '✅ \u00A0copied' : 'Copy to clipboard'} 
+            </button>
+        </p>
+
         <form onSubmit={submitPin} className="pin-form">
             <input name="pin" className={'pin'} type="text" minLength={4}
                 maxLength={4}

@@ -34,7 +34,7 @@ const route = Route()
 
 // const App: FunctionComponent<Props> = function App ({ permissions }) {
 const App: FunctionComponent<Props> = function App () {
-    const routeState = useSignal<string>(location.pathname)
+    const routeState = useSignal<string>(location.pathname + location.search)
     const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.Program | null>(null)
     const session = useSignal<wn.Session | null>(null)
@@ -92,6 +92,7 @@ const App: FunctionComponent<Props> = function App () {
                     console.log('...not session...', program)
                     // create-account is ok if you don't have a name
                     if (location.pathname === '/create-account') return
+                    if (location.pathname.includes('login')) return
                     route.setRoute('/login')
                 }
             })
@@ -144,6 +145,8 @@ const App: FunctionComponent<Props> = function App () {
 
     if (!webnative.value) return null
 
+    console.log('***match**', match)
+
     return (<div class="shell">
         <HamburgerWrapper isOpen={mobileNavOpen} onClick={mobileNavHandler} />
         <MobileNav isOpen={mobileNavOpen}>
@@ -183,9 +186,9 @@ const App: FunctionComponent<Props> = function App () {
         </div>
 
         <div class="content">
-            <Node webnative={webnative} appAvatar={appAvatar}
-                params={match.params} session={session} setRoute={route.setRoute}
-                fullUsername={fullUsername}
+            <Node webnative={webnative} appAvatar={appAvatar} session={session} 
+                params={match.params} setRoute={route.setRoute}
+                splats={match.splats} fullUsername={fullUsername}
             />
         </div>
     </div>)

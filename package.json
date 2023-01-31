@@ -18,6 +18,7 @@
     "@nichoth/components": "^0.1.0",
     "@nichoth/routes": "^3.0.4",
     "@preact/signals": "^1.1.2",
+    "clipboard-copy": "^4.0.1",
     "drag-drop": "^7.2.0",
     "events": "^3.3.0",
     "generate-avatar": "^1.4.10",
