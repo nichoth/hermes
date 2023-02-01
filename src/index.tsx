@@ -60,9 +60,16 @@ const App: FunctionComponent<Props> = function App () {
     useEffect(() => {
         return route(function onRoute (path:string) {
             routeState.value = path
+            // if (!session.value) {
+            //     if (location.pathname === '/create-account') return
+            //     if (location.pathname.includes('login')) return
+            //     route.setRoute('/login')
+            // }
         })
     }, [])
 
+    //
+    // componentDidMount
     //
     // * initialize webnative,
     // * redirect to '/login' if not authed
@@ -90,7 +97,6 @@ const App: FunctionComponent<Props> = function App () {
                 //
                 if (!session.value) {
                     console.log('...not session...', program)
-                    // create-account is ok if you don't have a name
                     if (location.pathname === '/create-account') return
                     if (location.pathname.includes('login')) return
                     route.setRoute('/login')
@@ -145,19 +151,18 @@ const App: FunctionComponent<Props> = function App () {
 
     if (!webnative.value) return null
 
-    console.log('***match**', match)
-
     return (<div class="shell">
         <HamburgerWrapper isOpen={mobileNavOpen} onClick={mobileNavHandler} />
         <MobileNav isOpen={mobileNavOpen}>
-            {navList.map(item => {
+            {session.value ? (navList.map(item => {
                 return <a className={'app-nav' + (routeState.value === item.href ?
                     ' active' : '')}
                     href={item.href}
                 >
                     {item.body}
                 </a>
-            }).concat([<button onClick={logout}>Logout</button>])}
+            }).concat([<button onClick={logout}>Logout</button>])) :
+            []}
         </MobileNav>
 
         <div class="head-part">
@@ -172,17 +177,20 @@ const App: FunctionComponent<Props> = function App () {
             </a>
 
             <nav>
-                {navList.map(item => {
+                {session.value ? (navList.map(item => {
                     return <a className={'app-nav' + (routeState.value === item.href ?
                         ' active' : '')}
                         href={item.href}
                     >
                         {item.body}
                     </a>
-                })}
+                })) : null}
             </nav>
 
-            <button onClick={logout} class="logout">Logout</button>
+            {session.value ?
+                <button onClick={logout} class="logout">Logout</button> :
+                null
+            }
         </div>
 
         <div class="content">

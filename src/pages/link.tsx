@@ -46,7 +46,7 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                 producer.on('challenge', challenge => {
                     // Either show `challenge.pin` or have the user input a PIN
                     //   and see if they're equal.
-                    console.log('challenge', arguments)
+                    console.log('challenge', challenge)
                     setChallenge(challenge)
                 })
 
