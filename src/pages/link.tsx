@@ -3,7 +3,6 @@ import { useState, useEffect } from 'preact/hooks'
 import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from "webnative"
-import clipboardCopy from "clipboard-copy";
 import { CopyBtn } from '../components/copy-btn.jsx'
 import './link.css'
 import './common.css'
@@ -31,7 +30,6 @@ interface Challenge {
 
 export const Link:FunctionComponent<Props> = function ({ webnative }) {
     const [challenge, setChallenge] = useState<Challenge|null>(null)
-    const [hasCopied, setCopied] = useState<boolean>(false)
 
     useEffect(() => {
         const { session } = webnative.value
@@ -43,11 +41,11 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                 // this is the device that *is* logged in
                 // which means we need to type a pin from the challenger,
                 //   and check that it's ok
-                producer.on('challenge', challenge => {
+                producer.on('challenge', _challenge => {
                     // Either show `challenge.pin` or have the user input a PIN
                     //   and see if they're equal.
-                    console.log('challenge', challenge)
-                    setChallenge(challenge)
+                    console.log('challenge', _challenge)
+                    setChallenge(_challenge)
                 })
 
                 producer.on('link', ({ approved }) => {
@@ -61,7 +59,6 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
     function submitPin (ev:TargetedEvent) {
         ev.preventDefault()
         if (!ev.target || !challenge) return
-        console.log('aaaaaaaaaa', ev)
 
         // have the user input a PIN and see if they're equal.
         const userInput = (ev.target as HTMLFormElement).elements['pin']
