@@ -14,8 +14,9 @@ import './login.css'
 import '../components/copy-btn.css'
 
 interface Props {
-    webnative: Signal<wn.Program>
-    session: Signal<wn.Session>
+    webnative: Signal<wn.Program>,
+    session: Signal<wn.Session>,
+    setRoute: (path:string) => void,
     params: { query:string }
 }
 
@@ -24,10 +25,10 @@ interface Props {
 // an existing account
 // You would go to this route on the new device
 //
-const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, params }) {
+const LoginRoute:FunctionComponent<Props> = function (props) {
+    const { webnative, session, params, setRoute } = props
     const query = Object.fromEntries(new URLSearchParams(params.query))
     const [isValid, setValid] = useState<boolean>(query.u?.length > 2)
-    const [authenticating, setAuthenticating] = useState<boolean>(false)
     const [displayPin, setDisplayPin] = useState<string>('')
     const resolvingPin = useSignal<boolean>(false)
 
@@ -51,7 +52,7 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, para
     // type the username, it is hashed with a DID, so not human readable
     //
 
-    console.log('isValid...', isValid)
+    console.log('isValid in the main route', isValid)
 
     async function linkAccount (ev:TargetedEvent) {
         ev.preventDefault()
@@ -70,11 +71,11 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, para
         })
 
         consumer.on('link', async ({ username, approved }) => {
-            console.log('on link', arguments)
             if (!approved) return console.log('fail!!!')
-            console.log('approve account link...', username)
+            console.log('approve account link...', username, approved)
             const _session = await webnative.value.auth.session()
             if (_session) session.value = _session
+            setRoute('/')
         })
     }
 

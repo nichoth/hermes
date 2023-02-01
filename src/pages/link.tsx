@@ -49,7 +49,8 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                 })
 
                 producer.on('link', ({ approved }) => {
-                    console.log('link', arguments)
+                    console.log('*link*', arguments)
+                    console.log('it was approved?', approved)
                     if (!approved) return
                     console.log('Device linked successfully')
                 })
@@ -61,7 +62,7 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         if (!ev.target || !challenge) return
 
         // have the user input a PIN and see if they're equal.
-        const userInput = (ev.target as HTMLFormElement).elements['pin']
+        const userInput = (ev.target as HTMLFormElement).elements['pin'].value
         console.log('user input', userInput)
         if (userInput === challenge.pin.join('')) challenge.confirmPin()
         else challenge.rejectPin()
@@ -91,7 +92,7 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
 
         <form onSubmit={submitPin} className="pin-form">
             <input name="pin" className={'pin'} type="text" minLength={4}
-                maxLength={4}
+                maxLength={6}
             />
 
             <button type="submit">submit pin</button>
