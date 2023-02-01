@@ -5,9 +5,11 @@ import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
-import { isUsernameValid, prepareUsername } from '../username.js'
+import { isUsernameValid } from '../username.js'
+import { CopyBtn } from '../components/copy-btn.jsx'
 import * as wn from 'webnative'
 import './centered.css'
+import './login.css'
 
 interface Props {
     webnative: Signal<wn.Program>
@@ -25,8 +27,8 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, para
     const [isValid, setValid] = useState<boolean>(query.u.length > 2)
     const [authenticating, setAuthenticating] = useState<boolean>(false)
     const [displayPin, setDisplayPin] = useState<string>('')
-    console.log('queryyyy', query)
 
+    // see https://webnative.fission.app/index.html#creating-a-program
     // **this is us**
     // On device without session:
     //     Somehow you'll need to get ahold of the username.
@@ -52,16 +54,18 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, para
         const username = target.elements['username'].value
         console.log('on submit', username)
 
-        const hashedUsername = await prepareUsername(username)
-        const consumer = await webnative.value.auth.accountConsumer(hashedUsername)
+        // const hashedUsername = await prepareUsername(username)
+        // const consumer = await webnative.value.auth.accountConsumer(hashedUsername)
         // const consumer = await createAccountLinkingConsumer(
         //     hashedUsername,
         //     webnative.value
         // )
 
+        const consumer = await webnative.value.auth.accountConsumer(username)
+
         consumer.on('challenge', ({ pin }) => {
             // show pin in UI
-            console.log('on challenge')
+            console.log('on challenge', pin)
             setDisplayPin(pin.join(''))
         })
 
@@ -99,7 +103,7 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, para
             <h2>Login</h2>
 
             <TextInput defaultValue={query.u} name="username" required={true}
-                displayName="Username" minlength={'3'} autoFocus
+                displayName="Account name" minlength={'3'} autoFocus
             />
 
             <Button isSpinning={false} type="submit" disabled={!isValid}>
@@ -111,7 +115,12 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, para
         <a href="/create-account">Create an account</a>
 
         {displayPin ?
-            <div class="pin">{displayPin}</div> :
+            (<div className="display-pin">
+                <span className="pin"><code>{displayPin}</code></span>
+                <CopyBtn className="copy-pin" payload={displayPin}>
+                    Copy PIN
+                </CopyBtn>
+            </div>) :
             null
         }
     </div>)

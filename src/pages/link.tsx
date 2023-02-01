@@ -4,6 +4,7 @@ import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from "webnative"
 import clipboardCopy from "clipboard-copy";
+import { CopyBtn } from '../components/copy-btn.jsx'
 import './link.css'
 import './common.css'
 
@@ -71,12 +72,6 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
 
     const username = webnative.value.session?.username
 
-    function copyLink (ev:MouseEvent) {
-        ev.preventDefault()
-        clipboardCopy(location.origin + '/login?u=' + username)
-        setCopied(true)
-    }
-
     // show an input for a PIN number
     //   user types the PIN from new device,
     //   then we check if it is ok
@@ -88,9 +83,9 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         <code>{location.origin + '/login?u=' + username}</code>
 
         <p>
-            <button className={'copy-btn'} onClick={copyLink}>
-                {hasCopied ? '✅ \u00A0copied' : 'Copy to clipboard'} 
-            </button>
+            <CopyBtn payload={(location.origin + '/login?u=' + username)}>
+                Copy to clipboard
+            </CopyBtn>
         </p>
 
         <hr />
