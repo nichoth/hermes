@@ -7,7 +7,6 @@ import clipboardCopy from "clipboard-copy";
 import './link.css'
 import './common.css'
 
-
 interface Props {
     webnative: Signal<wn.Program>
     session: Signal<wn.Session|null>
@@ -96,7 +95,7 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
 
         <hr />
 
-        <p>Enter the pin from the new device:</p>
+        <p>Enter the PIN from the new device:</p>
 
         <form onSubmit={submitPin} className="pin-form">
             <input name="pin" className={'pin'} type="text" minLength={4}

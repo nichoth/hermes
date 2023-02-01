@@ -15,11 +15,16 @@ interface Props {
     params: { query:string }
 }
 
+//
+// this route is for if you have a new device, and you want to use
+// an existing account
+// You would go to this route on the new device
+//
 const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, params }) {
-    const [isValid, setValid] = useState<boolean>(false)
+    const query = Object.fromEntries(new URLSearchParams(params.query))
+    const [isValid, setValid] = useState<boolean>(query.u.length > 2)
     const [authenticating, setAuthenticating] = useState<boolean>(false)
     const [displayPin, setDisplayPin] = useState<string>('')
-    const query = Object.fromEntries(new URLSearchParams(params.query))
     console.log('queryyyy', query)
 
     // **this is us**
@@ -88,12 +93,13 @@ const LoginRoute:FunctionComponent<Props> = function ({ webnative, session, para
     }
 
     return (<div class="route route-login centered">
-        <form onSubmit={handleSubmit} className="link-form" id="link-form"
+        <form onSubmit={handleSubmit} className="login-form" id="login-form"
             onInput={onFormInput}
         >
             <h2>Login</h2>
-            <TextInput name="username" required={true} displayName="Username"
-                minlength={'3'} autoFocus
+
+            <TextInput defaultValue={query.u} name="username" required={true}
+                displayName="Username" minlength={'3'} autoFocus
             />
 
             <Button isSpinning={false} type="submit" disabled={!isValid}>
