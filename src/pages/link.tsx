@@ -91,8 +91,8 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         <p>Enter the PIN from the new device:</p>
 
         <form onSubmit={submitPin} className="pin-form">
-            <input name="pin" className={'pin'} type="text" minLength={4}
-                maxLength={6}
+            <input name="pin" className={'pin'} type="text" minLength={6}
+                maxLength={6} 
             />
 
             <button type="submit">submit pin</button>
