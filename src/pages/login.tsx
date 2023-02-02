@@ -122,7 +122,9 @@ const LoginRoute:FunctionComponent<Props> = function (props) {
                     here that you need to enter in your already connected device.
                 </p>
 
-                <Button isSpinning={resolvingPin.value} type="submit" disabled={!isValid}>
+                <Button isSpinning={resolvingPin.value} type="submit"
+                    disabled={!isValid}
+                >
                     Link account
                 </Button>
                 <Button onClick={nevermind}>Nevermind</Button>

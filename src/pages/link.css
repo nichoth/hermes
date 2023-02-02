@@ -7,5 +7,42 @@
     & button {
         display: block;
         margin-top: 0.5rem;
+
+        margin-right: 1rem;
+        position: relative;
+        color: white;
+        background-color: #4281CB;
+        padding: 0.5rem 2rem;
+        font-size: 1rem;
+        border: none;
+        outline: 0px solid;
+        transition: outline 0.4s;
+
+        &:disabled {
+            opacity: 0.6;
+            &:hover {
+                outline: none;
+            }
+        }
+
+        &:hover {
+            outline: 3px solid whitesmoke;
+        }
+    }
+
+}
+
+#pin-input {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    width: 6rem;
+    border: 1px solid;
+    border-bottom: 2px solid;
+    padding: 0.4rem;
+    padding-bottom: 0.2rem;
+
+    &:hover {
+        outline: none;
     }
 }

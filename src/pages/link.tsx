@@ -30,11 +30,11 @@ interface Challenge {
 
 export const Link:FunctionComponent<Props> = function ({ webnative }) {
     const [challenge, setChallenge] = useState<Challenge|null>(null)
+    const [validPin, setValidPin] = useState<boolean>(false)
 
     useEffect(() => {
         const { session } = webnative.value
         if (!session) return
-        console.log('*username*', session.username)
 
         webnative.value.auth.accountProducer(session.username)
             .then(producer => {
@@ -70,6 +70,15 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
 
     const username = webnative.value.session?.username
 
+    function pinInput (ev) {
+        const el = ev.target
+        el.value = el.value.slice(0, el.getAttribute('maxlength'))
+        const max = parseInt(el.getAttribute('maxlength'))
+        const min = parseInt(el.getAttribute('minlength'))
+        const valid = (el.value.length >= min && el.value.length <= max)
+        if (valid !== validPin) setValidPin(valid)
+    }
+
     // show an input for a PIN number
     //   user types the PIN from new device,
     //   then we check if it is ok
@@ -92,10 +101,14 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
 
         <form onSubmit={submitPin} className="pin-form">
             <input name="pin" className={'pin'} type="number" minLength={6}
-                maxLength={6} 
+                autoComplete="off"
+                inputMode="numeric"
+                id="pin-input"
+                onInput={pinInput}
+                maxLength={6}
             />
 
-            <button type="submit">submit pin</button>
+            <button type="submit" disabled={!validPin}>submit pin</button>
         </form>
 
     </div>
