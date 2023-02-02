@@ -4,14 +4,14 @@ import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { useSignal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
+import * as wn from 'webnative'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid } from '../username.js'
 import { CopyBtn, CopyIconBtn } from '../components/copy-btn.jsx'
-import * as wn from 'webnative'
+import '../components/copy-btn.css'
 import './centered.css'
 import './login.css'
-import '../components/copy-btn.css'
 
 interface Props {
     webnative: Signal<wn.Program>,
@@ -106,7 +106,7 @@ const LoginRoute:FunctionComponent<Props> = function (props) {
             (<p>
                 Visit <code>{linkingLink}</code>
                 <CopyIconBtn title="copy" payload={linkingLink} />
-                on a device that is already logged in to your account.
+                on a device that is already-logged in to your account.
             </p>) :
 
             (<form onSubmit={linkAccount} className="login-form" id="login-form"
