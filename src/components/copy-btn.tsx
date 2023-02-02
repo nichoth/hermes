@@ -1,6 +1,6 @@
 import { FunctionComponent, h } from 'preact'
 import { useSignal } from "@preact/signals"
-import clipboardCopy from "clipboard-copy";
+import clipboardCopy from "clipboard-copy"
 
 interface Props {
     className?: string,

@@ -4,6 +4,7 @@ import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from "webnative"
 import { CopyBtn } from '../components/copy-btn.jsx'
+import Button from '../components/button.jsx'
 import './link.css'
 import './common.css'
 
@@ -90,9 +91,11 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         <code>{location.origin + '/login?u=' + username}</code>
 
         <p>
-            <CopyBtn payload={(location.origin + '/login?u=' + username)}>
-                Copy to clipboard
-            </CopyBtn>
+            <span class={'form-stuff'}>
+                <CopyBtn payload={(location.origin + '/login?u=' + username)}>
+                    Copy to clipboard
+                </CopyBtn>
+            </span>
         </p>
 
         <hr />
@@ -108,8 +111,10 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                 maxLength={6}
             />
 
-            <button type="submit" disabled={!validPin}>submit pin</button>
+            <Button type="submit" disabled={!validPin}>Submit PIN</Button>
         </form>
 
     </div>
 }
+
+            // <button type="submit" disabled={!validPin}>submit pin</button>

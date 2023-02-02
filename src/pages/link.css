@@ -1,33 +1,6 @@
-.copy-btn {
-    width: 9rem;
-    padding: 0.3rem 1rem;
-}
-
-.pin-form {
+.route.link {
     & button {
         display: block;
-        margin-top: 0.5rem;
-
-        margin-right: 1rem;
-        position: relative;
-        color: white;
-        background-color: #4281CB;
-        padding: 0.5rem 2rem;
-        font-size: 1rem;
-        border: none;
-        outline: 0px solid;
-        transition: outline 0.4s;
-
-        &:disabled {
-            opacity: 0.6;
-            &:hover {
-                outline: none;
-            }
-        }
-
-        &:hover {
-            outline: 3px solid whitesmoke;
-        }
     }
 
 }
@@ -41,6 +14,7 @@
     border-bottom: 2px solid;
     padding: 0.4rem;
     padding-bottom: 0.2rem;
+    margin-bottom: 1rem;
 
     &:hover {
         outline: none;
