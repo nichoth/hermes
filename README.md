@@ -44,9 +44,6 @@ The social part is all configurable too, at a pretty granular level. So you can 
 
 This is a big difference from traditional social networks, like *Instagram*, where the server reads/knows all your data.
 
-## notes
-The `events` module is required by our dependencies. It wasn't included so we have added it here.
-
 ## relevant links
 
 * [Fission docs -- sharing private data](https://guide.fission.codes/developers/webnative/sharing-private-data)
