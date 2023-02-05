@@ -13,5 +13,4 @@ export const Pencil = function () {
             </g>
         </svg>
     </span>
-
 }

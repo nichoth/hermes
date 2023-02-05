@@ -6,6 +6,7 @@ import { Whoami } from './pages/whoami.jsx'
 import { NewPost } from './pages/new.jsx'
 import { Post } from './pages/post.jsx'
 import { CreateAccount } from './pages/create-account.jsx'
+import { Link } from './pages/link.jsx'
 
 export default function _Router () {
     const router = Router()
@@ -21,6 +22,14 @@ export default function _Router () {
                 <a href="/">home</a>
             ]
         }
+    })
+
+    router.addRoute('/link', () => {
+        return Link
+    })
+
+    router.addRoute('/login?:query', () => {
+        return LoginRoute
     })
 
     router.addRoute('/login', () => {

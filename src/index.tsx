@@ -34,7 +34,7 @@ const route = Route()
 
 // const App: FunctionComponent<Props> = function App ({ permissions }) {
 const App: FunctionComponent<Props> = function App () {
-    const routeState = useSignal<string>(location.pathname)
+    const routeState = useSignal<string>(location.pathname + location.search)
     const appAvatar = useSignal<string|undefined>(undefined)
     const webnative = useSignal<wn.Program | null>(null)
     const session = useSignal<wn.Session | null>(null)
@@ -60,9 +60,16 @@ const App: FunctionComponent<Props> = function App () {
     useEffect(() => {
         return route(function onRoute (path:string) {
             routeState.value = path
+            // if (!session.value) {
+            //     if (location.pathname === '/create-account') return
+            //     if (location.pathname.includes('login')) return
+            //     route.setRoute('/login')
+            // }
         })
     }, [])
 
+    //
+    // componentDidMount
     //
     // * initialize webnative,
     // * redirect to '/login' if not authed
@@ -76,9 +83,6 @@ const App: FunctionComponent<Props> = function App () {
             .then(async program => {
                 webnative.value = program
 
-                console.log('**program**', program)
-                console.log('**program.session**', program.session)
-
                 session.value = (program.session ?? await program.auth.session())
 
                 fullUsername.value = await program.components.storage.getItem(
@@ -90,8 +94,8 @@ const App: FunctionComponent<Props> = function App () {
                 //
                 if (!session.value) {
                     console.log('...not session...', program)
-                    // create-account is ok if you don't have a name
                     if (location.pathname === '/create-account') return
+                    if (location.pathname.includes('login')) return
                     route.setRoute('/login')
                 }
             })
@@ -147,14 +151,15 @@ const App: FunctionComponent<Props> = function App () {
     return (<div class="shell">
         <HamburgerWrapper isOpen={mobileNavOpen} onClick={mobileNavHandler} />
         <MobileNav isOpen={mobileNavOpen}>
-            {navList.map(item => {
+            {session.value ? (navList.map(item => {
                 return <a className={'app-nav' + (routeState.value === item.href ?
                     ' active' : '')}
                     href={item.href}
                 >
                     {item.body}
                 </a>
-            }).concat([<button onClick={logout}>Logout</button>])}
+            }).concat([<button onClick={logout}>Logout</button>])) :
+            []}
         </MobileNav>
 
         <div class="head-part">
@@ -169,23 +174,26 @@ const App: FunctionComponent<Props> = function App () {
             </a>
 
             <nav>
-                {navList.map(item => {
+                {session.value ? (navList.map(item => {
                     return <a className={'app-nav' + (routeState.value === item.href ?
                         ' active' : '')}
                         href={item.href}
                     >
                         {item.body}
                     </a>
-                })}
+                })) : null}
             </nav>
 
-            <button onClick={logout} class="logout">Logout</button>
+            {session.value ?
+                <button onClick={logout} class="logout">Logout</button> :
+                null
+            }
         </div>
 
         <div class="content">
-            <Node webnative={webnative} appAvatar={appAvatar}
-                params={match.params} session={session} setRoute={route.setRoute}
-                fullUsername={fullUsername}
+            <Node webnative={webnative} appAvatar={appAvatar} session={session} 
+                params={match.params} setRoute={route.setRoute}
+                splats={match.splats} fullUsername={fullUsername}
             />
         </div>
     </div>)

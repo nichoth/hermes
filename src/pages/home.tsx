@@ -22,45 +22,53 @@ const Home:FunctionComponent<Props> = function ({ webnative, session }) {
     )
 
     useEffect(() => {
-        fs.ls(logPath).then(async _posts => {
-            const _files = Object.keys(_posts).map(async (filename, i) => {
-                // read the post JSON
-                const fullPath = wn.path.appData(
-                    PERMISSIONS.app,
-                    wn.path.file(CONSTANTS.logDirPath, filename)
-                )
+        fs.ls(logPath)
+            .then(async _posts => {
+                const _files = Object.keys(_posts).map(async (filename, i) => {
+                    // read the post JSON
+                    const fullPath = wn.path.appData(
+                        PERMISSIONS.app,
+                        wn.path.file(CONSTANTS.logDirPath, filename)
+                    )
 
-                const content = await fs.cat(fullPath)
-                const post = JSON.parse(new TextDecoder().decode(content))
+                    const content = await fs.cat(fullPath)
+                    const post = JSON.parse(new TextDecoder().decode(content))
 
-                // get img URL
-                const n = post.sequence
-                const imgPath = wn.path.appData(
-                    PERMISSIONS.app,
-                    // @TODO -- file extensions
-                    wn.path.file(CONSTANTS.blobDirPath, n + '-0.jpg')
-                )
+                    // get img URL
+                    const n = post.sequence
+                    const imgPath = wn.path.appData(
+                        PERMISSIONS.app,
+                        // @TODO -- file extensions
+                        wn.path.file(CONSTANTS.blobDirPath, n + '-0.jpg')
+                    )
 
-                let imgBlob
-                try {
-                    imgBlob = await fs.cat(imgPath)
-                } catch (err) {
-                    // do nothing, just for development
-                    console.log('caught error err')
-                }
-                const imgUrl = URL.createObjectURL(
-                    new Blob([imgBlob as BlobPart], { type: 'image/jpeg' })
-                )
+                    let imgBlob
+                    try {
+                        imgBlob = await fs.cat(imgPath)
+                    } catch (err) {
+                        // do nothing, just for development
+                        console.log('caught error err')
+                    }
+                    const imgUrl = URL.createObjectURL(
+                        new Blob([imgBlob as BlobPart], { type: 'image/jpeg' })
+                    )
 
-                return ({
-                    post,
-                    imgUrl
+                    return ({
+                        post,
+                        imgUrl
+                    })
                 })
-            })
 
-            const files = await Promise.all(_files)
-            setPosts(files)
-        })
+                const files = await Promise.all(_files)
+                setPosts(files)
+            })
+            .catch(err => {
+                if (err.toString().includes('Path does not exist')) {
+                    return console.log('couldnt get files, thats ok, do nothing')
+                }
+
+                console.log('err listing files', err)
+            })
     }, [fs])
 
     return <div class="route home">

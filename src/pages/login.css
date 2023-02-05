@@ -1,0 +1,19 @@
+.form-stuff {
+    & .input-group {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.display-pin {
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid white;
+    margin: 1rem 0;
+    background-color: #e4e4e4;
+
+    & .pin {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+}

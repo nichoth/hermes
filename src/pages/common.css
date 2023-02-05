@@ -1,0 +1,9 @@
+hr {
+    border: solid;
+    color: gray;
+    margin: 2rem 0;
+}
+
+code {
+    font-size: 1rem;
+}
