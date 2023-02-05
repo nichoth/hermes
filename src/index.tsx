@@ -83,9 +83,6 @@ const App: FunctionComponent<Props> = function App () {
             .then(async program => {
                 webnative.value = program
 
-                console.log('**program**', program)
-                console.log('**program.session**', program.session)
-
                 session.value = (program.session ?? await program.auth.session())
 
                 fullUsername.value = await program.components.storage.getItem(

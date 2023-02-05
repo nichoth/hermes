@@ -42,14 +42,14 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                 // this is the device that *is* logged in
                 // which means we need to type a pin from the challenger,
                 //   and check that it's ok
-                producer.on('challenge', _challenge => {
+                producer.on('challenge', function handleChallenge (_challenge) {
                     // Either show `challenge.pin` or have the user input a PIN
                     //   and see if they're equal.
                     console.log('challenge', _challenge)
                     setChallenge(_challenge)
                 })
 
-                producer.on('link', ({ approved }) => {
+                producer.on('link', function handleLink ({ approved }) {
                     console.log('*link*', arguments)
                     console.log('it was approved?', approved)
                     if (!approved) return
@@ -116,5 +116,3 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
 
     </div>
 }
-
-            // <button type="submit" disabled={!validPin}>submit pin</button>
