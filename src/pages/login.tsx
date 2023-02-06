@@ -75,6 +75,7 @@ const LoginRoute:FunctionComponent<Props> = function (props) {
             console.log('approve account link...', username, approved)
             const _session = await webnative.value.auth.session()
             if (_session) session.value = _session
+            consumer.cancel()
             setRoute('/')
         })
     }
