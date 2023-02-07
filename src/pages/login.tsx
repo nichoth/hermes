@@ -76,6 +76,8 @@ const LoginRoute:FunctionComponent<Props> = function (props) {
             const _session = await webnative.value.auth.session()
             if (_session) session.value = _session
             consumer.cancel()
+            // @TODO
+            // need to fetch userData from server
             setRoute('/')
         })
     }

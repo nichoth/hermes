@@ -50,6 +50,10 @@ const App: FunctionComponent<Props> = function App () {
     window.webnative = webnative
     // @ts-ignore
     window.wn = wn
+    // @ts-ignore
+    window.session = session
+    // @ts-ignore
+    window.userData = userData.value
 
     function logout (ev) {
         ev.preventDefault()
@@ -87,17 +91,22 @@ const App: FunctionComponent<Props> = function App () {
         })
             .then(async program => {
                 webnative.value = program
-
                 session.value = (program.session ?? await program.auth.session())
 
                 try {
-                    // const { did, humanName } = JSON.parse(
-                    userData.value = JSON.parse(
-                        await program.components.storage.getItem(
-                            USERDATA_STORAGE_KEY
-                        ) as string
-                    )
-                    // userData.value = { did, humanName }
+                    const data = await program.components.storage.getItem(
+                        USERDATA_STORAGE_KEY
+                    ) as string
+
+                    userData.value = JSON.parse(data) as UserData
+                    if (!userData.value) {
+                        console.log('not aaaaaaaaa')
+                        // @TODO
+                        // we dont have the userData locally, need to fetch
+                        // this happens if you are on a new device
+                        //
+                        
+                    }
                 } catch (err) {
                     console.log('errrrrrrrr, parsing json', err)
                 }
@@ -113,7 +122,6 @@ const App: FunctionComponent<Props> = function App () {
                 }
             })
     }, [])
-    // }, [permissions])
 
     //
     // read the avatar, set it in app state

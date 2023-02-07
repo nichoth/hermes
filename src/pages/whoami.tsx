@@ -33,7 +33,7 @@ export const Whoami:FunctionComponent<Props> = function ({
 }) {
     if (!session.value) return null
     const { fs } = session.value
-    const humanName = (userData?.value).humanName
+    const humanName = (userData?.value)?.humanName 
 
     interface Profile {
         description: string | null;
@@ -168,10 +168,11 @@ export const Whoami:FunctionComponent<Props> = function ({
         const { crypto, storage } = webnative.value.components
         const username = ev.target['username'].value
         const did = await createDID(crypto)
-        const newUserData = {
+        // @TODO -- set username on server
+        const newUserData = Object.assign({}, userData, {
             humanName: username,
             did
-        }
+        })
         const preppedDid = await prepareDid(did)
         const isVal = await isUsernameValid(preppedDid, webnative.value)
         if (!isVal) {

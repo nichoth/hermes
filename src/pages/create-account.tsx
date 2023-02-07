@@ -54,12 +54,12 @@ const CreateAccount:FunctionComponent<Props> = function ({
         console.log('is available', isAvailable)
         if (!isAvailable) return
 
-        console.log('new user did', preppedDid)
+        console.log('new user did, the hashed name', preppedDid)
 
         await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify({
             humanName: username,
             did,
-            hashedDid: preppedDid
+            hashedName: preppedDid
         }))
 
         const { success } = await webnative.value.auth.register({
@@ -77,9 +77,12 @@ const CreateAccount:FunctionComponent<Props> = function ({
             webnative.value = program
             userData.value = Object.assign({}, userData.value, { did })
 
+            // @TODO -- set userData on server
+
             const _session = program.session
             console.log('__session__', _session)
             if (_session) session.value = _session
+
             return setRoute('/')
         }
 
