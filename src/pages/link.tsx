@@ -55,6 +55,7 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                     if (!approved) return
                     producer.cancel()
                     console.log('Device linked successfully')
+                    // @TODO -- show success message
                 })
             })
     }, [webnative.value])

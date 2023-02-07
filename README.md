@@ -53,3 +53,7 @@ This is a big difference from traditional social networks, like *Instagram*, whe
 * [discord talk](https://discord.com/channels/478735028319158273/678353918752718848/996476638697099294)
 * [version 1 -- ssc](https://github.com/nichoth/ssc-server)
  
+
+ ## notes
+
+MVP is "online first" / online-only

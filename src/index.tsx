@@ -9,7 +9,7 @@ import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
-import { USERNAME_STORAGE_KEY, getHumanName } from './username.js'
+import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
 import CONSTANTS from './CONSTANTS.jsx'
@@ -30,6 +30,11 @@ interface Props {
     permissions: Permissions,
 }
 
+interface UserData {
+    humanName: string
+    did: string
+}
+
 const route = Route()
 
 // const App: FunctionComponent<Props> = function App ({ permissions }) {
@@ -39,12 +44,16 @@ const App: FunctionComponent<Props> = function App () {
     const webnative = useSignal<wn.Program | null>(null)
     const session = useSignal<wn.Session | null>(null)
     const mobileNavOpen = useSignal<boolean>(false)
-    const fullUsername = useSignal<string|null>(null)
+    const userData = useSignal<UserData|null>(null)
 
     // @ts-ignore
     window.webnative = webnative
     // @ts-ignore
     window.wn = wn
+    // @ts-ignore
+    window.session = session
+    // @ts-ignore
+    window.userData = userData.value
 
     function logout (ev) {
         ev.preventDefault()
@@ -82,12 +91,25 @@ const App: FunctionComponent<Props> = function App () {
         })
             .then(async program => {
                 webnative.value = program
-
                 session.value = (program.session ?? await program.auth.session())
 
-                fullUsername.value = await program.components.storage.getItem(
-                    USERNAME_STORAGE_KEY
-                ) as string
+                try {
+                    const data = await program.components.storage.getItem(
+                        USERDATA_STORAGE_KEY
+                    ) as string
+
+                    userData.value = JSON.parse(data) as UserData
+                    if (!userData.value) {
+                        console.log('not aaaaaaaaa')
+                        // @TODO
+                        // we dont have the userData locally, need to fetch
+                        // this happens if you are on a new device
+                        //
+                        
+                    }
+                } catch (err) {
+                    console.log('errrrrrrrr, parsing json', err)
+                }
 
                 //
                 // __not authed__ -- redirect to login
@@ -100,7 +122,6 @@ const App: FunctionComponent<Props> = function App () {
                 }
             })
     }, [])
-    // }, [permissions])
 
     //
     // read the avatar, set it in app state
@@ -170,7 +191,7 @@ const App: FunctionComponent<Props> = function App () {
                 <figure>
                     <img src={appAvatar.value}></img>
                 </figure>
-                <span>{getHumanName(fullUsername.value || '')}</span>
+                <span>{userData.value?.humanName || ''}</span>
             </a>
 
             <nav>
@@ -193,7 +214,7 @@ const App: FunctionComponent<Props> = function App () {
         <div class="content">
             <Node webnative={webnative} appAvatar={appAvatar} session={session} 
                 params={match.params} setRoute={route.setRoute}
-                splats={match.splats} fullUsername={fullUsername}
+                splats={match.splats} userData={userData}
             />
         </div>
     </div>)
