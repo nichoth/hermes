@@ -59,7 +59,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
         await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify({
             humanName: username,
             did,
-            hashedName: preppedDid
+            hashedDid: preppedDid
         }))
 
         const { success } = await webnative.value.auth.register({
