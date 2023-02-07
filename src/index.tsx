@@ -9,7 +9,7 @@ import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
-import { USERNAME_STORAGE_KEY, getHumanName } from './username.js'
+import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
 import CONSTANTS from './CONSTANTS.jsx'
@@ -30,6 +30,11 @@ interface Props {
     permissions: Permissions,
 }
 
+interface UserData {
+    humanName: string
+    did: string
+}
+
 const route = Route()
 
 // const App: FunctionComponent<Props> = function App ({ permissions }) {
@@ -39,7 +44,7 @@ const App: FunctionComponent<Props> = function App () {
     const webnative = useSignal<wn.Program | null>(null)
     const session = useSignal<wn.Session | null>(null)
     const mobileNavOpen = useSignal<boolean>(false)
-    const fullUsername = useSignal<string|null>(null)
+    const userData = useSignal<UserData|null>(null)
 
     // @ts-ignore
     window.webnative = webnative
@@ -85,9 +90,17 @@ const App: FunctionComponent<Props> = function App () {
 
                 session.value = (program.session ?? await program.auth.session())
 
-                fullUsername.value = await program.components.storage.getItem(
-                    USERNAME_STORAGE_KEY
-                ) as string
+                try {
+                    // const { did, humanName } = JSON.parse(
+                    userData.value = JSON.parse(
+                        await program.components.storage.getItem(
+                            USERDATA_STORAGE_KEY
+                        ) as string
+                    )
+                    // userData.value = { did, humanName }
+                } catch (err) {
+                    console.log('errrrrrrrr, parsing json', err)
+                }
 
                 //
                 // __not authed__ -- redirect to login
@@ -170,7 +183,7 @@ const App: FunctionComponent<Props> = function App () {
                 <figure>
                     <img src={appAvatar.value}></img>
                 </figure>
-                <span>{getHumanName(fullUsername.value || '')}</span>
+                <span>{userData.value?.humanName || ''}</span>
             </a>
 
             <nav>
@@ -193,7 +206,7 @@ const App: FunctionComponent<Props> = function App () {
         <div class="content">
             <Node webnative={webnative} appAvatar={appAvatar} session={session} 
                 params={match.params} setRoute={route.setRoute}
-                splats={match.splats} fullUsername={fullUsername}
+                splats={match.splats} userData={userData}
             />
         </div>
     </div>)

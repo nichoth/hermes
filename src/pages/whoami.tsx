@@ -2,21 +2,26 @@ import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
 import { FunctionComponent } from 'preact'
 import { Signal, useSignal } from "@preact/signals"
-import { getHumanName } from "../username.js"
+// import { getHumanName } from "../username.js"
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
 import CONSTANTS from "../CONSTANTS.jsx"
 import PERMISSIONS from '../permissions.js'
 import TextInput from '../components/text-input.jsx'
-import { createDID, prepareUsername, isUsernameValid,
-    USERNAME_STORAGE_KEY } from '../username.js'
+import { createDID, prepareDid, isUsernameValid,
+    USERDATA_STORAGE_KEY } from '../username.js'
 
 import './whoami.css'
+
+interface UserData {
+    humanName: string
+    did: string
+}
 
 interface Props {
     appAvatar: Signal<File|string|null>,
     session: Signal<wn.Session>,
-    fullUsername: Signal<string>,
+    userData: Signal<UserData>
     webnative: Signal<wn.Program>
 }
 
@@ -24,11 +29,11 @@ export const Whoami:FunctionComponent<Props> = function ({
     session,
     webnative,
     appAvatar,
-    fullUsername
+    userData
 }) {
     if (!session.value) return null
     const { fs } = session.value
-    const humanName = getHumanName(fullUsername?.value || '')
+    const humanName = (userData?.value).humanName
 
     interface Profile {
         description: string | null;
@@ -163,17 +168,20 @@ export const Whoami:FunctionComponent<Props> = function ({
         const { crypto, storage } = webnative.value.components
         const username = ev.target['username'].value
         const did = await createDID(crypto)
-        const newFullUsername = `${username}#${did}`
-        const preppedUsername = await prepareUsername(newFullUsername)
-        const isVal = await isUsernameValid(preppedUsername, webnative.value)
+        const newUserData = {
+            humanName: username,
+            did
+        }
+        const preppedDid = await prepareDid(did)
+        const isVal = await isUsernameValid(preppedDid, webnative.value)
         if (!isVal) {
             // @TODO -- show the user invalidness
             console.log('**invalid**')
             return
         }
-        await storage.setItem(USERNAME_STORAGE_KEY, newFullUsername)
+        await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(newUserData))
         setEditingUsername(false)
-        fullUsername.value = newFullUsername
+        userData.value = newUserData
     }
 
     function setPendingDesc (ev) {

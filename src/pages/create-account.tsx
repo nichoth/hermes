@@ -7,21 +7,21 @@ import * as wn from 'webnative'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
-    USERNAME_STORAGE_KEY, prepareUsername } from '../username.js'
+    USERDATA_STORAGE_KEY, prepareDid } from '../username.js'
 import './centered.css'
 
 interface Props {
     webnative: Signal<wn.Program>,
     session: Signal<wn.Session>,
     setRoute: Function,
-    fullUsername: Signal<string>
+    userDid: Signal<string>
 }
 
 const CreateAccount:FunctionComponent<Props> = function ({
     webnative,
     session,
     setRoute,
-    fullUsername
+    userDid
 }) {
     const [usernameAvailable, setAvailable] = useState<boolean>(true)
     const [isValid, setValid] = useState<boolean>(false)
@@ -37,30 +37,33 @@ const CreateAccount:FunctionComponent<Props> = function ({
         const username = target.elements['username'].value
         const { crypto, storage } = webnative.value.components
         const did = await createDID(crypto)
-        const _fullUsername = `${username}#${did}`
-        const preppedUsername = await prepareUsername(_fullUsername)
+        const preppedDid = await prepareDid(did) // the hashed DID
 
-        console.log('full username', _fullUsername)
-        console.log('prepped name', preppedUsername)
+        console.log('prepped did', preppedDid)
 
-        const isVal = await isUsernameValid(preppedUsername, webnative.value)
+        const isVal = await isUsernameValid(preppedDid, webnative.value)
         console.log('is valid', isVal)
         if (!isVal) return
 
         // probably don't need to check isAvailable, because the
         // username for fission *is always* unique
         const isAvailable = await isUsernameAvailable(
-            preppedUsername,
+            preppedDid,
             webnative.value
         )
         console.log('is available', isAvailable)
         if (!isAvailable) return
 
-        console.log('new username', preppedUsername)
+        console.log('new user did', preppedDid)
 
-        await storage.setItem(USERNAME_STORAGE_KEY, _fullUsername)
+        await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify({
+            humanName: username,
+            did,
+            hashedName: preppedDid
+        }))
+
         const { success } = await webnative.value.auth.register({
-            username: preppedUsername
+            username: preppedDid
         })
 
         if (success) {
@@ -72,8 +75,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
             })
             console.log('*program*', program)
             webnative.value = program
-            fullUsername.value = _fullUsername
-            
+            userDid.value = did
 
             const _session = program.session
             console.log('__session__', _session)
@@ -81,7 +83,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
             return setRoute('/')
         }
 
-        console.log('not sucess...')
+        console.log('not success...')
     }
 
     function nevermind (ev) {
@@ -96,29 +98,18 @@ const CreateAccount:FunctionComponent<Props> = function ({
         if (!form || !value) return
         const { crypto } = webnative.value.components
         const did = await createDID(crypto)
-        const fullUsername = `${value}#${did}`
-        const encodedUsernameLocal = await prepareUsername(fullUsername);
+        const encodedDid = await prepareDid(did)
 
         // check is valid
         const _isValid = (
             form.checkValidity() &&
-            await isUsernameValid(encodedUsernameLocal, webnative.value)
+            await isUsernameValid(encodedDid, webnative.value)
         )
         if (_isValid !== isValid) setValid(_isValid)
         if (!_isValid) return
 
-        // check is available
-        // @TODO -- need to check the hashed name + DID
-
-        // see format in the template repo
-        // isUsernameAvailable(encodedUsernameLocal, webnative.value).then(avail => {
-        //     console.log('is avail', avail)
-        //     console.log('is avail in state', usernameAvailable)
-        //     if (avail !== usernameAvailable) setAvailable(avail)
-        // })
-
         const isAvailable = await isUsernameAvailable(
-            encodedUsernameLocal,
+            encodedDid,
             webnative.value
         )
         console.log('is avail', isAvailable)

@@ -4,10 +4,13 @@ import { sha256 } from "webnative/components/crypto/implementation/browser"
 import type { Crypto } from "webnative";
 import { publicKeyToDid } from "webnative/did/transformers";
 
-export const prepareUsername = async (username: string): Promise<string> => {
-    const normalizedUsername = username.normalize('NFD')
+// this returns a hash of the user's DID
+// a 'true' username, that cannot be edited
+// export const prepareUsername = async (did:string): Promise<string> => {
+export const prepareDid = async (did:string): Promise<string> => {
+    const normalizedDid = did.normalize('NFD')
     const hashedUsername = await sha256(
-        new TextEncoder().encode(normalizedUsername)
+        new TextEncoder().encode(normalizedDid)
     )
 
     return uint8arrays.toString(hashedUsername, 'base32').slice(0, 32)
@@ -27,7 +30,7 @@ export const isUsernameValid = (
     return webnative.auth.isUsernameValid(username)
 }
 
-export const USERNAME_STORAGE_KEY = 'fullUsername'
+export const USERDATA_STORAGE_KEY = 'userData'
 
 export const createDID = async (
     crypto: Crypto.Implementation
@@ -64,6 +67,6 @@ export const createAccountLinkingProducer = async (
     return webnative.auth.accountProducer(username)
 }
 
-export const getHumanName = (fullUsername:string) => {
-    return fullUsername.split('#')[0]
-}
+// export const getHumanName = (fullUsername:string) => {
+//     return fullUsername.split('#')[0]
+// }
