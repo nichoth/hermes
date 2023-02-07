@@ -40,6 +40,11 @@ export const createDID = async (
     return publicKeyToDid(crypto, pubKey, ksAlg)
 }
 
+export interface UserData {
+    humanName: string
+    did: string
+}
+
 // export const createAccountLinkingConsumer = async (
 //     username: string,
 //     program: wn.Program

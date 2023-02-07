@@ -7,21 +7,21 @@ import * as wn from 'webnative'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
-    USERDATA_STORAGE_KEY, prepareDid } from '../username.js'
+    USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
 import './centered.css'
 
 interface Props {
     webnative: Signal<wn.Program>,
     session: Signal<wn.Session>,
     setRoute: Function,
-    userDid: Signal<string>
+    userData: Signal<UserData>
 }
 
 const CreateAccount:FunctionComponent<Props> = function ({
     webnative,
     session,
     setRoute,
-    userDid
+    userData
 }) {
     const [usernameAvailable, setAvailable] = useState<boolean>(true)
     const [isValid, setValid] = useState<boolean>(false)
@@ -75,7 +75,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
             })
             console.log('*program*', program)
             webnative.value = program
-            userDid.value = did
+            userData.value = Object.assign({}, userData.value, { did })
 
             const _session = program.session
             console.log('__session__', _session)
