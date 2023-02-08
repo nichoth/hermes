@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  environment = {NODE_VERSION = '14'}
+  environment = {NODE_VERSION = '16'}
   functions = "netlify/functions"
   publish = "dist"
 
@@ -21,6 +21,7 @@
   autoLaunch = false
   publish = "dist" # Folder with the static content
   targetPort = 4173
+  port = 8888
   envFiles = [".env"] # The env files to use, ordered by priority (left - highest, right - lowest)
 
 [template.environment]
