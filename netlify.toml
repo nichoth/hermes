@@ -21,6 +21,7 @@
   autoLaunch = false
   publish = "dist" # Folder with the static content
   targetPort = 4173
+  envFiles = [".env"] # The env files to use, ordered by priority (left - highest, right - lowest)
 
 [template.environment]
   FAUNADB_SERVER_SECRET = "faunaDB secret"

@@ -6,9 +6,7 @@
   "version": "0.0.0",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "mkdir -p ./dist && rm -rf ./dist/* && vite",
-    "start-new": "mkdir -p ./dist && rm -rf ./dist/* && vite && concurrently --kill-others \"npx vite\" \"npx ntl functions:serve -p 8777\"",
-    "start-again": "mkdir -p ./dist && rm -rf ./dist/* && ntl dev",
+    "start": "mkdir -p ./dist && rm -rf ./dist/* && vite build && ntl dev",
     "lint": "standardx -v",
     "build": "vite build",
     "serve": "vite preview",
