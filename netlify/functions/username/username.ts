@@ -1,8 +1,9 @@
 import dotenv from 'dotenv'
 dotenv.config()
 import faunadb from 'faunadb'
-import { didToPublicKey, verify } from '../util.js'
 import stringify from 'json-stable-stringify'
+import * as ucans from "ucans"
+import { didToPublicKey, verify } from '../util.js'
 
 const q = faunadb.query
 const client = new faunadb.Client({
@@ -50,6 +51,18 @@ export const handler = async function (ev, ctx) {
     // need to check the UCAN -- `author` in the message is authorized by
     // the `rootDID`
     //
+    const result = await ucans.verify(ucan, {
+        audience: author,
+        requiredCapabilities: [
+            {
+              capability: {
+                with: { scheme: "mailto", hierPart: "boris@fission.codes" },
+                can: { namespace: "msg", segments: [ "SEND" ] }
+              },
+              rootIssuer: rootDID
+            }
+        ]
+    })
 
 
     //
