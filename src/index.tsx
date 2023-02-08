@@ -37,7 +37,6 @@ interface UserData {
 
 const route = Route()
 
-// const App: FunctionComponent<Props> = function App ({ permissions }) {
 const App: FunctionComponent<Props> = function App () {
     const routeState = useSignal<string>(location.pathname + location.search)
     const appAvatar = useSignal<string|undefined>(undefined)

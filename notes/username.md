@@ -109,5 +109,69 @@ https://guide.fission.codes/developers/webnative/authentication-strategies#devic
 
 ------------------------
 
+See [signing a message in ssc](https://github.com/nichoth/ssc/blob/main/index.js#L268)
 
-j33f3z2uimddg3dsokr2dvdfrr453z2n
+```js
+async function signObj (keys, hmac_key, obj) {
+    if (!obj) {
+        obj = hmac_key
+        hmac_key = null
+    }
+    var _obj = clone(obj)
+    const msgStr = stringify(_obj)
+    _obj.signature = await sign(keys, msgStr)
+    return _obj
+}
+```
+
+`obj` here is the entire `value` field in an ssb message.
+
+```js
+{
+  previous: null,
+  sequence: 1,
+  author: 'did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH',
+  // author: '@IGrkmx/GjfzaOLNjTpdmmPWuTj5xeSv/2pCP+yUI8eo=.ed25519',
+  timestamp: 1608054728047,
+  hash: 'sha256',
+  content: {
+    type: 'post',
+    text: 'woooo',
+    mentions: ['&my-hash.sha256']
+  },
+  signature: 'LJUQXvR6SZ9lQSlF1w1RFQi3GFIU4B/Cc1sP6kjxnMZn3YW8X7nj9/hlWiTF3cJbWkc9xHvApJ+9uRtHxicXAQ==.sig.ed25519'
+}
+```
+
+
+
+----------------
+
+
+See [verifying ucan invocations](https://github.com/ucan-wg/ts-ucan#verifying-ucan-invocations)
+
+```js
+// verify an invocation of a UCAN on another machine (in this example a service)
+const result = await ucans.verify(encoded, {
+  // to make sure we're the intended recipient of this UCAN
+  audience: serviceDID,
+  // A callback for figuring out whether a UCAN is known to be revoked
+  isRevoked: async ucan => false // as a stub. Should look up the UCAN CID in a DB.
+  // capabilities required for this invocation & which owner we expect for each capability
+  requiredCapabilities: [
+    {
+      capability: {
+        with: { scheme: "mailto", hierPart: "boris@fission.codes" },
+        can: { namespace: "msg", segments: [ "SEND" ] }
+      },
+      rootIssuer: borisDID, // check against a known owner of the boris@fission.codes email address
+    }
+  ],
+)
+
+if (result.ok) {
+  // The UCAN authorized the user
+} else {
+  // Unauthorized
+}
+```

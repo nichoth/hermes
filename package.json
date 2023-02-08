@@ -24,10 +24,12 @@
     "drag-drop": "^7.2.0",
     "faunadb": "^4.7.1",
     "generate-avatar": "^1.4.10",
-    "json-stable-stringify": "^1.0.1",
+    "json-stable-stringify": "^1.0.2",
     "monotonic-timestamp": "^0.0.9",
+    "one-webcrypto": "^1.0.3",
     "preact": "^10.11.2",
     "route-event": "^4.1.1",
+    "ucans": "^0.10.0",
     "webnative": "^0.35.2"
   },
   "devDependencies": {
