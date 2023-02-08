@@ -21,7 +21,7 @@ export const handler = async function (ev, ctx) {
     if (ev.httpMethod !== 'POST') {
         return {
             statusCode: 405,
-            body: 'invalid http method'
+            body: JSON.stringify('invalid http method')
         }
     }
 
@@ -38,7 +38,10 @@ export const handler = async function (ev, ctx) {
     }
 
     if (!author || !username) {
-        return { statusCode: 400, body: JSON.stringify('invalid request params') }
+        return {
+            statusCode: 400,
+            body: JSON.stringify('invalid request params')
+        }
     }
 
     const doc = await client.query(
@@ -49,7 +52,10 @@ export const handler = async function (ev, ctx) {
             )),
 
             // is empty, so create the username
-            'empty',
+            q.Create(
+                q.Collection('username'),
+                { data: { author, username } }
+            ),
 
             // is not empty, so update the username
             q.Create(

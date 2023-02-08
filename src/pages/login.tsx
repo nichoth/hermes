@@ -78,6 +78,7 @@ const LoginRoute:FunctionComponent<Props> = function (props) {
             consumer.cancel()
             // @TODO
             // need to fetch userData from server
+            // need to save the session.username locally
             setRoute('/')
         })
     }
