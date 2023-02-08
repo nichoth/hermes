@@ -1,5 +1,6 @@
 [build]
   command = "npm run build"
+  environment = {NODE_VERSION = '16'}
   functions = "netlify/functions"
   publish = "dist"
 
@@ -15,3 +16,13 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[dev]
+  autoLaunch = false
+  publish = "dist" # Folder with the static content
+  targetPort = 4173
+  port = 8888
+  envFiles = [".env"] # The env files to use, ordered by priority (left - highest, right - lowest)
+
+[template.environment]
+  FAUNADB_SERVER_SECRET = "faunaDB secret"

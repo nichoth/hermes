@@ -1,10 +1,8 @@
-// @ts-check
-import { h, render } from 'preact'
-import * as wn from "webnative"
+import { render, FunctionComponent } from 'preact'
+import * as wn from 'webnative'
 import { useEffect } from 'preact/hooks'
-import { useSignal } from "@preact/signals"
-import { Permissions } from "webnative/permissions.js"
-import { FunctionComponent } from 'preact'
+import { useSignal } from '@preact/signals'
+import { Permissions } from 'webnative/permissions.js'
 import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
@@ -20,7 +18,9 @@ import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
 import './z-index.css'
 
-const APP_INFO = { name: "hermes", creator: "snail-situation", }
+const APP_INFO = { name: 'hermes', creator: 'snail-situation' }
+
+const { location, Blob } = window
 
 const router = Router()
 
@@ -85,7 +85,7 @@ const App: FunctionComponent<Props> = function App () {
     //
     useEffect(() => {
         wn.program({
-            namespace: { creator: "snail-situation", name: "hermes" },
+            namespace: { creator: 'snail-situation', name: 'hermes' },
             debug: true
             // permissions
         })
@@ -105,7 +105,6 @@ const App: FunctionComponent<Props> = function App () {
                         // we dont have the userData locally, need to fetch
                         // this happens if you are on a new device
                         //
-                        
                     }
                 } catch (err) {
                     console.log('errrrrrrrr, parsing json', err)
