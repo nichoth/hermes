@@ -32,6 +32,14 @@ export default defineConfig({
     server: {
         port: 8888,
         host: true,
+        open: true,
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8888/.netlify/functions',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/api/, ''),
+            },
+        },
         // this is b/c we were getting an odd error about module resolution
         // in dev, but it doesn't seem to affect the app at all
         // hmr: {

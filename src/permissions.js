@@ -1,9 +1,9 @@
-import { path } from "webnative"
+import { path } from 'webnative'
 
 export const PERMISSIONS = {
     app: {
-        name: "hermes",
-        creator: "snail-situation",
+        name: 'hermes',
+        creator: 'snail-situation'
     },
     fs: {
         public: [path.directory('Apps', 'snail-situation', 'hermes')],

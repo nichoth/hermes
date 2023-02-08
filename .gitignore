@@ -2,3 +2,7 @@ node_modules
 bundle.js
 .DS_Store
 dist/
+.env
+
+# Local Netlify folder
+.netlify

@@ -7,6 +7,9 @@
   "main": "src/index.tsx",
   "scripts": {
     "start": "mkdir -p ./dist && rm -rf ./dist/* && vite",
+    "start-new": "mkdir -p ./dist && rm -rf ./dist/* && vite && concurrently --kill-others \"npx vite\" \"npx ntl functions:serve -p 8777\"",
+    "start-again": "mkdir -p ./dist && rm -rf ./dist/* && ntl dev",
+    "lint": "standardx -v",
     "build": "vite build",
     "serve": "vite preview",
     "preversion": "npm test",
@@ -20,6 +23,7 @@
     "@preact/signals": "^1.1.2",
     "clipboard-copy": "^4.0.1",
     "drag-drop": "^7.2.0",
+    "faunadb": "^4.7.1",
     "generate-avatar": "^1.4.10",
     "json-stable-stringify": "^1.0.1",
     "monotonic-timestamp": "^0.0.9",
@@ -28,11 +32,15 @@
     "webnative": "^0.35.2"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@preact/preset-vite": "^2.4.0",
     "@types/react": "^18.0.20",
+    "@typescript-eslint/parser": "^5.51.0",
     "concurrently": "^7.4.0",
     "cypress": "^10.8.0",
+    "dotenv": "^16.0.3",
+    "netlify-cli": "^12.10.0",
     "postcss-nesting": "^10.2.0",
     "tap-arc": "^0.3.5",
     "tape": "^5.6.0",
@@ -49,5 +57,13 @@
   "bugs": {
     "url": "https://github.com/nichoth/hermes/issues"
   },
-  "homepage": "https://github.com/nichoth/hermes#readme"
+  "homepage": "https://github.com/nichoth/hermes#readme",
+  "standardx": {
+    "ignore": [
+      "dist/*",
+      "netlify/functions/**/*",
+      "vite.config.js",
+      "cypress.config.js"
+    ]
+  }
 }
