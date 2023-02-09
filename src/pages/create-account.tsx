@@ -75,7 +75,10 @@ const CreateAccount:FunctionComponent<Props> = function ({
             })
             console.log('*program*', program)
             webnative.value = program
-            userData.value = Object.assign({}, userData.value, { did })
+            userData.value = Object.assign({}, userData.value, {
+                did,
+                humanName: username
+            })
 
             // @TODO -- set userData on server
 

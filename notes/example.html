@@ -1,0 +1,68 @@
+<!-- see https://glitch.com/~webnative-public-data-viewer -->
+
+<script>
+    import * as wn from "webnative"
+    import { getSimpleLinks } from "webnative/fs/protocol/basic"
+    import { PublicFile } from "webnative/fs/v1/PublicFile"
+    import { PublicTree } from "webnative/fs/v1/PublicTree"
+    
+    const USERNAME_TO_LOOKUP = "icidasset"
+    
+    async function init() {
+      const program = await wn.program({
+        namespace: "public-data-viewer"
+      })
+  
+      const { depot, reference } = program.components
+      
+      const cid = await reference.dataRoot.lookup(USERNAME_TO_LOOKUP)
+      
+      const publicCid = (await getSimpleLinks(depot, cid)).public.cid
+      const publicTree = await PublicTree.fromCID(depot, reference, publicCid)
+      
+      const unsplashDir = await publicTree.get(
+        wn.path.unwrap(wn.path.directory("Unsplash")) // [ "Unsplash" ]
+      )
+      
+      const links = Object.values(
+        await unsplashDir.ls([])
+      )
+      
+      // Render pictures
+      const pictures = await Promise.all(
+        links.map(async picture => {
+          const file = await unsplashDir.get([ picture.name ])
+          
+          // Alternatively, load the public file directly
+          // const file = await PublicFile.fromCID(depot, picture.cid)
+          
+          // Picture `src`
+          const url = URL.createObjectURL(new Blob([ file.content ]))
+          
+          // Alternatively, use the IPFS gateway
+          // const url = `https://ipfs.runfission.com/ipfs/${picture.cid.toString()}/userland`
+          
+          return `<img src="${url}" width="400" style="max-width: 90vw" /><br />`    
+        })
+      )
+  
+      return `
+        <div>
+          ${pictures.join("")}
+        </div>
+      `
+    }
+    
+    let promise = init()
+  
+  </script>
+  
+  <div>
+    {#await promise}
+      <p>Waiting ...</p>
+    {:then contents}
+      <p>{@html contents}</p>
+    {:catch error}
+      <p style="color: red">{error.message}</p>
+    {/await}
+  </div>

@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 import faunadb from 'faunadb'
 import stringify from 'json-stable-stringify'
-import * as ucans from "ucans"
+import * as ucans from 'ucans'
 import { didToPublicKey, verify } from '../util.js'
 
 const q = faunadb.query
@@ -56,8 +56,8 @@ export const handler = async function (ev, ctx) {
         requiredCapabilities: [
             {
                 capability: {
-                    with: { scheme: "mailto", hierPart: "boris@fission.codes" },
-                    can: { namespace: "msg", segments: [ "SEND" ] }
+                    with: { scheme: 'my', hierPart: '*' },
+                    can: '*'
                 },
                 rootIssuer: rootDID
             }

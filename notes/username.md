@@ -219,3 +219,8 @@ the ucan for the new device looks like this
     "signature": "RRI16p2QYraUl8nl6mH6u_ebwKRb9ZVhAkF4bTYwbq8fSnHotMzL67OJE75qq7GkG4SyX6I6Rek_ajbHMvVCLr7l-KX-bGneaACd4dsMceexDhnxjJnJ2QUclkz4ObIrwAiLbEWKyxG2N2_XB8d1FdBHGsTC6CfuqY7miEYEx-UYCCYY_lUSeUnu4j6M4fTaFGX0dojQN50SM_Ro7Sn0OtLBFu5lgIUivMUd60_fWqXF0Bkd-Dgca0zabHBtYOtmhhYExOhNpEIU0tmo330rkJ2dIWM9lMCNaJzxgfp2uKNug2H7m4eO1v2a8142qycUsb5T1f6Yygi4n9JEDF1nxA"
 }
 ```
+
+
+
+----------------
+

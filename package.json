@@ -6,7 +6,7 @@
   "version": "0.0.0",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "npm run build && ntl dev",
+    "start": "npm run build && BROWSER=none ntl dev",
     "starting": "ntl dev",
     "lint": "standardx -v",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && vite build",

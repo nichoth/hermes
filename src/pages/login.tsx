@@ -32,8 +32,6 @@ const LoginRoute:FunctionComponent<Props> = function (props) {
     const [displayPin, setDisplayPin] = useState<string>('')
     const resolvingPin = useSignal<boolean>(false)
 
-    console.log('query', query)
-
     // see https://webnative.fission.app/index.html#creating-a-program
     // **this is us**
     // On device without session:
