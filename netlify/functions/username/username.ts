@@ -55,11 +55,11 @@ export const handler = async function (ev, ctx) {
         audience: author,
         requiredCapabilities: [
             {
-              capability: {
-                with: { scheme: "mailto", hierPart: "boris@fission.codes" },
-                can: { namespace: "msg", segments: [ "SEND" ] }
-              },
-              rootIssuer: rootDID
+                capability: {
+                    with: { scheme: "mailto", hierPart: "boris@fission.codes" },
+                    can: { namespace: "msg", segments: [ "SEND" ] }
+                },
+                rootIssuer: rootDID
             }
         ]
     })
