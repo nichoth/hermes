@@ -10,13 +10,15 @@ import Route from 'route-event'
 import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-import CONSTANTS from './CONSTANTS.jsx'
+import CONSTANTS from './CONSTANTS.js'
 import PERMISSIONS from './permissions.js'
 import './index.css'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
 import './z-index.css'
+
+// http://localhost:9999/.netlify/functions/username
 
 const APP_INFO = { name: 'hermes', creator: 'snail-situation' }
 
