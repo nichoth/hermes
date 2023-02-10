@@ -5,7 +5,7 @@ import { Signal, useSignal } from "@preact/signals"
 // import { getHumanName } from "../username.js"
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
-import CONSTANTS from "../CONSTANTS.jsx"
+import CONSTANTS from "../CONSTANTS.js"
 import PERMISSIONS from '../permissions.js'
 import TextInput from '../components/text-input.jsx'
 import { createDID, prepareDid, isUsernameValid,

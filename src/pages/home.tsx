@@ -2,7 +2,7 @@ import { FunctionComponent, h } from 'preact'
 import { Signal } from '@preact/signals'
 import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
-import CONSTANTS from '../CONSTANTS.jsx'
+import CONSTANTS from '../CONSTANTS.js'
 import { PERMISSIONS } from '../permissions.js'
 import './home.css'
 

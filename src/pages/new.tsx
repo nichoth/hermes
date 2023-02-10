@@ -8,7 +8,7 @@ import timestamp from 'monotonic-timestamp'
 import Button from '../components/button.jsx'
 import TextInput from '../components/text-input.jsx'
 import { PERMISSIONS } from '../permissions.js'
-import CONSTANTS from '../CONSTANTS.jsx'
+import CONSTANTS from '../CONSTANTS.js'
 import './new.css'
 
 interface Props {

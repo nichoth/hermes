@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks'
 import PERMISSIONS from '../permissions.js'
-import CONSTANTS from '../CONSTANTS.jsx'
+import CONSTANTS from '../CONSTANTS.js'
 import * as wn from "webnative"
 import './post.css'
 
