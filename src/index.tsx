@@ -37,6 +37,8 @@ interface UserData {
 
 const route = Route()
 
+console.log('...testing...')
+
 const App: FunctionComponent<Props> = function App () {
     const routeState = useSignal<string>(location.pathname + location.search)
     const appAvatar = useSignal<string|undefined>(undefined)
@@ -99,7 +101,6 @@ const App: FunctionComponent<Props> = function App () {
 
                     userData.value = JSON.parse(data) as UserData
                     if (!userData.value) {
-                        console.log('not aaaaaaaaa')
                         // @TODO
                         // we dont have the userData locally, need to fetch
                         // this happens if you are on a new device

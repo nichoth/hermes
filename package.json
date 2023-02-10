@@ -8,7 +8,6 @@
   "scripts": {
     "start": "npm run build && BROWSER=none ntl dev",
     "starting": "ntl dev",
-    "lint": "standardx -v",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && vite build",
     "serve": "vite preview",
     "preversion": "npm test",

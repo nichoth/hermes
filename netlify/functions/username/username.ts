@@ -11,8 +11,8 @@ const client = new faunadb.Client({
 })
 
 // a request is like
-// { signature, ucan, value: {
-//    username, author, rootDID, hashedUsername, timestamp } }
+// { ucan, value: { signature, username, author, rootDID, hashedUsername,
+//   timestamp } }
 // `author` is the DID from the device that is writing the message
 // `username` is the new human-readable username
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account

@@ -68,15 +68,17 @@ const LoginRoute:FunctionComponent<Props> = function (props) {
             setDisplayPin(pin.join(''))
         })
 
-        consumer.on('link', async ({ username, approved }) => {
+        consumer.on('link', async (obj) => {
+            const { username, approved } = obj
             if (!approved) return console.log('fail!!!')
-            console.log('approve account link...', username, approved)
+            console.log('approve account link...', obj)
             const _session = await webnative.value.auth.session()
             if (_session) session.value = _session
             consumer.cancel()
             // @TODO
             // need to fetch userData from server
-            // need to save the session.username locally
+            // need to fetch the userData by given username
+            // should save userData locally
             setRoute('/')
         })
     }
