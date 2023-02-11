@@ -1,7 +1,9 @@
 // @ts-check
 import * as uint8arrays from 'uint8arrays'
 import { webcrypto } from 'one-webcrypto'
-import * as utils from 'keystore-idb/lib/utils.js'
+import * as utils from 'keystore-idb/utils.js'
+// import KeyStore from 'keystore-idb/keystore/index.js'
+import { KeyStore } from 'keystore-idb/types.js'
 
 const KEY_TYPE = {
     RSA: "rsa",
@@ -90,6 +92,10 @@ function hasPrefix (prefixedKey, prefix) {
     return arrBufs.equal(prefix, prefixedKey.slice(0, prefix.byteLength))
 }
 
-function arrBufToBase64 (buf) {
+function arrBufToBase64 (buf:Buffer) {
     return uint8arrays.toString(new Uint8Array(buf), "base64pad")
+}
+
+export function sign (keystore:KeyStore, msg:string) {
+    return keystore.sign(msg)
 }

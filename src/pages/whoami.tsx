@@ -10,7 +10,6 @@ import PERMISSIONS from '../permissions.js'
 import TextInput from '../components/text-input.jsx'
 import { createDID, prepareDid, isUsernameValid,
     USERDATA_STORAGE_KEY } from '../username.js'
-
 import './whoami.css'
 
 interface UserData {

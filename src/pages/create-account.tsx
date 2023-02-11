@@ -4,11 +4,14 @@ import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from 'webnative'
+import stringify from 'json-stable-stringify'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
     USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
 import './centered.css'
+import { URL_PREFIX } from '../CONSTANTS.js'
+import { sign } from '../util.js'
 
 interface Props {
     webnative: Signal<wn.Program>,
@@ -36,6 +39,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
         const target = ev.target as HTMLFormElement
         const username = target.elements['username'].value
         const { crypto, storage } = webnative.value.components
+        const { keystore } = crypto
         const did = await createDID(crypto)
         const preppedDid = await prepareDid(did) // the hashed DID
 
@@ -51,16 +55,20 @@ const CreateAccount:FunctionComponent<Props> = function ({
             preppedDid,
             webnative.value
         )
-        console.log('is available', isAvailable)
-        if (!isAvailable) return
+        if (!isAvailable) return console.log('not available', preppedDid)
 
-        console.log('new user did, the hashed name', preppedDid)
+        const newUserData = { humanName: username, did, hashedName: preppedDid }
 
-        await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify({
-            humanName: username,
-            did,
-            hashedName: preppedDid
-        }))
+        await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(newUserData))
+
+        const sig = sign(keystore, stringify(newUserData))
+
+        // @TODO -- save to DB
+        await fetch(URL_PREFIX + '/username', {
+            method: 'POST',
+            // @TODO -- need to sign a message
+            body: JSON.stringify(newUserData)
+        })
 
         const { success } = await webnative.value.auth.register({
             username: preppedDid
@@ -79,8 +87,6 @@ const CreateAccount:FunctionComponent<Props> = function ({
                 did,
                 humanName: username
             })
-
-            // @TODO -- set userData on server
 
             const _session = program.session
             console.log('__session__', _session)

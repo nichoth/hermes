@@ -3,7 +3,7 @@ dotenv.config()
 import faunadb from 'faunadb'
 import stringify from 'json-stable-stringify'
 import * as ucans from 'ucans'
-import { didToPublicKey, verify } from '../util.js'
+import { didToPublicKey, verify } from '../../../src/util.js'
 
 const q = faunadb.query
 const client = new faunadb.Client({
