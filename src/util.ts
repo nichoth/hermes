@@ -2,8 +2,8 @@
 import * as uint8arrays from 'uint8arrays'
 import { webcrypto } from 'one-webcrypto'
 import * as utils from 'keystore-idb/utils.js'
-// import KeyStore from 'keystore-idb/keystore/index.js'
-import { KeyStore } from 'keystore-idb/types.js'
+import { Implementation } from 'webnative/components/crypto/implementation'
+type KeyStore = Implementation['keystore']
 
 const KEY_TYPE = {
     RSA: "rsa",
@@ -97,5 +97,5 @@ function arrBufToBase64 (buf:Buffer) {
 }
 
 export function sign (keystore:KeyStore, msg:string) {
-    return keystore.sign(msg)
+    return keystore.sign(uint8arrays.fromString(msg))
 }

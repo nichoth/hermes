@@ -43,6 +43,8 @@ export const createDID = async (
 export interface UserData {
     humanName: string
     did: string
+    hashedName: string
+    timestamp: number
 }
 
 // export const createAccountLinkingConsumer = async (

@@ -5,6 +5,7 @@ import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from 'webnative'
 import stringify from 'json-stable-stringify'
+import timestamp from 'monotonic-timestamp'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
@@ -57,17 +58,27 @@ const CreateAccount:FunctionComponent<Props> = function ({
         )
         if (!isAvailable) return console.log('not available', preppedDid)
 
-        const newUserData = { humanName: username, did, hashedName: preppedDid }
+        const newUserData:UserData = {
+            humanName: username,
+            did,
+            hashedName: preppedDid,
+            timestamp: timestamp()
+        }
 
         await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(newUserData))
 
+        // * need to add a UCAN to the message
+        // on the server,
+        // * check that signature is valid for `value`
+        // * validate the given UCAN -- 
+
         const sig = sign(keystore, stringify(newUserData))
+        const msg = { signature: sig, value: newUserData }
 
         // @TODO -- save to DB
         await fetch(URL_PREFIX + '/username', {
             method: 'POST',
-            // @TODO -- need to sign a message
-            body: JSON.stringify(newUserData)
+            body: JSON.stringify(msg)
         })
 
         const { success } = await webnative.value.auth.register({
