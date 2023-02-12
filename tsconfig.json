@@ -4,7 +4,7 @@
     "lib": ["es2020", "DOM", "DOM.Iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": false,
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["node", "vite/client"],
@@ -19,5 +19,5 @@
     "jsxFragmentFactory": "Fragment",
     "noImplicitAny": false
   },
-  "include": ["src"]
+  "include": ["src", "test"]
 }

@@ -17,7 +17,7 @@ const client = new faunadb.Client({
 // `username` is the new human-readable username
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
 
-export const handler = async function (ev, ctx) {
+export const handler = async function hanlder (ev) {
     if (ev.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -31,7 +31,7 @@ export const handler = async function (ev, ctx) {
         const body = JSON.parse(ev.body);
         ({ value, ucan, signature } = body);
         ({ author, rootDID, username, hashedUsername, timestamp } = value);
-    } catch (err) {
+    } catch (err:any) {
         return {
             statusCode: 422,
             body: 'invalid JSON'
@@ -72,7 +72,7 @@ export const handler = async function (ev, ctx) {
     try {
         const pubKey = didToPublicKey(author).publicKey
         isOk = await verify(pubKey, signature, stringify(value))
-    } catch (err) {
+    } catch (err:any) {
         return {
             statusCode: 400,
             body: JSON.stringify(err.message)

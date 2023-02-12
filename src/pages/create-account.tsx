@@ -72,7 +72,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
         // * check that signature is valid for `value`
         // * validate the given UCAN -- 
 
-        const sig = sign(keystore, stringify(newUserData))
+        const sig = await sign(keystore, stringify(newUserData))
         const msg = { signature: sig, value: newUserData }
 
         // @TODO -- save to DB
