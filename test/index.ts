@@ -1,5 +1,5 @@
 // server side tests -- running in a node environment
-import test from 'tape'
+import * as test from 'tape'
 import { handler } from '../netlify/functions/username/username.js'
 
 test('set username', t => {

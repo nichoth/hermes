@@ -37,14 +37,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.handler = void 0;
-var dotenv_1 = require("dotenv");
-dotenv_1["default"].config();
-var faunadb_1 = require("faunadb");
+var dotenv = require("dotenv");
+dotenv.config();
+var faunadb = require("faunadb");
 var json_stable_stringify_1 = require("json-stable-stringify");
 var ucans = require("ucans");
 var util_js_1 = require("../../../src/util.js");
-var q = faunadb_1["default"].query;
-var client = new faunadb_1["default"].Client({
+var q = faunadb.query;
+var client = new faunadb.Client({
     secret: process.env.FAUNADB_SERVER_SECRET || ''
 });
 // a request is like
