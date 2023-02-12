@@ -11,7 +11,8 @@
     "serve": "vite preview",
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "test": "tape test/index.js | tap-arc",
+    "build-tests": "npx tsc test/index.ts --target esnext --moduleResolution nodenext",
+    "test": "npm run build-tests && tape test/index.js | tap-arc",
     "cypress-test": "concurrently --kill-others \"npx ntl dev\" \"npx cypress open\""
   },
   "dependencies": {
@@ -43,7 +44,7 @@
     "postcss-nesting": "^10.2.0",
     "tap-arc": "^0.3.5",
     "tape": "^5.6.3",
-    "typescript": "^4.8.3",
+    "typescript": "^4.9.5",
     "uint8arrays": "^4.0.3",
     "vite": "^3.1.0"
   },

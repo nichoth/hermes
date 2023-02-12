@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
-import * as faunadb from 'faunadb'
+// import * as faunadb from 'faunadb'
+import { default as faunadb } from 'faunadb'
 import stringify from 'json-stable-stringify'
 import * as ucans from 'ucans'
 import { didToPublicKey, verify } from '../../../src/util.js'

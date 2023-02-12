@@ -3,7 +3,7 @@
     "module": "ES2022",
     "moduleResolution": "nodenext",
     "target": "ESNext",
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "lib": ["DOM", "DOM.Iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": false,
@@ -19,5 +19,6 @@
     "jsxFragmentFactory": "Fragment",
     "noImplicitAny": false
   },
-  "include": ["src", "test"]
+  "include": ["src", "test"],
+  "exclude": ["node_modules"]
 }

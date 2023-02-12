@@ -1,49 +1,44 @@
-"use strict";
-exports.__esModule = true;
-exports.sign = exports.didToPublicKey = exports.verify = void 0;
 // @ts-check
-var uint8arrays = require("uint8arrays");
-var one_webcrypto_1 = require("one-webcrypto");
-var utils = require("keystore-idb/utils.js");
-var KEY_TYPE = {
+import * as uint8arrays from 'uint8arrays';
+import { webcrypto } from 'one-webcrypto';
+import * as utils from 'keystore-idb/utils.js';
+const KEY_TYPE = {
     RSA: "rsa",
     Edwards: "ed25519",
     BLS: "bls12-381"
 };
-var ECC_WRITE_ALG = 'ECDSA';
-var DEFAULT_HASH_ALG = 'SHA-256';
-var DEFAULT_CHAR_SIZE = 16;
-var EDWARDS_DID_PREFIX = new Uint8Array([0xed, 0x01]);
-var BLS_DID_PREFIX = new Uint8Array([0xea, 0x01]);
-var RSA_DID_PREFIX = new Uint8Array([0x00, 0xf5, 0x02]);
-var BASE58_DID_PREFIX = 'did:key:z';
-var verify = function (publicKey, sig, msg) {
-    return one_webcrypto_1.webcrypto.subtle.verify({
+const ECC_WRITE_ALG = 'ECDSA';
+const DEFAULT_HASH_ALG = 'SHA-256';
+const DEFAULT_CHAR_SIZE = 16;
+const EDWARDS_DID_PREFIX = new Uint8Array([0xed, 0x01]);
+const BLS_DID_PREFIX = new Uint8Array([0xea, 0x01]);
+const RSA_DID_PREFIX = new Uint8Array([0x00, 0xf5, 0x02]);
+const BASE58_DID_PREFIX = 'did:key:z';
+export const verify = (publicKey, sig, msg) => {
+    return webcrypto.subtle.verify({
         name: ECC_WRITE_ALG,
         hash: { name: DEFAULT_HASH_ALG }
     }, publicKey, utils.normalizeBase64ToBuf(sig), utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE));
 };
-exports.verify = verify;
-function didToPublicKey(did) {
+export function didToPublicKey(did) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error("Please use a base58-encoded DID formatted `did:key:z...`");
     }
-    var didWithoutPrefix = ('' + did.substr(BASE58_DID_PREFIX.length));
-    var magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc");
-    var _a = parseMagicBytes(magicalBuf), keyBuffer = _a.keyBuffer, type = _a.type;
+    const didWithoutPrefix = ('' + did.substr(BASE58_DID_PREFIX.length));
+    const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc");
+    const { keyBuffer, type } = parseMagicBytes(magicalBuf);
     return {
         publicKey: arrBufToBase64(keyBuffer),
-        type: type
+        type
     };
 }
-exports.didToPublicKey = didToPublicKey;
-var arrBufs = {
-    equal: function (aBuf, bBuf) {
-        var a = new Uint8Array(aBuf);
-        var b = new Uint8Array(bBuf);
+const arrBufs = {
+    equal: (aBuf, bBuf) => {
+        const a = new Uint8Array(aBuf);
+        const b = new Uint8Array(bBuf);
         if (a.length !== b.length)
             return false;
-        for (var i = 0; i < a.length; i++) {
+        for (let i = 0; i < a.length; i++) {
             if (a[i] !== b[i])
                 return false;
         }
@@ -85,7 +80,6 @@ function hasPrefix(prefixedKey, prefix) {
 function arrBufToBase64(buf) {
     return uint8arrays.toString(new Uint8Array(buf), "base64pad");
 }
-function sign(keystore, msg) {
+export function sign(keystore, msg) {
     return keystore.sign(uint8arrays.fromString(msg));
 }
-exports.sign = sign;
