@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "module": "ES2022",
+    "module": "ESNext",
     "moduleResolution": "nodenext",
     "target": "ESNext",
-    "esModuleInterop": true,
-    "lib": ["DOM", "DOM.Iterable", "esnext"],
-    "allowJs": true,
+    "esModuleInterop": false,
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "esnext"],
+    "allowJs": false,
     "skipLibCheck": false,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["node", "vite/client"],
     "forceConsistentCasingInFileNames": true,
@@ -19,6 +19,5 @@
     "jsxFragmentFactory": "Fragment",
     "noImplicitAny": false
   },
-  "include": ["src", "test"],
-  "exclude": ["node_modules"]
+  "include": ["src"]
 }
