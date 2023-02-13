@@ -8,5 +8,4 @@ dist/
 .netlify
 # compiled JS code
 util.js
-netlify/functions/**/*.js
-test/*.js
+**/*.js
