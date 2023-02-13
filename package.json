@@ -12,13 +12,14 @@
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
     "build-tests": "npx tsc test/index.ts --target ESNext --moduleResolution node16",
-    "test": "tape test/index.js | tap-arc",
+    "test": "node test/index.js | tap-arc",
     "cypress-test": "concurrently --kill-others \"npx ntl dev\" \"npx cypress open\""
   },
   "dependencies": {
     "@nichoth/components": "^0.1.1",
     "@nichoth/routes": "^3.0.4",
     "@preact/signals": "^1.1.2",
+    "@ucans/ucans": "^0.11.2",
     "clipboard-copy": "^4.0.1",
     "drag-drop": "^7.2.0",
     "faunadb": "^4.7.1",
@@ -28,13 +29,13 @@
     "one-webcrypto": "^1.0.3",
     "preact": "^10.11.2",
     "route-event": "^4.1.1",
-    "ucans": "^0.10.0",
     "webnative": "^0.35.2"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@preact/preset-vite": "^2.4.0",
+    "@types/node": "^18.13.0",
     "@types/react": "^18.0.20",
     "@typescript-eslint/parser": "^5.51.0",
     "concurrently": "^7.4.0",
