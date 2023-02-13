@@ -8,3 +8,4 @@ dist/
 .netlify
 # compiled function code
 netlify/functions/**/*.js
+test/*.js

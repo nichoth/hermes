@@ -11,7 +11,7 @@
     "serve": "vite preview",
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "build-tests": "npx tsc test/index.ts --target ESNext --moduleResolution node16",
+    "build-tests": "npx tsc test/index.ts --target ESNext --moduleResolution node16 --module nodenext",
     "test": "node test/index.js | tap-arc",
     "cypress-test": "concurrently --kill-others \"npx ntl dev\" \"npx cypress open\""
   },
