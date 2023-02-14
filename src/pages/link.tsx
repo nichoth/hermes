@@ -4,10 +4,9 @@ import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from "webnative"
 import { CopyBtn } from '../components/copy-btn.jsx'
-import { Toast } from '../components/toast.jsx'
+import { Toast, Type } from '../components/toast.jsx'
 import Button from '../components/button.jsx'
 import './link.css'
-import '../components/toast.css'
 import '../components/close-btn.css'
 import './common.css'
 
@@ -65,7 +64,6 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                     producer.cancel()
                     console.log('Device linked successfully')
 
-                    // @TODO -- show success message
                     setShowLinked(true)
                 })
             })
@@ -137,7 +135,10 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         </form>
 
         {(showLinked ?
-            <Toast onClose={closeToast}>hurray</Toast> :
+            <Toast type={Type.success} onClose={closeToast}>
+                <div>Device linked successfully</div>
+                <a href="/">return home</a>
+            </Toast> :
             null
         )}
     </div>
