@@ -6,3 +6,6 @@ dist/
 
 # Local Netlify folder
 .netlify
+# compiled JS code
+util.js
+**/*.js

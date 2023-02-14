@@ -179,3 +179,9 @@ nav {
     justify-self: right;
     right: 0;
 }
+
+.hamburger {
+    & .line {
+        width: 25px;
+    }
+}

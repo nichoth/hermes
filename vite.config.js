@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import preact from "@preact/preset-vite"
+import preact from '@preact/preset-vite'
 import postcssNesting from 'postcss-nesting'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 
@@ -10,7 +10,7 @@ export default defineConfig({
             devtoolsInProd: false,
             prefreshEnabled: true,
             babel: {
-                sourceMaps: "both"
+                sourceMaps: 'both'
             }
         }),
         NodeGlobalsPolyfillPlugin({
@@ -35,7 +35,7 @@ export default defineConfig({
         open: true,
         proxy: {
             '/api': {
-                target: 'http://localhost:8888/.netlify/functions',
+                target: 'http://localhost:9999/.netlify/functions',
                 changeOrigin: true,
                 rewrite: path => path.replace(/^\/api/, ''),
             },

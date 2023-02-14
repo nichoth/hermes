@@ -19,9 +19,8 @@ const TextInput:FunctionComponent<Props & JSX.HTMLAttributes> = function (props)
     delete _props.displayName
 
     return <div className="form-stuff">
-        <div className={'input-group ' + name}>
+        <div className={'input-group' + (name ? ` ${name}` : '')}>
             <input {..._props}
-                name={name}
                 type={props.type || 'text'}
                 placeholder=" "
                 required={props.required}
