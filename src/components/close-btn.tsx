@@ -16,9 +16,3 @@ export const CloseBtn:FunctionComponent<Props> = function CloseBtn (props) {
         </svg>
     </button>
 }
-
-// viewBox="0 0 1024 1024"
-
-// <svg class="close-btn" viewBox="0 0 115.77 122.88" version="1.1" xmlns="http://www.w3.org/2000/svg">
-//     <path d="M777.856 280.192l-33.92-33.952-231.872 231.872-231.84-231.872-33.984 33.888 231.872 231.904-231.84 231.84 33.888 33.984 231.904-231.904 231.84 231.872 33.952-33.888-231.872-231.904z" />
-// </svg>

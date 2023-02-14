@@ -32,17 +32,6 @@ interface Challenge {
     rejectPin: () => void
 }
 
-// function Toast (props) {
-//     const { msg } = props
-//     const _props = Object.assign({}, props)
-//     delete _props.msg
-
-//     return <div className={'toast'}>
-//         {msg}
-//         <CloseBtn {..._props} />
-//     </div>
-// }
-
 export const Link:FunctionComponent<Props> = function ({ webnative }) {
     const [challenge, setChallenge] = useState<Challenge|null>(null)
     const [validPin, setValidPin] = useState<boolean>(false)
@@ -148,7 +137,7 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         </form>
 
         {(showLinked ?
-            <Toast onClick={closeToast}>hurray</Toast> :
+            <Toast onClose={closeToast}>hurray</Toast> :
             null
         )}
     </div>
