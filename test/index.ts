@@ -2,7 +2,7 @@
 import { test } from 'tapzero'
 import { handler } from '../netlify/functions/username/username.js'
 
-test('set username', t => {
+test('set username', async t => {
     // { value, ucan, signature }
     const ev = {
         httpMethod: 'POST',
@@ -13,5 +13,7 @@ test('set username', t => {
         })
     }
 
-    handler(ev)
+    const res = await handler(ev)
+    t.equal(res.statusCode, 400)
+    console.log('ressssssssssssss', res)
 })

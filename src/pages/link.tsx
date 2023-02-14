@@ -4,8 +4,11 @@ import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from "webnative"
 import { CopyBtn } from '../components/copy-btn.jsx'
+import { Toast } from '../components/toast.jsx'
 import Button from '../components/button.jsx'
 import './link.css'
+import '../components/toast.css'
+import '../components/close-btn.css'
 import './common.css'
 
 interface Props {
@@ -29,19 +32,36 @@ interface Challenge {
     rejectPin: () => void
 }
 
+// function Toast (props) {
+//     const { msg } = props
+//     const _props = Object.assign({}, props)
+//     delete _props.msg
+
+//     return <div className={'toast'}>
+//         {msg}
+//         <CloseBtn {..._props} />
+//     </div>
+// }
+
 export const Link:FunctionComponent<Props> = function ({ webnative }) {
     const [challenge, setChallenge] = useState<Challenge|null>(null)
     const [validPin, setValidPin] = useState<boolean>(false)
+    const [showLinked, setShowLinked] = useState<boolean>(false)
+
+    // @ts-ignore
+    window.setShowLinked = setShowLinked
 
     useEffect(() => {
         const { session } = webnative.value
         if (!session) return
+        let _producer
 
         webnative.value.auth.accountProducer(session.username)
             .then(producer => {
                 // this is the device that *is* logged in
                 // which means we need to type a pin from the challenger,
                 //   and check that it's ok
+                _producer = producer
                 producer.on('challenge', function handleChallenge (_challenge) {
                     // Either show `challenge.pin` or have the user input a PIN
                     //   and see if they're equal.
@@ -55,9 +75,15 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                     if (!approved) return
                     producer.cancel()
                     console.log('Device linked successfully')
+
                     // @TODO -- show success message
+                    setShowLinked(true)
                 })
             })
+        
+        return function () {
+            if (_producer) _producer.cancel()
+        }
     }, [webnative.value])
 
     function submitPin (ev:TargetedEvent) {
@@ -80,6 +106,11 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
         const min = parseInt(el.getAttribute('minlength'))
         const valid = (el.value.length >= min && el.value.length <= max)
         if (valid !== validPin) setValidPin(valid)
+    }
+
+    function closeToast (ev) {
+        ev.preventDefault()
+        setShowLinked(false)
     }
 
     // show an input for a PIN number
@@ -116,5 +147,9 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
             <Button type="submit" disabled={!validPin}>Submit PIN</Button>
         </form>
 
+        {(showLinked ?
+            <Toast onClick={closeToast}>hurray</Toast> :
+            null
+        )}
     </div>
 }
