@@ -18,19 +18,24 @@ const client = new faunadb.Client({
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
 
 export const handler = async function hanlder (ev) {
-    if (ev.httpMethod !== 'POST') {
+    if ((ev.httpMethod !== 'POST') && (ev.httpMethod !== 'PUT')) {
         return {
             statusCode: 405,
             body: JSON.stringify('invalid http method')
         }
     }
 
-    let author, username, hashedUsername, signature, ucan, value, timestamp,
+    // humanName: username,
+    // author: did,
+    // hashedName: preppedDid,
+    // timestamp: timestamp()
+
+    let author, humanName, hashedUsername, signature, ucan, value, timestamp,
         rootDID;
     try {
         const body = JSON.parse(ev.body);
         ({ value, ucan, signature } = body);
-        ({ author, rootDID, username, hashedUsername, timestamp } = value);
+        ({ author, rootDID, humanName, hashedUsername, timestamp } = value);
     } catch (err:any) {
         return {
             statusCode: 422,
@@ -38,16 +43,16 @@ export const handler = async function hanlder (ev) {
         }
     }
 
-    if (!author || !username || !hashedUsername || !rootDID || !timestamp) {
+    if (!author || !humanName || !hashedUsername || !rootDID || !timestamp) {
         return {
             statusCode: 400,
             body: JSON.stringify('invalid request params')
         }
     }
 
-
     //
     // @TODO
+    // see https://github.com/ucan-wg/ts-ucan#verifying-ucan-invocations
     // need to check the UCAN -- `author` in the message is authorized by
     // the `rootDID`
     //
@@ -64,6 +69,12 @@ export const handler = async function hanlder (ev) {
         ]
     })
 
+    if (!result.ok) {
+        return {
+            statusCode: 401,
+            body: JSON.stringify('Not authorized')
+        }
+    }
 
     //
     // check the signature
@@ -86,19 +97,28 @@ export const handler = async function hanlder (ev) {
         }
     }
 
-    //
-    // @TODO -- check timestamp -- should be later than the DB timestamp
-    //
-
-
-    //
-    // everything is ok, so update the DB
-    //
     interface DbResponse {
         type?: number
         message?: string
     }
 
+    if (ev.httpMethod === 'POST') {
+        // create a new user
+        const doc:DbResponse = await client.query(q.Create(
+            q.Collection('username'),
+            { data: { humanName, hashedUsername, timestamp, rootDID } }
+        ))
+
+        // everything went ok
+        // we created a new user record
+        return {
+            statusCode: 201,
+            body: JSON.stringify(doc)
+        }
+    }
+
+    // method is PUT
+    // update an existing user
     const doc:DbResponse = await client.query(
         q.Let(
             {
@@ -107,10 +127,8 @@ export const handler = async function hanlder (ev) {
             q.If(
                 q.Exists(q.Var('match')),
                 q.Update(q.Select('ref', q.Get(q.Var('match'))), { data: {
-                    username,
-                    hashedUsername,
-                    timestamp,
-                    rootDID
+                    humanName,
+                    timestamp
                 }}),
                 { type: 404, message: 'not found' }
             )
@@ -129,7 +147,7 @@ export const handler = async function hanlder (ev) {
     // everything went ok
     // we updated a record with a new username
     return {
-        statusCode: 200,
+        statusCode: 204,
         body: JSON.stringify(doc)
     }
 }

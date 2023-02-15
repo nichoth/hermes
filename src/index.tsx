@@ -12,6 +12,7 @@ import Router from './router.jsx'
 import { navList } from './navigation.js'
 import CONSTANTS from './CONSTANTS.js'
 import PERMISSIONS from './permissions.js'
+import { UserData } from './username.js'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
@@ -32,14 +33,7 @@ interface Props {
     permissions: Permissions,
 }
 
-interface UserData {
-    humanName: string
-    did: string
-}
-
 const route = Route()
-
-console.log('...testing...')
 
 const App: FunctionComponent<Props> = function App () {
     const routeState = useSignal<string>(location.pathname + location.search)

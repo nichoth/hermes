@@ -46,9 +46,9 @@ const CreateAccount:FunctionComponent<Props> = function ({
 
         console.log('prepped did', preppedDid)
 
-        const isVal = await isUsernameValid(preppedDid, webnative.value)
-        console.log('is valid', isVal)
-        if (!isVal) return
+        const isValid = await isUsernameValid(preppedDid, webnative.value)
+        console.log('is valid', isValid)
+        if (!isValid) return
 
         // probably don't need to check isAvailable, because the
         // username for fission *is always* unique
@@ -60,26 +60,16 @@ const CreateAccount:FunctionComponent<Props> = function ({
 
         const newUserData:UserData = {
             humanName: username,
-            did,
-            hashedName: preppedDid,
+            author: did,
+            rootDid: did,
+            hashedUsername: preppedDid,
             timestamp: timestamp()
         }
-
-        await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(newUserData))
 
         // * need to add a UCAN to the message
         // on the server,
         // * check that signature is valid for `value`
         // * validate the given UCAN -- 
-
-        const sig = await sign(keystore, stringify(newUserData))
-        const msg = { signature: sig, value: newUserData }
-
-        // @TODO -- save to DB
-        await fetch(URL_PREFIX + '/username', {
-            method: 'POST',
-            body: JSON.stringify(msg)
-        })
 
         const { success } = await webnative.value.auth.register({
             username: preppedDid
@@ -87,6 +77,11 @@ const CreateAccount:FunctionComponent<Props> = function ({
 
         if (success) {
             console.log('success!!!!!!!!!!!')
+            await storage.setItem(
+                USERDATA_STORAGE_KEY,
+                JSON.stringify(newUserData)
+            )
+
             const program = await wn.program({
                 namespace: { creator: "snail-situation", name: "hermes" },
                 debug: true,
@@ -94,14 +89,24 @@ const CreateAccount:FunctionComponent<Props> = function ({
             })
             console.log('*program*', program)
             webnative.value = program
-            userData.value = Object.assign({}, userData.value, {
-                did,
-                humanName: username
-            })
+            userData.value = Object.assign({}, newUserData)
 
             const _session = program.session
             console.log('__session__', _session)
-            if (_session) session.value = _session
+            if (!_session) return
+            session.value = _session
+
+            const ucan = Object.values(session.value.fs?.proofs || {})[0]
+            const sig = await sign(keystore, stringify(newUserData))
+            const msg = { ucan, signature: sig, value: newUserData }
+
+            console.log('**msg**', msg)
+
+            // @TODO -- save to DB
+            await fetch(URL_PREFIX + '/username', {
+                method: 'POST',
+                body: JSON.stringify(msg)
+            })
 
             return setRoute('/')
         }
