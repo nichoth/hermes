@@ -99,3 +99,7 @@ function arrBufToBase64 (buf:Buffer) {
 export function sign (keystore:KeyStore, msg:string) {
     return keystore.sign(uint8arrays.fromString(msg))
 }
+
+export function toString (buf:Uint8Array) {
+    return uint8arrays.toString(buf, 'base64url')
+}

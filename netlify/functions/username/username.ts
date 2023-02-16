@@ -78,6 +78,7 @@ export const handler = async function hanlder (ev) {
 
     //
     // check the signature
+    // check that `author` + `signature` are ok together
     //
     let isOk:boolean
     try {
@@ -97,14 +98,9 @@ export const handler = async function hanlder (ev) {
         }
     }
 
-    interface DbResponse {
-        type?: number
-        message?: string
-    }
-
     if (ev.httpMethod === 'POST') {
         // create a new user
-        const doc:DbResponse = await client.query(q.Create(
+        const doc = await client.query(q.Create(
             q.Collection('username'),
             { data: { humanName, hashedUsername, timestamp, rootDID } }
         ))
@@ -117,8 +113,12 @@ export const handler = async function hanlder (ev) {
         }
     }
 
-    // method is PUT
-    // update an existing user
+    interface DbResponse {
+        type?: number
+        message?: string
+    }
+
+    // method is PUT -- update an existing user
     const doc:DbResponse = await client.query(
         q.Let(
             {

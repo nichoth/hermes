@@ -6,13 +6,20 @@ import { TargetedEvent } from 'preact/compat'
 import * as wn from 'webnative'
 import stringify from 'json-stable-stringify'
 import timestamp from 'monotonic-timestamp'
+import * as ucans from '@ucans/ucans'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
     USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
+import * as username from '../username.js'
 import './centered.css'
 import { URL_PREFIX } from '../CONSTANTS.js'
-import { sign } from '../util.js'
+import { sign, toString } from '../util.js'
+
+// @ts-ignore
+window.ucans = ucans
+// @ts-ignore
+window.username = username
 
 interface Props {
     webnative: Signal<wn.Program>,
@@ -48,7 +55,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
 
         const isValid = await isUsernameValid(preppedDid, webnative.value)
         console.log('is valid', isValid)
-        if (!isValid) return
+        if (!isValid) return console.log('not valid!!!')
 
         // probably don't need to check isAvailable, because the
         // username for fission *is always* unique
@@ -85,6 +92,9 @@ const CreateAccount:FunctionComponent<Props> = function ({
             const program = await wn.program({
                 namespace: { creator: "snail-situation", name: "hermes" },
                 debug: true,
+                fileSystem: {
+                    loadImmediately: true
+                }
                 // permissions: PERMISSIONS
             })
             console.log('*program*', program)
@@ -97,16 +107,24 @@ const CreateAccount:FunctionComponent<Props> = function ({
             session.value = _session
 
             const ucan = Object.values(session.value.fs?.proofs || {})[0]
+            console.log('**ucan**', ucan)
+            console.log('**session proofs**', session.value.fs?.proofs)
+            console.log('session', session.value)
+            console.log('session', session.value.fs)
+            console.log('session', session.value.fs?.proofs)
+            // if (!ucan) throw new Error('no ucan')
             const sig = await sign(keystore, stringify(newUserData))
-            const msg = { ucan, signature: sig, value: newUserData }
+            const msg = { ucan, signature: toString(sig), value: newUserData }
 
             console.log('**msg**', msg)
 
-            // @TODO -- save to DB
-            await fetch(URL_PREFIX + '/username', {
+            // save to DB
+            const res = await (await fetch(URL_PREFIX + '/username', {
                 method: 'POST',
                 body: JSON.stringify(msg)
-            })
+            })).json()
+
+            console.log('save username response', res)
 
             return setRoute('/')
         }
