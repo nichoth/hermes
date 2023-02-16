@@ -14,7 +14,7 @@ import { isUsernameValid, isUsernameAvailable, createDID,
 import * as username from '../username.js'
 import './centered.css'
 import { URL_PREFIX } from '../CONSTANTS.js'
-import { sign, toString } from '../util.js'
+import { sign, toString, sleep } from '../util.js'
 
 // @ts-ignore
 window.ucans = ucans
@@ -100,6 +100,8 @@ const CreateAccount:FunctionComponent<Props> = function ({
             console.log('*program*', program)
             webnative.value = program
             userData.value = Object.assign({}, newUserData)
+
+            await sleep(3000)
 
             const _session = program.session
             console.log('__session__', _session)
