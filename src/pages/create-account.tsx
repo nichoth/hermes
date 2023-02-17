@@ -6,13 +6,21 @@ import { TargetedEvent } from 'preact/compat'
 import * as wn from 'webnative'
 import stringify from 'json-stable-stringify'
 import timestamp from 'monotonic-timestamp'
+import { publicKeyToDid } from "webnative/did/transformers";
+import * as ucans from '@ucans/ucans'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
     USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
+import * as username from '../username.js'
 import './centered.css'
 import { URL_PREFIX } from '../CONSTANTS.js'
-import { sign } from '../util.js'
+import { sign, toString, sleep } from '../util.js'
+
+// @ts-ignore
+window.ucans = ucans
+// @ts-ignore
+window.username = username
 
 interface Props {
     webnative: Signal<wn.Program>,
@@ -44,11 +52,20 @@ const CreateAccount:FunctionComponent<Props> = function ({
         const did = await createDID(crypto)
         const preppedDid = await prepareDid(did) // the hashed DID
 
+        // -------- get author ------
+
+        // author is a DID format string
+        const pubKey = await crypto.keystore.publicWriteKey()
+        const ksAlg = await crypto.keystore.getAlgorithm()
+        const author = publicKeyToDid(crypto, pubKey, ksAlg)
+
+        // -------- /get author ------
+
         console.log('prepped did', preppedDid)
 
         const isValid = await isUsernameValid(preppedDid, webnative.value)
         console.log('is valid', isValid)
-        if (!isValid) return
+        if (!isValid) return console.log('not valid!!!')
 
         // probably don't need to check isAvailable, because the
         // username for fission *is always* unique
@@ -60,7 +77,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
 
         const newUserData:UserData = {
             humanName: username,
-            author: did,
+            author,
             rootDid: did,
             hashedUsername: preppedDid,
             timestamp: timestamp()
@@ -85,11 +102,16 @@ const CreateAccount:FunctionComponent<Props> = function ({
             const program = await wn.program({
                 namespace: { creator: "snail-situation", name: "hermes" },
                 debug: true,
+                fileSystem: {
+                    loadImmediately: true
+                }
                 // permissions: PERMISSIONS
             })
             console.log('*program*', program)
             webnative.value = program
             userData.value = Object.assign({}, newUserData)
+
+            await sleep(3000)
 
             const _session = program.session
             console.log('__session__', _session)
@@ -97,16 +119,23 @@ const CreateAccount:FunctionComponent<Props> = function ({
             session.value = _session
 
             const ucan = Object.values(session.value.fs?.proofs || {})[0]
+            console.log('**ucan**', ucan)
+            console.log('**session proofs**', session.value.fs?.proofs)
             const sig = await sign(keystore, stringify(newUserData))
-            const msg = { ucan, signature: sig, value: newUserData }
+            // const msg = { ucan, signature: toString(sig), value: newUserData }
+            const msg = { signature: toString(sig), value: newUserData }
 
-            console.log('**msg**', msg)
+            // @ts-ignore
+            window.msg = stringify(newUserData)
 
-            // @TODO -- save to DB
-            await fetch(URL_PREFIX + '/username', {
+            // save to DB
+            const res = await fetch(URL_PREFIX + '/username', {
                 method: 'POST',
                 body: JSON.stringify(msg)
-            })
+            }).then(res => res.json())
+
+            console.log('**save username response**', res)
+            console.log('res.string', res.string)
 
             return setRoute('/')
         }

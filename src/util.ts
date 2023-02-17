@@ -1,9 +1,16 @@
 // @ts-check
 import * as uint8arrays from 'uint8arrays'
-import { webcrypto } from 'one-webcrypto'
-import * as utils from 'keystore-idb/utils.js'
 import { Implementation } from 'webnative/components/crypto/implementation'
+// import Crypto from 'crypto'
 type KeyStore = Implementation['keystore']
+
+// import * as BrowserCrypto from 'webnative/components/crypto/implementation/browser.js'
+import * as BrowserCrypto from 'webnative/components/crypto/implementation/browser'
+
+// import * as components from 'webnative/components'
+// import * as crypto from 'webnative/components/crypto/'
+// const { crypto } = BrowserCrypto
+
 
 const KEY_TYPE = {
     RSA: "rsa",
@@ -19,19 +26,38 @@ const BLS_DID_PREFIX = new Uint8Array([ 0xea, 0x01 ])
 const RSA_DID_PREFIX = new Uint8Array([ 0x00, 0xf5, 0x02 ])
 const BASE58_DID_PREFIX = 'did:key:z'
 
-export const verify = (publicKey, sig, msg) => {
-    return webcrypto.subtle.verify(
-        {
-            name: ECC_WRITE_ALG,
-            hash: { name: DEFAULT_HASH_ALG }
-        },
-        publicKey,
-        utils.normalizeBase64ToBuf(sig),
-        utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
-    )
+export function sleep (ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export function didToPublicKey (did) {
+// export const verify = (publicKey, sig, msg) => {
+//     const keyType = BrowserCrypto.did.keyTypes['']
+
+//     return webcrypto.subtle.verify(
+//         {
+//             name: ECC_WRITE_ALG,
+//             hash: { name: DEFAULT_HASH_ALG }
+//         },
+//         publicKey,
+//         utils.normalizeBase64ToBuf(sig),
+//         utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
+//     )
+// }
+
+export const verify = async (did:string, sig:string, msg:string) => {
+    const { publicKey, type } = didToPublicKey(did)
+    const keyType = BrowserCrypto.did.keyTypes[type]
+
+    const res = await keyType.verify({
+        message: uint8arrays.fromString(msg),
+        publicKey,
+        signature: uint8arrays.fromString(sig, 'base64url')
+    })
+
+    return res
+}
+
+export function didToPublicKey (did:string): ({ publicKey:Uint8Array, type:string }) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
@@ -40,9 +66,13 @@ export function didToPublicKey (did) {
     const didWithoutPrefix = ('' + did.substr(BASE58_DID_PREFIX.length))
     const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
     const { keyBuffer, type } = parseMagicBytes(magicalBuf)
+
+    // const pubKey = await webcrypto.subtle.importKey('raw', keyBuffer,
+    //     type, false, ['verify'])
   
     return {
-        publicKey: arrBufToBase64(keyBuffer),
+        // publicKey: pubKey,
+        publicKey: keyBuffer,
         type
     }
 }
@@ -64,7 +94,6 @@ const arrBufs = {
  * to determine cryptosystem & the unprefixed key-buffer.
  */
 function parseMagicBytes (prefixedKey) {
-    // console.log('**magical buf**', prefixedKey)
     // RSA
     if (hasPrefix(prefixedKey, RSA_DID_PREFIX)) {
         return {
@@ -92,10 +121,14 @@ function hasPrefix (prefixedKey, prefix) {
     return arrBufs.equal(prefix, prefixedKey.slice(0, prefix.byteLength))
 }
 
-function arrBufToBase64 (buf:Buffer) {
-    return uint8arrays.toString(new Uint8Array(buf), "base64pad")
-}
+// function arrBufToBase64 (buf:Buffer) {
+//     return uint8arrays.toString(new Uint8Array(buf), 'base64pad')
+// }
 
 export function sign (keystore:KeyStore, msg:string) {
     return keystore.sign(uint8arrays.fromString(msg))
+}
+
+export function toString (arr:Uint8Array) {
+    return uint8arrays.toString(arr, 'base64url')
 }

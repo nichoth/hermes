@@ -2,8 +2,8 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import { default as faunadb } from 'faunadb'
 import { default as stringify } from 'json-stable-stringify'
-import * as ucans from '@ucans/ucans'
-import { didToPublicKey, verify } from '../../../src/util.js'
+// import * as ucans from '@ucans/ucans'
+import { verify } from '../../../src/util.js'
 
 const q = faunadb.query
 const client = new faunadb.Client({
@@ -25,17 +25,12 @@ export const handler = async function hanlder (ev) {
         }
     }
 
-    // humanName: username,
-    // author: did,
-    // hashedName: preppedDid,
-    // timestamp: timestamp()
-
-    let author, humanName, hashedUsername, signature, ucan, value, timestamp,
-        rootDID;
+    let author, humanName, hashedUsername, signature, value, timestamp,
+        rootDid;
     try {
         const body = JSON.parse(ev.body);
-        ({ value, ucan, signature } = body);
-        ({ author, rootDID, humanName, hashedUsername, timestamp } = value);
+        ({ value, signature } = body);
+        ({ author, rootDid, humanName, hashedUsername, timestamp } = value);
     } catch (err:any) {
         return {
             statusCode: 422,
@@ -43,70 +38,76 @@ export const handler = async function hanlder (ev) {
         }
     }
 
-    if (!author || !humanName || !hashedUsername || !rootDID || !timestamp) {
+    const vals = { author, humanName, hashedUsername,
+        signature, timestamp, rootDid }
+
+    if (!author || !humanName || !hashedUsername || !rootDid ||
+    !signature || !timestamp) {
         return {
             statusCode: 400,
-            body: JSON.stringify('invalid request params')
+            body: JSON.stringify({ msg: 'invalid request params', vals })
         }
     }
 
+    // ucan stuff
+    // ------------------------------------------------------------
     //
     // @TODO
     // see https://github.com/ucan-wg/ts-ucan#verifying-ucan-invocations
     // need to check the UCAN -- `author` in the message is authorized by
     // the `rootDID`
     //
-    const result = await ucans.verify(ucan, {
-        audience: author,
-        requiredCapabilities: [
-            {
-                capability: {
-                    with: { scheme: 'my', hierPart: '*' },
-                    can: '*'
-                },
-                rootIssuer: rootDID
-            }
-        ]
-    })
+    // const result = await ucans.verify(ucan, {
+    //     audience: author,
+    //     requiredCapabilities: [
+    //         {
+    //             capability: {
+    //                 with: { scheme: 'my', hierPart: '*' },
+    //                 can: '*'
+    //             },
+    //             rootIssuer: rootDID
+    //         }
+    //     ]
+    // })
 
-    if (!result.ok) {
-        return {
-            statusCode: 401,
-            body: JSON.stringify('Not authorized')
-        }
-    }
+    // if (!result.ok) {
+    //     return {
+    //         statusCode: 401,
+    //         body: JSON.stringify('Not authorized')
+    //     }
+    // }
+    // ------------------------------------------------------------
+
 
     //
     // check the signature
+    // check that `author` + `signature` are ok together
     //
     let isOk:boolean
     try {
-        const pubKey = didToPublicKey(author).publicKey
-        isOk = await verify(pubKey, signature, stringify(value))
+        isOk = await verify(author, signature, stringify(value))
     } catch (err:any) {
         return {
-            statusCode: 400,
-            body: JSON.stringify(err.message)
+            statusCode: 500,
+            body: JSON.stringify({ msg: err.message })
         }
     }
 
     if (!isOk) {
         return {
             statusCode: 400,
-            body: JSON.stringify('Invalid signature')
+            body: JSON.stringify({
+                msg: 'Invalid signature',
+                string: stringify(value)
+            })
         }
-    }
-
-    interface DbResponse {
-        type?: number
-        message?: string
     }
 
     if (ev.httpMethod === 'POST') {
         // create a new user
-        const doc:DbResponse = await client.query(q.Create(
+        const doc = await client.query(q.Create(
             q.Collection('username'),
-            { data: { humanName, hashedUsername, timestamp, rootDID } }
+            { data: { humanName, hashedUsername, timestamp, rootDid } }
         ))
 
         // everything went ok
@@ -117,8 +118,12 @@ export const handler = async function hanlder (ev) {
         }
     }
 
-    // method is PUT
-    // update an existing user
+    interface DbResponse {
+        type?: number
+        message?: string
+    }
+
+    // method is PUT -- update an existing user
     const doc:DbResponse = await client.query(
         q.Let(
             {
