@@ -8,6 +8,7 @@ import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
 import { USERDATA_STORAGE_KEY } from './username.js'
+import { URL_PREFIX } from './CONSTANTS.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
 import CONSTANTS from './CONSTANTS.js'
@@ -91,6 +92,14 @@ const App: FunctionComponent<Props> = function App () {
                 session.value = (program.session ?? await program.auth.session())
 
                 try {
+
+                    // @TODO -- use the remote DB to fetch any updates to username,
+                    //   and synchronize the data
+                    // const res = await fetch(URL_PREFIX + '/username')
+                    //     .then(res => res.json())
+
+                    // userData.value = res
+
                     const data = await program.components.storage.getItem(
                         USERDATA_STORAGE_KEY
                     ) as string
