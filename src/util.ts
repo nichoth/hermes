@@ -50,12 +50,16 @@ export const verify = async (did:string, sig:string, msg:string) => {
     const { publicKey, type } = await didToPublicKey(did)
     const keyType = BrowserCrypto.did.keyTypes[type]
 
-    return keyType.verify({
+    const res = await keyType.verify({
         message: uint8arrays.fromString(msg, 'utf8'),
         publicKey,
         signature: uint8arrays.fromString(sig, 'base64url')
         // signature: sig
     })
+
+    console.log('resssssssssss', res)
+
+    return res
 
     // verify(algorithm, key, signature, data)
     // return webcrypto.subtle.verify(
@@ -66,7 +70,8 @@ export const verify = async (did:string, sig:string, msg:string) => {
     // )
 }
 
-export async function didToPublicKey (did):Promise<({ publicKey:Uint8Array, type:string })> {
+export async function didToPublicKey (did:string):
+Promise<({ publicKey:Uint8Array, type:string })> {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
