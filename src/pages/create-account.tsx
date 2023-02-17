@@ -6,6 +6,7 @@ import { TargetedEvent } from 'preact/compat'
 import * as wn from 'webnative'
 import stringify from 'json-stable-stringify'
 import timestamp from 'monotonic-timestamp'
+import { publicKeyToDid } from "webnative/did/transformers";
 import * as ucans from '@ucans/ucans'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
@@ -51,6 +52,15 @@ const CreateAccount:FunctionComponent<Props> = function ({
         const did = await createDID(crypto)
         const preppedDid = await prepareDid(did) // the hashed DID
 
+        // -------- get author ------
+
+        // author is a DID format string
+        const pubKey = await crypto.keystore.publicWriteKey()
+        const ksAlg = await crypto.keystore.getAlgorithm()
+        const author = publicKeyToDid(crypto, pubKey, ksAlg)
+
+        // -------- /get author ------
+
         console.log('prepped did', preppedDid)
 
         const isValid = await isUsernameValid(preppedDid, webnative.value)
@@ -67,7 +77,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
 
         const newUserData:UserData = {
             humanName: username,
-            author: did,
+            author,
             rootDid: did,
             hashedUsername: preppedDid,
             timestamp: timestamp()
@@ -115,7 +125,8 @@ const CreateAccount:FunctionComponent<Props> = function ({
             // const msg = { ucan, signature: toString(sig), value: newUserData }
             const msg = { signature: toString(sig), value: newUserData }
 
-            console.log('**msg**', msg)
+            // @ts-ignore
+            window.msg = stringify(newUserData)
 
             // save to DB
             const res = await fetch(URL_PREFIX + '/username', {
@@ -124,6 +135,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
             }).then(res => res.json())
 
             console.log('**save username response**', res)
+            console.log('res.string', res.string)
 
             return setRoute('/')
         }

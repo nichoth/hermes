@@ -106,7 +106,10 @@ export const handler = async function hanlder (ev) {
     if (!isOk) {
         return {
             statusCode: 400,
-            body: JSON.stringify('Invalid signature')
+            body: JSON.stringify({
+                msg: 'Invalid signature',
+                string: stringify(value)
+            })
         }
     }
 

@@ -1,7 +1,5 @@
 // @ts-check
 import * as uint8arrays from 'uint8arrays'
-import { webcrypto } from 'one-webcrypto'
-import * as utils from 'keystore-idb/utils.js'
 import { Implementation } from 'webnative/components/crypto/implementation'
 // import Crypto from 'crypto'
 type KeyStore = Implementation['keystore']
@@ -47,31 +45,19 @@ export function sleep (ms) {
 // }
 
 export const verify = async (did:string, sig:string, msg:string) => {
-    const { publicKey, type } = await didToPublicKey(did)
+    const { publicKey, type } = didToPublicKey(did)
     const keyType = BrowserCrypto.did.keyTypes[type]
 
     const res = await keyType.verify({
-        message: uint8arrays.fromString(msg, 'utf8'),
+        message: uint8arrays.fromString(msg),
         publicKey,
         signature: uint8arrays.fromString(sig, 'base64url')
-        // signature: sig
     })
 
-    console.log('resssssssssss', res)
-
     return res
-
-    // verify(algorithm, key, signature, data)
-    // return webcrypto.subtle.verify(
-    //     keyType,
-    //     publicKey,
-    //     utils.normalizeBase64ToBuf(sig),
-    //     utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
-    // )
 }
 
-export async function didToPublicKey (did:string):
-Promise<({ publicKey:Uint8Array, type:string })> {
+export function didToPublicKey (did:string): ({ publicKey:Uint8Array, type:string }) {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
@@ -80,8 +66,6 @@ Promise<({ publicKey:Uint8Array, type:string })> {
     const didWithoutPrefix = ('' + did.substr(BASE58_DID_PREFIX.length))
     const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
     const { keyBuffer, type } = parseMagicBytes(magicalBuf)
-
-    console.log('typeeeeeeeeeeeee', type)
 
     // const pubKey = await webcrypto.subtle.importKey('raw', keyBuffer,
     //     type, false, ['verify'])
