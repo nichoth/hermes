@@ -3,7 +3,9 @@ dotenv.config()
 import { default as faunadb } from 'faunadb'
 import { default as stringify } from 'json-stable-stringify'
 // import * as ucans from '@ucans/ucans'
-import { didToPublicKey, verify } from '../../../src/util.js'
+import { /*didToPublicKey,*/ verify } from '../../../src/util.js'
+
+// import { Components } from 'webnative/components'
 
 // import { didToPublicKey } from 'webnative/did/transformers.js'
 
@@ -92,11 +94,11 @@ export const handler = async function hanlder (ev) {
     //
     let isOk:boolean
     try {
-        const pubKey:CryptoKey = (await didToPublicKey(author)).publicKey
-        isOk = await verify(pubKey, signature, stringify(value))
+        // const pubKey:CryptoKey = (await didToPublicKey(author)).publicKey
+        isOk = await verify(author, signature, stringify(value))
     } catch (err:any) {
         return {
-            statusCode: 400,
+            statusCode: 500,
             body: JSON.stringify({ msg: err.message })
         }
     }
