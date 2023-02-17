@@ -3,6 +3,7 @@ import * as uint8arrays from 'uint8arrays'
 import { webcrypto } from 'one-webcrypto'
 import * as utils from 'keystore-idb/utils.js'
 import { Implementation } from 'webnative/components/crypto/implementation'
+import Crypto from 'crypto'
 type KeyStore = Implementation['keystore']
 
 const KEY_TYPE = {
@@ -35,7 +36,7 @@ export const verify = (publicKey, sig, msg) => {
     )
 }
 
-export function didToPublicKey (did) {
+export async function didToPublicKey(did):Promise<({ publicKey:CryptoKey, type:string })> {
     if (!did.startsWith(BASE58_DID_PREFIX)) {
         throw new Error(
             "Please use a base58-encoded DID formatted `did:key:z...`")
@@ -44,9 +45,12 @@ export function didToPublicKey (did) {
     const didWithoutPrefix = ('' + did.substr(BASE58_DID_PREFIX.length))
     const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
     const { keyBuffer, type } = parseMagicBytes(magicalBuf)
+
+    const pubKey = await Crypto.webcrypto.subtle.importKey('raw', keyBuffer, type,
+        true, ['verify'])
   
     return {
-        publicKey: arrBufToBase64(keyBuffer),
+        publicKey: pubKey,
         type
     }
 }
@@ -68,7 +72,6 @@ const arrBufs = {
  * to determine cryptosystem & the unprefixed key-buffer.
  */
 function parseMagicBytes (prefixedKey) {
-    // console.log('**magical buf**', prefixedKey)
     // RSA
     if (hasPrefix(prefixedKey, RSA_DID_PREFIX)) {
         return {
@@ -96,14 +99,14 @@ function hasPrefix (prefixedKey, prefix) {
     return arrBufs.equal(prefix, prefixedKey.slice(0, prefix.byteLength))
 }
 
-function arrBufToBase64 (buf:Buffer) {
-    return uint8arrays.toString(new Uint8Array(buf), "base64pad")
-}
+// function arrBufToBase64 (buf:Buffer) {
+//     return uint8arrays.toString(new Uint8Array(buf), 'base64pad')
+// }
 
 export function sign (keystore:KeyStore, msg:string) {
     return keystore.sign(uint8arrays.fromString(msg))
 }
 
-export function toString (buf:Uint8Array) {
-    return uint8arrays.toString(buf, 'base64url')
+export function toString (arr:Uint8Array) {
+    return uint8arrays.toString(arr, 'base64pad')
 }

@@ -111,22 +111,19 @@ const CreateAccount:FunctionComponent<Props> = function ({
             const ucan = Object.values(session.value.fs?.proofs || {})[0]
             console.log('**ucan**', ucan)
             console.log('**session proofs**', session.value.fs?.proofs)
-            console.log('session', session.value)
-            console.log('session', session.value.fs)
-            console.log('session', session.value.fs?.proofs)
-            // if (!ucan) throw new Error('no ucan')
             const sig = await sign(keystore, stringify(newUserData))
-            const msg = { ucan, signature: toString(sig), value: newUserData }
+            // const msg = { ucan, signature: toString(sig), value: newUserData }
+            const msg = { signature: toString(sig), value: newUserData }
 
             console.log('**msg**', msg)
 
             // save to DB
-            const res = await (await fetch(URL_PREFIX + '/username', {
+            const res = await fetch(URL_PREFIX + '/username', {
                 method: 'POST',
                 body: JSON.stringify(msg)
-            })).json()
+            }).then(res => res.json())
 
-            console.log('save username response', res)
+            console.log('**save username response**', res)
 
             return setRoute('/')
         }
