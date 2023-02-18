@@ -3,15 +3,13 @@ import { Signal } from '@preact/signals'
 import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
 import { APP_INFO, LOG_DIR_PATH, BLOB_DIR_PATH } from '../CONSTANTS.js'
-// import { PERMISSIONS } from '../permissions.js'
 import './home.css'
 
 interface Props {
-    webnative: Signal<wn.Program>
     session: Signal<wn.Session|null>
 }
 
-const Home:FunctionComponent<Props> = function ({ webnative, session }) {
+const Home:FunctionComponent<Props> = function ({ session }) {
     if (!session.value?.fs) return null
     const { fs } = session.value
     const [posts, setPosts] = useState<object[]>([])

@@ -1,9 +1,15 @@
 .route-friends {
+    & h1 {
+        margin-bottom: 0.4em;
+    }
+
     & h2 {
         margin-bottom: 0.2em;
+        border-bottom: 1px solid gray;
     }
 
     & p {
         margin-top: 0;
+        margin-bottom: 2rem;
     }
 }

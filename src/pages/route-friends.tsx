@@ -50,18 +50,23 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             (<p><em>none</em></p>) :
             (<ul>
                 {(pendingFriends.value.map(user => {
-                    return <li>{user.humanName}</li>
+                    return <li className="friend">
+                        {user.humanName}
+                    </li>
                 }))}
             </ul>)
         }
 
         <h2>Friends</h2>
-        {!friendsList.value.length ? (<p><em>none</em></p>): (<ul>
-            {friendsList.value.map(friend => {
-                return <li className="friend">
-                    {friend.humanName}
-                </li>
-            })}
-        </ul>)}
+        {!friendsList.value.length ?
+            (<p><em>none</em></p>) :
+            (<ul>
+                {friendsList.value.map(friend => {
+                    return <li className="friend">
+                        {friend.humanName}
+                    </li>
+                })}
+            </ul>)
+        }
     </div>
 }

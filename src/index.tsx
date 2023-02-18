@@ -2,16 +2,13 @@ import { render, FunctionComponent } from 'preact'
 import * as wn from 'webnative'
 import { useEffect } from 'preact/hooks'
 import { useSignal } from '@preact/signals'
-// import { Permissions } from 'webnative/permissions.js'
 import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
 import { USERDATA_STORAGE_KEY } from './username.js'
-// import { URL_PREFIX } from './CONSTANTS.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-// import CONSTANTS from './CONSTANTS.js'
 import { AVATAR_PATH } from './CONSTANTS.js'
 import { UserData } from './username.js'
 import '@nichoth/components/hamburger.css'
@@ -84,8 +81,10 @@ const App: FunctionComponent<Props> = function App () {
     useEffect(() => {
         wn.program({
             namespace: { creator: 'snail-situation', name: 'hermes' },
-            debug: true
-            // permissions
+            debug: true,
+            fileSystem: {
+                loadImmediately: true
+            }
         })
             .then(async program => {
                 webnative.value = program
