@@ -152,7 +152,7 @@ const App: FunctionComponent<Props> = function App () {
             .catch(err => {
                 // no avatar file, so set it to an auto generated value
                 console.log('**cant read in index**', err)
-                console.log('the path we couldnt read...', avatarPath)
+                console.log('the avatar path we couldnt read...', avatarPath)
                 appAvatar.value = 'data:image/svg+xml;utf8,' +
                     generateFromString(username)
 

@@ -13,9 +13,11 @@ export const APP_INFO = {
 export const LOG_DIR_PATH = 'log'
 export const BLOB_DIR_PATH = 'blob'
 export const PROFILE_PATH = 'profile.json'
-export  const AVATAR_PATH = 'avatar.jpeg'
+export const AVATAR_PATH = 'avatar.jpeg'
+export const FRIENDS_PATH = 'friends.json'
 
 export default {
+    FRIENDS_PATH,
     AVATAR_PATH,
     PROFILE_PATH,
     LOG_DIR_PATH,
