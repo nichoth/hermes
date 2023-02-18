@@ -16,15 +16,12 @@ const Home:FunctionComponent<Props> = function ({ webnative, session }) {
     const { fs } = session.value
     const [posts, setPosts] = useState<object[]>([])
 
-    const logPath = wn.path.appData(
-        APP_INFO,
-        wn.path.directory(LOG_DIR_PATH)
-    )
+    const logPath = wn.path.appData(APP_INFO, wn.path.directory(LOG_DIR_PATH))
 
     useEffect(() => {
         fs.ls(logPath)
             .then(async _posts => {
-                const _files = Object.keys(_posts).map(async (filename, i) => {
+                const _files = Object.keys(_posts).map(async (filename) => {
                     // read the post JSON
                     const fullPath = wn.path.appData(
                         APP_INFO,

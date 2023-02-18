@@ -217,8 +217,8 @@ const App: FunctionComponent<Props> = function App () {
 
         <div class="content">
             <Node webnative={webnative} appAvatar={appAvatar} session={session} 
-                params={match.params} setRoute={route.setRoute}
-                splats={match.splats} userData={userData}
+                params={match?.params} setRoute={route.setRoute}
+                splats={match?.splats} userData={userData}
             />
         </div>
     </div>)
