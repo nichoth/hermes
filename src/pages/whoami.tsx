@@ -5,8 +5,8 @@ import { Signal, useSignal } from "@preact/signals"
 // import { getHumanName } from "../username.js"
 import { Pencil } from "../components/pencil-edit-button.jsx"
 import EditableImg from '../components/editable-image.jsx'
-import CONSTANTS from "../CONSTANTS.js"
-import PERMISSIONS from '../permissions.js'
+// import CONSTANTS from "../CONSTANTS.js"
+import { PROFILE_PATH, APP_INFO, AVATAR_PATH } from "../CONSTANTS.js"
 import TextInput from '../components/text-input.jsx'
 import { createDID, prepareDid, isUsernameValid,
     USERDATA_STORAGE_KEY } from '../username.js'
@@ -61,8 +61,8 @@ export const Whoami:FunctionComponent<Props> = function ({
         if (!fs || !session) return
 
         const profilePath = wn.path.appData(
-            PERMISSIONS.app,
-            wn.path.file(CONSTANTS.profilePath)
+            APP_INFO,
+            wn.path.file(PROFILE_PATH)
         )
 
         fs.cat(profilePath)
@@ -102,8 +102,8 @@ export const Whoami:FunctionComponent<Props> = function ({
 
         try {
             const filepath = wn.path.appData(
-                PERMISSIONS.app,
-                wn.path.file(CONSTANTS.avatarPath)
+                APP_INFO,
+                wn.path.file(AVATAR_PATH)
             )
             // write the file as the `file` element that is submitted with
             //   the form -- `ev.target.files[0]`
@@ -147,8 +147,8 @@ export const Whoami:FunctionComponent<Props> = function ({
         console.log('save profile', description)
 
         const filepath = wn.path.appData(
-            PERMISSIONS.app,
-            wn.path.file(CONSTANTS.profilePath)
+            APP_INFO,
+            wn.path.file(PROFILE_PATH)
         )
         await fs.write(
             filepath,

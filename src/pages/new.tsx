@@ -7,30 +7,31 @@ import * as wn from "webnative"
 import timestamp from 'monotonic-timestamp'
 import Button from '../components/button.jsx'
 import TextInput from '../components/text-input.jsx'
-import { PERMISSIONS } from '../permissions.js'
-import CONSTANTS from '../CONSTANTS.js'
+// import { PERMISSIONS } from '../permissions.js'
+import { LOG_DIR_PATH, BLOB_DIR_PATH, APP_INFO } from '../CONSTANTS.js'
 import './new.css'
 
-interface Props {
+interface NewPostProps {
     webnative: Signal<wn.Program>,
     session: Signal<wn.Session>
 }
 
-const NewPost:FunctionComponent<Props> = function (props) {
+const NewPost:FunctionComponent<NewPostProps> = function (props) {
     return <div class="route new-post">
         <PostInput {...props} />
     </div>
 }
 
-interface Props {
-    webnative: Signal<wn.Program>
+interface InputProps {
+    webnative: Signal<wn.Program>,
+    session: Signal<wn.Session>
 }
 
-const PostInput:FunctionComponent<Props> = function PostInput (props) {
+const PostInput:FunctionComponent<InputProps> = function PostInput (props) {
     const [pendingImage, setPendingImage] = useState<File|null>(null)
     const [isValid, setValid] = useState<Boolean>(false)
     const [isResolving, setResolving] = useState<Boolean>(false)
-    const { fs, username } = (props.webnative.value.session || {})
+    const { fs, username } = (props.session.value || {})
 
     function checkIsValid () {
         var el = document.getElementById('new-post-form') as HTMLFormElement
@@ -70,8 +71,8 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
 
         // find latest sequence number
         const logPath = wn.path.appData(
-            PERMISSIONS.app,
-            wn.path.directory(CONSTANTS.logDirPath)
+            APP_INFO,
+            wn.path.directory(LOG_DIR_PATH)
         )
         // @NOTE -- this is like `mkdir -p` -- doesn't throw if the dir exists
         await fs.mkdir(logPath)
@@ -89,8 +90,8 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
 
         // get filepath for the post JSON
         const postPath = wn.path.appData(
-            PERMISSIONS.app,
-            wn.path.file(CONSTANTS.logDirPath, n + '.json')
+            APP_INFO,
+            wn.path.file(LOG_DIR_PATH, n + '.json')
         )
 
         // write the JSON
@@ -106,9 +107,9 @@ const PostInput:FunctionComponent<Props> = function PostInput (props) {
 
         // write the image
         const imgFilepath = wn.path.appData(
-            PERMISSIONS.app,
+            APP_INFO,
             // __@TODO__ -- handle other file extensions
-            wn.path.file(CONSTANTS.blobDirPath, n + '-0.jpg')
+            wn.path.file(BLOB_DIR_PATH, n + '-0.jpg')
             // ^ we are only supporting single image per post for now
         )
         const reader = new FileReader()

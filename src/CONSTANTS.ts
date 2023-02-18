@@ -1,15 +1,25 @@
 const { mode } = import.meta.env
-const urlPrefix = (mode === 'development' ?
+
+export const URL_PREFIX = (mode === 'development' ?
     (location.protocol + '//' + location.hostname + ':9999' +
         '/.netlify/functions') :
     '/api')
 
-export const URL_PREFIX = urlPrefix
+export const APP_INFO = {
+    name: 'hermes',
+    creator: 'snail-situation'
+}
+
+export const LOG_DIR_PATH = 'log'
+export const BLOB_DIR_PATH = 'blob'
+export const PROFILE_PATH = 'profile.json'
+export  const AVATAR_PATH = 'avatar.jpeg'
 
 export default {
-    avatarPath: 'avatar.jpg',
-    profilePath: 'profile.json',
-    logDirPath: 'log',
-    blobDirPath: 'blob',
-    URL_PREFIX: urlPrefix
+    AVATAR_PATH,
+    PROFILE_PATH,
+    LOG_DIR_PATH,
+    BLOB_DIR_PATH,
+    URL_PREFIX,
+    APP_INFO
 }

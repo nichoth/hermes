@@ -2,8 +2,8 @@ import { FunctionComponent, h } from 'preact'
 import { Signal } from '@preact/signals'
 import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
-import CONSTANTS from '../CONSTANTS.js'
-import { PERMISSIONS } from '../permissions.js'
+import { APP_INFO, LOG_DIR_PATH, BLOB_DIR_PATH } from '../CONSTANTS.js'
+// import { PERMISSIONS } from '../permissions.js'
 import './home.css'
 
 interface Props {
@@ -17,8 +17,8 @@ const Home:FunctionComponent<Props> = function ({ webnative, session }) {
     const [posts, setPosts] = useState<object[]>([])
 
     const logPath = wn.path.appData(
-        PERMISSIONS.app,
-        wn.path.directory(CONSTANTS.logDirPath)
+        APP_INFO,
+        wn.path.directory(LOG_DIR_PATH)
     )
 
     useEffect(() => {
@@ -27,8 +27,8 @@ const Home:FunctionComponent<Props> = function ({ webnative, session }) {
                 const _files = Object.keys(_posts).map(async (filename, i) => {
                     // read the post JSON
                     const fullPath = wn.path.appData(
-                        PERMISSIONS.app,
-                        wn.path.file(CONSTANTS.logDirPath, filename)
+                        APP_INFO,
+                        wn.path.file(LOG_DIR_PATH, filename)
                     )
 
                     const content = await fs.cat(fullPath)
@@ -37,9 +37,9 @@ const Home:FunctionComponent<Props> = function ({ webnative, session }) {
                     // get img URL
                     const n = post.sequence
                     const imgPath = wn.path.appData(
-                        PERMISSIONS.app,
+                        APP_INFO,
                         // @TODO -- file extensions
-                        wn.path.file(CONSTANTS.blobDirPath, n + '-0.jpg')
+                        wn.path.file(BLOB_DIR_PATH, n + '-0.jpg')
                     )
 
                     let imgBlob

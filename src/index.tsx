@@ -2,17 +2,17 @@ import { render, FunctionComponent } from 'preact'
 import * as wn from 'webnative'
 import { useEffect } from 'preact/hooks'
 import { useSignal } from '@preact/signals'
-import { Permissions } from 'webnative/permissions.js'
+// import { Permissions } from 'webnative/permissions.js'
 import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
 import { USERDATA_STORAGE_KEY } from './username.js'
-import { URL_PREFIX } from './CONSTANTS.js'
+// import { URL_PREFIX } from './CONSTANTS.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-import CONSTANTS from './CONSTANTS.js'
-import PERMISSIONS from './permissions.js'
+// import CONSTANTS from './CONSTANTS.js'
+import { AVATAR_PATH } from './CONSTANTS.js'
 import { UserData } from './username.js'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
@@ -31,7 +31,7 @@ const router = Router()
 console.log('env', import.meta.env)
 
 interface Props {
-    permissions: Permissions,
+    // permissions: Permissions,
 }
 
 const route = Route()
@@ -139,7 +139,7 @@ const App: FunctionComponent<Props> = function App () {
 
         const avatarPath = wn.path.appData(
             APP_INFO,
-            wn.path.file(CONSTANTS.avatarPath)
+            wn.path.file(AVATAR_PATH)
         )
 
         fs.cat(avatarPath)
@@ -152,11 +152,11 @@ const App: FunctionComponent<Props> = function App () {
             .catch(err => {
                 // no avatar file, so set it to an auto generated value
                 console.log('**cant read in index**', err)
+                console.log('the path we couldnt read...', avatarPath)
                 appAvatar.value = 'data:image/svg+xml;utf8,' +
                     generateFromString(username)
 
                 if (!wn.path.appData) return
-                console.log('the path we couldnt read...', avatarPath)
             })
     }, [session.value])
 
@@ -225,4 +225,4 @@ const App: FunctionComponent<Props> = function App () {
 }
 
 const el = document.getElementById('root')
-if (el) render(<App permissions={PERMISSIONS} />, el)
+if (el) render(<App />, el)

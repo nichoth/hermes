@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'preact/hooks'
-import PERMISSIONS from '../permissions.js'
-import CONSTANTS from '../CONSTANTS.js'
+import { LOG_DIR_PATH, BLOB_DIR_PATH, APP_INFO } from '../CONSTANTS.js'
 import * as wn from "webnative"
 import './post.css'
 
@@ -47,14 +46,14 @@ async function readPost (webnative, username, sequence) {
 
     if (username === webnative.session.username) {
         const postPath = wn.path.appData(
-            PERMISSIONS.app,
-            wn.path.file(CONSTANTS.logDirPath, sequence + '.json')
+            APP_INFO,
+            wn.path.file(LOG_DIR_PATH, sequence + '.json')
         )
 
         const imgPath = wn.path.appData(
-            PERMISSIONS.app,
+            APP_INFO,
             // @TODO -- file extensions
-            wn.path.file(CONSTANTS.blobDirPath, sequence + '-0.jpg')
+            wn.path.file(BLOB_DIR_PATH, sequence + '-0.jpg')
         )
 
         const [post, imgUrl] = await Promise.all([
