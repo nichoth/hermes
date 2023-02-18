@@ -8,6 +8,7 @@ import { Post } from './pages/post.jsx'
 import { CreateAccount } from './pages/create-account.jsx'
 import { Link } from './pages/link.jsx'
 import { Friends } from './pages/route-friends.jsx'
+import { FriendsRequest } from './pages/friend-request.jsx'
 
 export default function _Router () {
     const router = Router()
@@ -55,6 +56,10 @@ export default function _Router () {
 
     router.addRoute('/friends', () => {
         return Friends
+    })
+
+    router.addRoute('/friends/request', () => {
+        return FriendsRequest
     })
 
     return router

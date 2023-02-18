@@ -17,6 +17,7 @@ interface Friend {
 
 export const Friends:FunctionComponent<Props> = function ({ session }) {
     const friendsList = useSignal<Friend[] | []>([])
+    const pendingFriends = useSignal<Friend[] | []>([])
 
     const listPath = wn.path.appData(
         APP_INFO,
@@ -38,9 +39,24 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
     }, [session])
 
     return <div className="route route-friends">
-        <p>friends here</p>
+        <h1>Friendship information</h1>
 
-        {!friendsList.value.length ? 'waa waa' : (<ul>
+        <p>
+            <a href="/friends/request">Request a new friend</a>
+        </p>
+
+        <h2>Pending friends</h2>
+        {!pendingFriends.value.length ?
+            (<p><em>none</em></p>) :
+            (<ul>
+                {(pendingFriends.value.map(user => {
+                    return <li>{user.humanName}</li>
+                }))}
+            </ul>)
+        }
+
+        <h2>Friends</h2>
+        {!friendsList.value.length ? (<p><em>none</em></p>): (<ul>
             {friendsList.value.map(friend => {
                 return <li className="friend">
                     {friend.humanName}

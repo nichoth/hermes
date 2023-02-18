@@ -13,6 +13,14 @@ body {
             cursor: not-allowed;
         }
     }
+
+    & h1 {
+        font-size: 1.5rem;
+    }
+
+    & h2 {
+        font-size: 1.3rem;
+    }
 }
 
 .mobile-nav-list {

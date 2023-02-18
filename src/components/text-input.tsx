@@ -13,7 +13,7 @@ interface Props {
     defaultValue?: string
 }
 
-const TextInput:FunctionComponent<Props & JSX.HTMLAttributes> = function (props) {
+export const TextInput:FunctionComponent<Props & JSX.HTMLAttributes> = function (props) {
     const { name, displayName } = props
     const _props:Partial<Props> = {...props}
     delete _props.displayName
