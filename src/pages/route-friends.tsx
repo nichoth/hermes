@@ -28,7 +28,7 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
         const fs = session.value?.fs
         if (!fs) return
 
-        fs.cat(listPath)
+        fs.read(listPath)
             .then(_friendsList => {
                 const list = JSON.parse(new TextDecoder().decode(_friendsList))
                 friendsList.value = list

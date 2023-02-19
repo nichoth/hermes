@@ -48,8 +48,9 @@ export const Post: FunctionComponent<Props> = function ({ params, session }) {
     </div>
 }
 
-async function readPost (session, username, sequence) {
-    const { fs } = session
+async function readPost (session, username, sequence):
+Promise<{ post: PostObject, imgUrl:string } | null> {
+    const { fs }:{ fs:wn.FileSystem } = session
 
     if (username === session.username) {
         const postPath = wn.path.appData(
@@ -64,11 +65,11 @@ async function readPost (session, username, sequence) {
         )
 
         const [post, imgUrl] = await Promise.all([
-            fs.cat(postPath).then(post => {
+            fs.read(postPath).then(post => {
                 return JSON.parse(new TextDecoder().decode(post))
             }),
 
-            fs.cat(imgPath).then(imgBlob => {
+            fs.read(imgPath).then(imgBlob => {
                 const imgUrl = URL.createObjectURL(
                     new Blob([imgBlob as BlobPart], { type: 'image/jpeg' })
                 )
@@ -81,6 +82,5 @@ async function readPost (session, username, sequence) {
 
     // else
     // need to get the other user's posts
-
-    return { post: null, imgUrl: null }
+    return null
 }
