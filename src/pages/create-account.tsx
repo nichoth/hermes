@@ -4,7 +4,6 @@ import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from 'webnative'
-import stringify from 'json-stable-stringify'
 import timestamp from 'monotonic-timestamp'
 import { publicKeyToDid } from "webnative/did/transformers";
 import * as ucans from '@ucans/ucans'
@@ -14,7 +13,7 @@ import { isUsernameValid, isUsernameAvailable, createDID,
     USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
 import * as username from '../username.js'
 import './centered.css'
-import { URL_PREFIX } from '../CONSTANTS.js'
+import { APP_INFO, PROFILE_PATH } from '../CONSTANTS.js'
 import { sign, toString, sleep } from '../util.js'
 
 // @ts-ignore
@@ -80,6 +79,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
             author,
             rootDid: did,
             hashedUsername: preppedDid,
+            description: '',
             timestamp: timestamp()
         }
 
@@ -107,35 +107,52 @@ const CreateAccount:FunctionComponent<Props> = function ({
                 }
                 // permissions: PERMISSIONS
             })
+
             console.log('*program*', program)
             webnative.value = program
             userData.value = Object.assign({}, newUserData)
-
-            await sleep(3000)
 
             const _session = program.session
             console.log('__session__', _session)
             if (!_session) return
             session.value = _session
 
-            const ucan = Object.values(session.value.fs?.proofs || {})[0]
-            console.log('**ucan**', ucan)
-            console.log('**session proofs**', session.value.fs?.proofs)
-            const sig = await sign(keystore, stringify(newUserData))
-            // const msg = { ucan, signature: toString(sig), value: newUserData }
-            const msg = { signature: toString(sig), value: newUserData }
+            // --------------- DB stuff -----------------------
+            // const ucan = Object.values(session.value.fs?.proofs || {})[0]
+            // console.log('**ucan**', ucan)
+            // console.log('**session proofs**', session.value.fs?.proofs)
+            // const sig = await sign(keystore, stringify(newUserData))
+            // const msg = { signature: toString(sig), value: newUserData }
 
-            // @ts-ignore
-            window.msg = stringify(newUserData)
+            // // @ts-ignore
+            // window.msg = stringify(newUserData)
 
-            // save to DB
-            const res = await fetch(URL_PREFIX + '/username', {
-                method: 'POST',
-                body: JSON.stringify(msg)
-            }).then(res => res.json())
+            // // save to DB
+            // const res = await fetch(URL_PREFIX + '/username', {
+            //     method: 'POST',
+            //     body: JSON.stringify(msg)
+            // }).then(res => res.json())
 
-            console.log('**save username response**', res)
-            console.log('res.string', res.string)
+            // console.log('**save username response**', res)
+            // console.log('res.string', res.string)
+            // --------------- DB stuff -----------------------
+
+
+            // -------------- wnfs stuff ---------------------------
+
+            const profilePath = wn.path.appData(
+                APP_INFO,
+                wn.path.file(PROFILE_PATH)
+            )
+            
+            await _session.fs?.write(
+                profilePath,
+                new TextEncoder().encode(JSON.stringify(newUserData))
+            )
+            await _session.fs?.publish()
+
+            // -------------- wnfs stuff ---------------------------
+
 
             return setRoute('/')
         }

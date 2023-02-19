@@ -1,5 +1,5 @@
 import * as wn from "webnative"
-import { useState, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import { FunctionComponent } from 'preact'
 import { Signal, useSignal } from "@preact/signals"
 // import { getHumanName } from "../username.js"
@@ -9,13 +9,13 @@ import EditableImg from '../components/editable-image.jsx'
 import { PROFILE_PATH, APP_INFO, AVATAR_PATH } from "../CONSTANTS.js"
 import TextInput from '../components/text-input.jsx'
 import { createDID, prepareDid, isUsernameValid,
-    USERDATA_STORAGE_KEY } from '../username.js'
+    USERDATA_STORAGE_KEY, UserData } from '../username.js'
 import './whoami.css'
 
-interface UserData {
-    humanName: string
-    did: string
-}
+// interface UserData {
+//     humanName: string
+//     did: string
+// }
 
 interface Props {
     appAvatar: Signal<File|string|null>,
@@ -44,7 +44,7 @@ export const Whoami:FunctionComponent<Props> = function ({
     }
 
     const [isEditingDesc, setEditingDesc] = useState<boolean>(false)
-    const [profile, setProfile] = useState<Profile|null>(null)
+    // const [profile, setProfile] = useState<Profile|null>(null)
     const [pendingImage, setPendingImage] = useState<Avatar | null>(null)
     const pendingDesc = useSignal<string|null>(null)
     const [isEditingUsername, setEditingUsername] = useState<boolean>(false)
@@ -57,23 +57,23 @@ export const Whoami:FunctionComponent<Props> = function ({
     }
 
     // set profile
-    useEffect(() => {
-        if (!fs || !session) return
+    // useEffect(() => {
+    //     if (!fs || !session) return
 
-        const profilePath = wn.path.appData(
-            APP_INFO,
-            wn.path.file(PROFILE_PATH)
-        )
+    //     const profilePath = wn.path.appData(
+    //         APP_INFO,
+    //         wn.path.file(PROFILE_PATH)
+    //     )
 
-        fs.cat(profilePath)
-            .then(content => {
-                if (!content) return
-                const str = new TextDecoder().decode(content)
-                setProfile(JSON.parse(str))
-            }).catch(err => {
-                console.log('errrrr reading file', err)
-            })
-    }, [fs])
+    //     fs.read(profilePath)
+    //         .then(content => {
+    //             if (!content) return
+    //             const str = new TextDecoder().decode(content)
+    //             setProfile(JSON.parse(str))
+    //         }).catch(err => {
+    //             console.log('errrrr reading file', err)
+    //         })
+    // }, [fs])
 
     function selectImg (ev) {
         ev.preventDefault()
@@ -114,7 +114,7 @@ export const Whoami:FunctionComponent<Props> = function ({
 
             // read the file we just wrote
             try {
-                const content = await fs.cat(filepath)
+                const content = await fs.read(filepath)
                 appAvatar.value = URL.createObjectURL(
                     new Blob([content as BlobPart], { type: 'image/*' })
                 )
@@ -146,18 +146,22 @@ export const Whoami:FunctionComponent<Props> = function ({
         const description = els.description.value.trim()
         console.log('save profile', description)
 
+        const newProfile:UserData = Object.assign({}, userData.value, {
+            description
+        })
         const filepath = wn.path.appData(
             APP_INFO,
             wn.path.file(PROFILE_PATH)
         )
         await fs.write(
             filepath,
-            new TextEncoder().encode(JSON.stringify({ description }))
+            new TextEncoder().encode(JSON.stringify(newProfile))
         )
         console.log('file path written...', filepath)
         await fs.publish()
         setEditingDesc(false)
-        setProfile({ description })
+        userData.value = newProfile
+        // setProfile(newProfile)
     }
 
     async function saveUsername (ev:SubmitEvent) {
@@ -168,20 +172,31 @@ export const Whoami:FunctionComponent<Props> = function ({
         const username = ev.target['username'].value
         const did = await createDID(crypto)
         // @TODO -- set username on server
-        const newUserData = Object.assign({}, userData, {
-            humanName: username,
-            did
-        })
+        // const newUserData = Object.assign({}, userData.value, {
+        //     humanName: username,
+        //     did
+        // })
         const preppedDid = await prepareDid(did)
         const isVal = await isUsernameValid(preppedDid, webnative.value)
         if (!isVal) {
             // @TODO -- show the user invalidness
-            console.log('**invalid**')
-            return
+            return console.log('**invalid**', preppedDid)
         }
-        await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(newUserData))
+
+        const newProfile:UserData = Object.assign({}, userData.value, {
+            humanName: username
+        })
+        const filepath = wn.path.appData(
+            APP_INFO,
+            wn.path.file(PROFILE_PATH)
+        )
+        await fs.write(
+            filepath,
+            new TextEncoder().encode(JSON.stringify(newProfile))
+        )
+        await storage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(newProfile))
+        userData.value = newProfile
         setEditingUsername(false)
-        userData.value = newUserData
     }
 
     function setPendingDesc (ev) {
@@ -279,7 +294,7 @@ export const Whoami:FunctionComponent<Props> = function ({
                             <form onSubmit={saveDescription}>
                                 <textarea name="description" autoFocus
                                     value={pendingDesc.value === null ?
-                                        (profile && profile.description || null) :
+                                        (userData.value.description || null) :
                                         pendingDesc.value
                                     }
                                     onInput={setPendingDesc}
@@ -288,13 +303,18 @@ export const Whoami:FunctionComponent<Props> = function ({
                                 <button type="submit"
                                     disabled={!pendingDesc.value?.trim() ||
                                         (pendingDesc.value.trim() ==
-                                            profile?.description)}
+                                            userData.value.description)}
                                 >
                                     save
                                 </button>
                             </form>
                         </div> :
-                        <p>{profile ? profile.description : <em>none</em>}</p>
+
+                        <p>
+                            {userData.value ?
+                                userData.value.description :
+                                <em>none</em>}
+                        </p>
                     }
                 </dd>
             </dl>

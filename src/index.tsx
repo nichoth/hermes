@@ -9,7 +9,7 @@ import Route from 'route-event'
 import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-import { AVATAR_PATH } from './CONSTANTS.js'
+import { AVATAR_PATH, PROFILE_PATH } from './CONSTANTS.js'
 import { UserData } from './username.js'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
@@ -90,6 +90,16 @@ const App: FunctionComponent<Props> = function App () {
                 webnative.value = program
                 session.value = (program.session ?? await program.auth.session())
 
+                //
+                // __not authed__ -- redirect to login
+                //
+                if (!session.value) {
+                    console.log('...not session...', program)
+                    if (location.pathname === '/create-account') return
+                    if (location.pathname.includes('login')) return
+                    route.setRoute('/login')
+                }
+
                 try {
 
                     // @TODO -- use the remote DB to fetch any updates to username,
@@ -99,11 +109,24 @@ const App: FunctionComponent<Props> = function App () {
 
                     // userData.value = res
 
-                    const data = await program.components.storage.getItem(
-                        USERDATA_STORAGE_KEY
-                    ) as string
+                    // let data = await program.components.storage.getItem(
+                    //     USERDATA_STORAGE_KEY
+                    // ) as string
+
+                    // if (!data) {
+                        // look in wnfs
+                        const profilePath = wn.path.appData(
+                            APP_INFO,
+                            wn.path.file(PROFILE_PATH)
+                        )
+                        const data = new TextDecoder().decode(
+                            await session.value?.fs?.read(profilePath)
+                        )
+                    // }
 
                     userData.value = JSON.parse(data) as UserData
+                    console.log('user data', userData.value)
+
                     if (!userData.value) {
                         // @TODO
                         // we dont have the userData locally, need to fetch
@@ -114,15 +137,6 @@ const App: FunctionComponent<Props> = function App () {
                     console.log('errrrrrrrr, parsing json', err)
                 }
 
-                //
-                // __not authed__ -- redirect to login
-                //
-                if (!session.value) {
-                    console.log('...not session...', program)
-                    if (location.pathname === '/create-account') return
-                    if (location.pathname.includes('login')) return
-                    route.setRoute('/login')
-                }
             })
     }, [])
 

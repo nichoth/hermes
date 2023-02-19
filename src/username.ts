@@ -42,6 +42,7 @@ export const createDID = async (
 
 export interface UserData {
     humanName: string
+    description: string,
     hashedUsername: string
     rootDid: string
     author: string
