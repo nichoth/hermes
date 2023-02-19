@@ -42,7 +42,7 @@ const Home:FunctionComponent<Props> = function ({ session }) {
                         imgBlob = await fs.cat(imgPath)
                     } catch (err) {
                         // do nothing, just for development
-                        console.log('caught error err')
+                        console.log('caught error', err)
                     }
                     const imgUrl = URL.createObjectURL(
                         new Blob([imgBlob as BlobPart], { type: 'image/jpeg' })
@@ -76,7 +76,7 @@ const Home:FunctionComponent<Props> = function ({ session }) {
                 return <li>
                     <a href={'/@' + item.post.author + '/' + item.post.sequence}>
                         <img src={item.imgUrl} alt={item.post.content.alt} />
-                        <p>{item.post.value?.content.text || item.post.content.text}</p>
+                        <p>{item.post.content.text}</p>
                     </a>
                 </li>
             })}

@@ -15,7 +15,6 @@
                 text-decoration: none;
 
                 &:hover {
-                    text-decoration: underline;
                     & img {
                         outline: 3px double blue;
                     }

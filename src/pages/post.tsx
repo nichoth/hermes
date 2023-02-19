@@ -2,6 +2,8 @@ import { useState, useEffect } from 'preact/hooks'
 import { LOG_DIR_PATH, BLOB_DIR_PATH, APP_INFO } from '../CONSTANTS.js'
 import * as wn from "webnative"
 import './post.css'
+import { Signal } from '@preact/signals'
+import { FunctionComponent } from 'preact'
 
 interface Post {
     post: PostObject,
@@ -20,17 +22,22 @@ interface PostObject {
     }
 }
 
-export function Post ({ params, webnative }) {
+interface Props {
+    session: Signal<wn.Session|null>,
+    params: { sequence: string, username: string }
+}
+
+export const Post: FunctionComponent<Props> = function ({ params, session }) {
     const { sequence, username } = params
     const [postContent, setPostContent] = useState<Post|null>(null)
 
     useEffect(() => {
-        readPost(webnative.value, username, sequence)
+        readPost(session.value, username, sequence)
             .then((post) => {
                 console.log('read post', post)
                 setPostContent(post)
             })
-    }, [params.sequence, params.username])
+    }, [sequence, username])
 
 
     if (!postContent) return null
@@ -41,10 +48,10 @@ export function Post ({ params, webnative }) {
     </div>
 }
 
-async function readPost (webnative, username, sequence) {
-    const { fs } = webnative.session
+async function readPost (session, username, sequence) {
+    const { fs } = session
 
-    if (username === webnative.session.username) {
+    if (username === session.username) {
         const postPath = wn.path.appData(
             APP_INFO,
             wn.path.file(LOG_DIR_PATH, sequence + '.json')
@@ -71,6 +78,9 @@ async function readPost (webnative, username, sequence) {
 
         return { post, imgUrl }
     }
+
+    // else
+    // need to get the other user's posts
 
     return { post: null, imgUrl: null }
 }
