@@ -26,7 +26,7 @@ const Home:FunctionComponent<Props> = function ({ session }) {
                         wn.path.file(LOG_DIR_PATH, filename)
                     )
 
-                    const content = await fs.cat(fullPath)
+                    const content = await fs.read(fullPath)
                     const post = JSON.parse(new TextDecoder().decode(content))
 
                     // get img URL
@@ -39,7 +39,7 @@ const Home:FunctionComponent<Props> = function ({ session }) {
 
                     let imgBlob
                     try {
-                        imgBlob = await fs.cat(imgPath)
+                        imgBlob = await fs.read(imgPath)
                     } catch (err) {
                         // do nothing, just for development
                         console.log('caught error', err)

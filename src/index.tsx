@@ -141,7 +141,7 @@ const App: FunctionComponent<Props> = function App () {
             wn.path.file(AVATAR_PATH)
         )
 
-        fs.cat(avatarPath)
+        fs.read(avatarPath)
             .then(content => {
                 if (!content) return
                 appAvatar.value = URL.createObjectURL(
