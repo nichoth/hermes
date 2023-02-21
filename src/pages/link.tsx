@@ -31,7 +31,7 @@ interface Challenge {
     rejectPin: () => void
 }
 
-export const Link:FunctionComponent<Props> = function ({ webnative }) {
+export const Link:FunctionComponent<Props> = function ({ webnative, session }) {
     const [challenge, setChallenge] = useState<Challenge|null>(null)
     const [validPin, setValidPin] = useState<boolean>(false)
     const [showLinked, setShowLinked] = useState<boolean>(false)
@@ -40,11 +40,12 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
     window.setShowLinked = setShowLinked
 
     useEffect(() => {
-        const { session } = webnative.value
-        if (!session) return
+        // const { session } = webnative.value
+        const _session = session.value
+        if (!_session) return
         let _producer
 
-        webnative.value.auth.accountProducer(session.username)
+        webnative.value.auth.accountProducer(_session.username)
             .then(producer => {
                 // this is the device that *is* logged in
                 // which means we need to type a pin from the challenger,
@@ -62,7 +63,6 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
                     console.log('it was approved?', approved)
                     if (!approved) return
                     producer.cancel()
-                    console.log('Device linked successfully')
 
                     setShowLinked(true)
                 })
@@ -79,7 +79,6 @@ export const Link:FunctionComponent<Props> = function ({ webnative }) {
 
         // have the user input a PIN and see if they're equal.
         const userInput = (ev.target as HTMLFormElement).elements['pin'].value
-        console.log('user input', userInput)
         if (userInput === challenge.pin.join('')) challenge.confirmPin()
         else challenge.rejectPin()
     }

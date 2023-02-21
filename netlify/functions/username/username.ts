@@ -18,6 +18,24 @@ const client = new faunadb.Client({
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
 
 export const handler = async function hanlder (ev) {
+    if (ev.httpMethod === 'GET') {
+
+        // const path = ev.path.replace(/\/\.netlify\/functions\/[^/]*\//, '')
+        // const pathParts = (path) ? path.split('/') : []
+
+        // console.log('ok', pathParts)
+
+        const params = ev.queryStringParameters
+        console.log('params', ev.queryStringParameters)
+
+        return {
+            statusCode: 200,
+            body: 'aaaaaa'
+            // body: JSON.stringify({ params })
+            // body: JSON.stringify({ name: pathParts[0] })
+        }
+    }
+
     if ((ev.httpMethod !== 'POST') && (ev.httpMethod !== 'PUT')) {
         return {
             statusCode: 405,
@@ -98,7 +116,7 @@ export const handler = async function hanlder (ev) {
             statusCode: 400,
             body: JSON.stringify({
                 msg: 'Invalid signature',
-                string: stringify(value)
+                originalMessage: stringify(value)
             })
         }
     }

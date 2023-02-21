@@ -6,6 +6,7 @@
   "version": "0.0.0",
   "main": "src/index.tsx",
   "scripts": {
+    "test-start": "ntl dev",
     "start": "concurrently --kill-others \"vite\" \"npx ntl functions:serve\"",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && vite build",
     "serve": "vite preview",

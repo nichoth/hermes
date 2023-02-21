@@ -5,6 +5,8 @@ export const URL_PREFIX = (mode === 'development' ?
         '/.netlify/functions') :
     '/api')
 
+// export const URL_PREFIX = '/api'
+
 export const APP_INFO = {
     name: 'hermes',
     creator: 'snail-situation'

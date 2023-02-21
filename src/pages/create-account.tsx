@@ -7,14 +7,15 @@ import * as wn from 'webnative'
 import timestamp from 'monotonic-timestamp'
 import { publicKeyToDid } from "webnative/did/transformers";
 import * as ucans from '@ucans/ucans'
+import stringify from 'json-stable-stringify'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
     USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
 import * as username from '../username.js'
 import './centered.css'
-import { APP_INFO, PROFILE_PATH } from '../CONSTANTS.js'
-import { sign, toString, sleep } from '../util.js'
+import { APP_INFO, PROFILE_PATH, URL_PREFIX } from '../CONSTANTS.js'
+import { sign, toString } from '../util.js'
 
 // @ts-ignore
 window.ucans = ucans
@@ -121,20 +122,20 @@ const CreateAccount:FunctionComponent<Props> = function ({
             // const ucan = Object.values(session.value.fs?.proofs || {})[0]
             // console.log('**ucan**', ucan)
             // console.log('**session proofs**', session.value.fs?.proofs)
-            // const sig = await sign(keystore, stringify(newUserData))
-            // const msg = { signature: toString(sig), value: newUserData }
+            const sig = await sign(keystore, stringify(newUserData))
+            const msg = { signature: toString(sig), value: newUserData }
 
-            // // @ts-ignore
-            // window.msg = stringify(newUserData)
+            // @ts-ignore
+            window.msg = msg
 
-            // // save to DB
-            // const res = await fetch(URL_PREFIX + '/username', {
-            //     method: 'POST',
-            //     body: JSON.stringify(msg)
-            // }).then(res => res.json())
+            // save to DB
+            const res = await fetch(URL_PREFIX + '/username', {
+                method: 'POST',
+                body: JSON.stringify(msg)
+            }).then(res => res.json())
 
-            // console.log('**save username response**', res)
-            // console.log('res.string', res.string)
+            console.log('**save username response**', res)
+            console.log('res.originalMessage', res.originalMessage)
             // --------------- DB stuff -----------------------
 
 

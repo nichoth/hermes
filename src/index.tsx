@@ -6,7 +6,7 @@ import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
-import { USERDATA_STORAGE_KEY } from './username.js'
+// import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
 import { AVATAR_PATH, PROFILE_PATH } from './CONSTANTS.js'
@@ -16,8 +16,6 @@ import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
 import './index.css'
 import './z-index.css'
-
-// http://localhost:9999/.netlify/functions/username
 
 const APP_INFO = { name: 'hermes', creator: 'snail-situation' }
 
@@ -101,7 +99,6 @@ const App: FunctionComponent<Props> = function App () {
                 }
 
                 try {
-
                     // @TODO -- use the remote DB to fetch any updates to username,
                     //   and synchronize the data
                     // const res = await fetch(URL_PREFIX + '/username')
@@ -208,7 +205,7 @@ const App: FunctionComponent<Props> = function App () {
                 <figure>
                     <img src={appAvatar.value}></img>
                 </figure>
-                <span>{userData.value?.humanName || ''}</span>
+                <span>{userData.value?.humanName}</span>
             </a>
 
             <nav>
