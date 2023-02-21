@@ -20,15 +20,28 @@ const client = new faunadb.Client({
 
 export const handler:Handler = async function hanlder (ev:HandlerEvent) {
     if (ev.httpMethod === 'GET') {
-
         const path = ev.path.replace(/\/\.netlify\/functions\/[^/]*\//, '')
-        const name = (path) ? path.split('/')[0] : []
+        const pathParts = (path) ? path.split('/') : []
+        const [name, seq] = pathParts
 
         console.log('ok', name)
 
+        const res:{ data } = await client.query(
+            q.Map(
+                q.Paginate(q.Match(q.Index('profile-by-humanName'), name)),
+                q.Lambda('profile', q.Get(q.Var('profile')))
+            )
+        )
+
+        const doc = res.data[seq ? parseInt(seq) : 0]
+
+        if (!doc) {
+            return { statusCode: 404, body: JSON.stringify('Not found') }
+        }
+
         return {
             statusCode: 200,
-            body: JSON.stringify({ name })
+            body: JSON.stringify(doc.data)
         }
     }
 
