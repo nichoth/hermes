@@ -14,7 +14,7 @@ import { isUsernameValid, isUsernameAvailable, createDID,
     USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
 import * as username from '../username.js'
 import './centered.css'
-import { APP_INFO, PROFILE_PATH, URL_PREFIX } from '../CONSTANTS.js'
+import { APP_INFO, PROFILE_PATH } from '../CONSTANTS.js'
 import { sign, toString } from '../util.js'
 
 // @ts-ignore
@@ -129,7 +129,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
             window.msg = msg
 
             // save to DB
-            const res = await fetch(URL_PREFIX + '/username', {
+            const res = await fetch('/api/username', {
                 method: 'POST',
                 body: JSON.stringify(msg)
             }).then(res => res.json())

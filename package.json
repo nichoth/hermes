@@ -7,7 +7,7 @@
   "main": "src/index.tsx",
   "scripts": {
     "test-start": "ntl dev",
-    "start": "concurrently --kill-others \"vite\" \"npx ntl functions:serve --port=9999\"",
+    "start": "concurrently --kill-others \"vite\" \"npx ntl functions:serve --port=9999 --debug\"",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && vite build",
     "serve": "vite preview",
     "preversion": "npm test",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@nichoth/components": "^0.1.1",
     "@nichoth/routes": "^3.0.4",
+    "@netlify/functions": "^1.4.0",
     "@preact/signals": "^1.1.2",
     "@ucans/ucans": "^0.11.2",
     "clipboard-copy": "^4.0.1",

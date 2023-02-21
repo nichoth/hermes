@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import { default as faunadb } from 'faunadb'
 import { default as stringify } from 'json-stable-stringify'
+import { Handler, HandlerEvent } from '@netlify/functions'
 // import * as ucans from '@ucans/ucans'
 import { verify } from '../../../src/util.js'
 
@@ -17,22 +18,17 @@ const client = new faunadb.Client({
 // `username` is the new human-readable username
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
 
-export const handler = async function hanlder (ev) {
+export const handler:Handler = async function hanlder (ev:HandlerEvent) {
     if (ev.httpMethod === 'GET') {
 
-        // const path = ev.path.replace(/\/\.netlify\/functions\/[^/]*\//, '')
-        // const pathParts = (path) ? path.split('/') : []
+        const path = ev.path.replace(/\/\.netlify\/functions\/[^/]*\//, '')
+        const name = (path) ? path.split('/')[0] : []
 
-        // console.log('ok', pathParts)
-
-        const params = ev.queryStringParameters
-        console.log('params', ev.queryStringParameters)
+        console.log('ok', name)
 
         return {
             statusCode: 200,
-            body: 'aaaaaa'
-            // body: JSON.stringify({ params })
-            // body: JSON.stringify({ name: pathParts[0] })
+            body: JSON.stringify({ name })
         }
     }
 
@@ -46,7 +42,7 @@ export const handler = async function hanlder (ev) {
     let author, humanName, hashedUsername, signature, value, timestamp,
         rootDid;
     try {
-        const body = JSON.parse(ev.body);
+        const body = JSON.parse(ev.body || '');
         ({ value, signature } = body);
         ({ author, rootDid, humanName, hashedUsername, timestamp } = value);
     } catch (err:any) {
@@ -128,8 +124,6 @@ export const handler = async function hanlder (ev) {
             { data: { humanName, hashedUsername, timestamp, rootDid } }
         ))
 
-        // everything went ok
-        // we created a new user record
         return {
             statusCode: 201,
             body: JSON.stringify(doc)

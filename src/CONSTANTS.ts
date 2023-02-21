@@ -1,12 +1,5 @@
 const { mode } = import.meta.env
 
-export const URL_PREFIX = (mode === 'development' ?
-    (location.protocol + '//' + location.hostname + ':9999' +
-        '/.netlify/functions') :
-    '/api')
-
-// export const URL_PREFIX = '/api'
-
 export const APP_INFO = {
     name: 'hermes',
     creator: 'snail-situation'
@@ -24,6 +17,5 @@ export default {
     PROFILE_PATH,
     LOG_DIR_PATH,
     BLOB_DIR_PATH,
-    URL_PREFIX,
     APP_INFO
 }
