@@ -93,72 +93,70 @@ const CreateAccount:FunctionComponent<Props> = function ({
             username: preppedDid
         })
 
-        if (success) {
-            console.log('success!!!!!!!!!!!')
-            await storage.setItem(
-                USERDATA_STORAGE_KEY,
-                JSON.stringify(newUserData)
-            )
+        if (!success) return console.log('not success...')
 
-            const program = await wn.program({
-                namespace: { creator: "snail-situation", name: "hermes" },
-                debug: true,
-                fileSystem: {
-                    loadImmediately: true
-                }
-                // permissions: PERMISSIONS
-            })
+        console.log('success!!!!!!!!!!!')
 
-            console.log('*program*', program)
-            webnative.value = program
-            userData.value = Object.assign({}, newUserData)
+        await storage.setItem(
+            USERDATA_STORAGE_KEY,
+            JSON.stringify(newUserData)
+        )
 
-            const _session = program.session
-            console.log('__session__', _session)
-            if (!_session) return
-            session.value = _session
+        const program = await wn.program({
+            namespace: { creator: "snail-situation", name: "hermes" },
+            debug: true,
+            fileSystem: {
+                loadImmediately: true
+            }
+        })
 
-            // --------------- DB stuff -----------------------
-            // const ucan = Object.values(session.value.fs?.proofs || {})[0]
-            // console.log('**ucan**', ucan)
-            // console.log('**session proofs**', session.value.fs?.proofs)
-            const sig = await sign(keystore, stringify(newUserData))
-            const msg = { signature: toString(sig), value: newUserData }
+        console.log('*program*', program)
+        webnative.value = program
+        userData.value = newUserData
 
-            // @ts-ignore
-            window.msg = msg
+        const _session = program.session
+        console.log('__session__', _session)
+        if (!_session) return
+        session.value = _session
 
-            // save to DB
-            const res = await fetch('/api/username', {
-                method: 'POST',
-                body: JSON.stringify(msg)
-            }).then(res => res.json())
+        // --------------- DB stuff -----------------------
+        // const ucan = Object.values(session.value.fs?.proofs || {})[0]
+        // console.log('**ucan**', ucan)
+        // console.log('**session proofs**', session.value.fs?.proofs)
 
-            console.log('**save username response**', res)
-            console.log('res.originalMessage', res.originalMessage)
-            // --------------- DB stuff -----------------------
+        const sig = await sign(keystore, stringify(newUserData))
+        const msg = { signature: toString(sig), value: newUserData }
 
+        // @ts-ignore
+        window.msg = msg
 
-            // -------------- wnfs stuff ---------------------------
+        // save to DB
+        const res = await fetch('/api/username', {
+            method: 'POST',
+            body: JSON.stringify(msg)
+        }).then(res => res.json())
 
-            const profilePath = wn.path.appData(
-                APP_INFO,
-                wn.path.file(PROFILE_PATH)
-            )
-            
-            await _session.fs?.write(
-                profilePath,
-                new TextEncoder().encode(JSON.stringify(newUserData))
-            )
-            await _session.fs?.publish()
-
-            // -------------- wnfs stuff ---------------------------
+        console.log('**save username response**', res)
+        // --------------- DB stuff -----------------------
 
 
-            return setRoute('/')
-        }
+        // -------------- wnfs stuff ---------------------------
 
-        console.log('not success...')
+        // const profilePath = wn.path.appData(
+        //     APP_INFO,
+        //     wn.path.file(PROFILE_PATH)
+        // )
+        
+        // await _session.fs?.write(
+        //     profilePath,
+        //     new TextEncoder().encode(JSON.stringify(newUserData))
+        // )
+        // await _session.fs?.publish()
+
+        // -------------- wnfs stuff ---------------------------
+
+
+        return setRoute('/')
     }
 
     function nevermind (ev) {
@@ -188,7 +186,6 @@ const CreateAccount:FunctionComponent<Props> = function ({
             webnative.value
         )
         console.log('is avail', isAvailable)
-        console.log('is avail in state', usernameAvailable)
         if (isAvailable !== usernameAvailable) setAvailable(isAvailable)
     }
 

@@ -33,7 +33,12 @@ export const handler:Handler = async function hanlder (ev:HandlerEvent) {
             )
         )
 
-        const doc = res.data[seq ? parseInt(seq) : 0]
+        let doc
+        try {
+            doc = res.data[seq ? parseInt(seq) : 0]
+        } catch (err) {
+            return { statusCode: 400, body: JSON.stringify(err) }
+        }
 
         if (!doc) {
             return { statusCode: 404, body: JSON.stringify('Not found') }
