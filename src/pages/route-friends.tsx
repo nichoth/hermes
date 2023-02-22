@@ -15,9 +15,16 @@ interface Friend {
     hashedUsername: string
 }
 
+interface Request {
+    humanName: string  // the requester's human name
+    from: string  // the requester's hashed DID
+    to: string  // our hashed DID
+}
+
 export const Friends:FunctionComponent<Props> = function ({ session }) {
     const friendsList = useSignal<Friend[] | []>([])
     const pendingFriends = useSignal<Friend[] | []>([])
+    const requests = useSignal<Request[] | []>([])
 
     const listPath = wn.path.appData(
         APP_INFO,
@@ -44,6 +51,16 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
         <p>
             <a href="/friends/request">Request a new friend</a>
         </p>
+
+        <h2>Pending Requests</h2>
+        {!requests.value.length ?
+            (<p><em>none</em></p>) :
+            (<ul>
+                {requests.value.map(req => {
+                    return <li className="friend-request">a request</li>
+                })}
+            </ul>)
+        }
 
         <h2>Pending friends</h2>
         {!pendingFriends.value.length ?

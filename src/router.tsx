@@ -9,6 +9,7 @@ import { CreateAccount } from './pages/create-account.jsx'
 import { Link } from './pages/link.jsx'
 import { Friends } from './pages/route-friends.jsx'
 import { FriendsRequest } from './pages/friend-request.jsx'
+import { Username } from './pages/route-username.jsx'
 
 export default function _Router () {
     const router = Router()
@@ -48,6 +49,10 @@ export default function _Router () {
 
     router.addRoute('/create-account', () => {
         return CreateAccount
+    })
+
+    router.addRoute('/@:username', () => {
+        return Username
     })
 
     router.addRoute('/@:username/:sequence', () => {
