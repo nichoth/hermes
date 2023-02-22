@@ -24,8 +24,6 @@ export const handler:Handler = async function hanlder (ev:HandlerEvent) {
         const pathParts = (path) ? path.split('/') : []
         const [name, seq] = pathParts
 
-        console.log('ok', name)
-
         const res:{ data } = await client.query(
             q.Map(
                 q.Paginate(q.Match(q.Index('profile-by-humanName'), name)),

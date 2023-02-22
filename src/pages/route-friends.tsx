@@ -5,14 +5,10 @@ import { Signal } from '@preact/signals'
 import { useSignal } from '@preact/signals'
 import './route-friends.css'
 import { APP_INFO, FRIENDS_PATH } from "../CONSTANTS.js"
+import { Friend } from '../friend.js'
 
 interface Props {
     session: Signal<wn.Session | null>
-}
-
-interface Friend {
-    humanName: string,
-    hashedUsername: string
 }
 
 interface Request {

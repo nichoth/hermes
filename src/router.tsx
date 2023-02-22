@@ -9,7 +9,7 @@ import { CreateAccount } from './pages/create-account.jsx'
 import { Link } from './pages/link.jsx'
 import { Friends } from './pages/route-friends.jsx'
 import { FriendsRequest } from './pages/friend-request.jsx'
-import { Username } from './pages/route-username.jsx'
+import { UserRoute } from './pages/route-username.jsx'
 
 export default function _Router () {
     const router = Router()
@@ -52,11 +52,11 @@ export default function _Router () {
     })
 
     router.addRoute('/@:username', () => {
-        return Username
+        return UserRoute
     })
 
     router.addRoute('/@:username/:index', () => {
-        return Username
+        return UserRoute
     })
 
     router.addRoute('/@:username/post/:sequence', () => {
@@ -65,6 +65,13 @@ export default function _Router () {
 
     router.addRoute('/@:username/:userIndex/post/:sequence', () => {
         return Post
+    })
+
+    router.addRoute('/@:username/request', () => {
+    })
+
+    router.addRoute('/@:username/:userIndex/request', () => {
+
     })
 
     // router.addRoute('/@:username/:sequence', () => {
