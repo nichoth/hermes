@@ -55,9 +55,21 @@ export default function _Router () {
         return Username
     })
 
-    router.addRoute('/@:username/:sequence', () => {
+    router.addRoute('/@:username/:index', () => {
+        return Username
+    })
+
+    router.addRoute('/@:username/post/:sequence', () => {
         return Post
     })
+
+    router.addRoute('/@:username/:userIndex/post/:sequence', () => {
+        return Post
+    })
+
+    // router.addRoute('/@:username/:sequence', () => {
+    //     return Post
+    // })
 
     router.addRoute('/friends', () => {
         return Friends

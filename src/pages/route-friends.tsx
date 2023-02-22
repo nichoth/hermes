@@ -52,7 +52,7 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             <a href="/friends/request">Request a new friend</a>
         </p>
 
-        <h2>Pending Requests</h2>
+        <h2>Pending requests</h2>
         {!requests.value.length ?
             (<p><em>none</em></p>) :
             (<ul>

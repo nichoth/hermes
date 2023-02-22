@@ -5,7 +5,7 @@ import './post.css'
 import { Signal } from '@preact/signals'
 import { FunctionComponent } from 'preact'
 
-interface Post {
+export interface Post {
     post: PostObject,
     imgUrl: string
 }
@@ -13,7 +13,7 @@ interface Post {
 interface PostObject {
     sequence: number,
     timestamp: number,
-    author: string,
+    author: string,  // the hashed username (not human readable)
     content: {
         type: 'post',
         text: string,
@@ -30,6 +30,8 @@ interface Props {
 export const Post: FunctionComponent<Props> = function ({ params, session }) {
     const { sequence, username } = params
     const [postContent, setPostContent] = useState<Post|null>(null)
+
+    console.log('params in post route', params)
 
     useEffect(() => {
         readPost(session.value, username, sequence)
@@ -51,6 +53,8 @@ export const Post: FunctionComponent<Props> = function ({ params, session }) {
 async function readPost (session, username, sequence):
 Promise<{ post: PostObject, imgUrl:string } | null> {
     const { fs }:{ fs:wn.FileSystem } = session
+
+    // @TODO -- request the userData from DB, or get it from cache
 
     if (username === session.username) {
         const postPath = wn.path.appData(

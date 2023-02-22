@@ -1,18 +1,24 @@
 import { FunctionComponent, h } from 'preact'
-import { Signal } from '@preact/signals'
+import { Signal, useSignal } from '@preact/signals'
 import * as wn from "webnative"
 import { useState, useEffect } from 'preact/hooks'
 import { APP_INFO, LOG_DIR_PATH, BLOB_DIR_PATH } from '../CONSTANTS.js'
 import './home.css'
+import { Post } from './post.jsx'
+import { UserData } from '../username.js'
 
 interface Props {
     session: Signal<wn.Session|null>
 }
 
+// should maybe fetch all your friend's userData right away
+
 const Home:FunctionComponent<Props> = function ({ session }) {
     if (!session.value?.fs) return null
     const { fs } = session.value
     const [posts, setPosts] = useState<object[]>([])
+    // @TODO -- should cache this
+    const users = useSignal<UserData[]>([])
 
     const logPath = wn.path.appData(APP_INFO, wn.path.directory(LOG_DIR_PATH))
 
@@ -41,20 +47,35 @@ const Home:FunctionComponent<Props> = function ({ session }) {
                     try {
                         imgBlob = await fs.read(imgPath)
                     } catch (err) {
-                        // do nothing, just for development
+                        // do nothing
+                        // @TODO -- show an error message
                         console.log('caught error', err)
                     }
                     const imgUrl = URL.createObjectURL(
                         new Blob([imgBlob as BlobPart], { type: 'image/jpeg' })
                     )
 
-                    return ({
-                        post,
-                        imgUrl
-                    })
+                    return ({ post, imgUrl })
                 })
 
                 const files = await Promise.all(_files)
+
+                const authors:string[] = Array.from(new Set(files.map(file => {
+                    return file.post.author
+                })))
+
+                console.log('authors', authors)
+
+                const authorQuery = new URLSearchParams({
+                    names: authors.concat(['foo']).toString()
+                })
+                console.log('*query*', authorQuery.toString())
+
+                const profiles = await fetch('/api/username-by-hash?' +
+                    authorQuery.toString()).then(res => res.json())
+
+                console.log('profiles', profiles)
+
                 setPosts(files)
             })
             .catch(err => {
@@ -72,7 +93,7 @@ const Home:FunctionComponent<Props> = function ({ session }) {
 
         <ul class="main-feed">
             {Object.keys(posts).map((key) => {
-                const item = posts[key]
+                const item:Post = posts[key]
                 return <li>
                     <a href={'/@' + item.post.author + '/' + item.post.sequence}>
                         <img src={item.imgUrl} alt={item.post.content.alt} />
