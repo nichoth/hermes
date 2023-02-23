@@ -32,8 +32,6 @@ const FriendshipBtn:FunctionComponent<BtnProps> = function FriendshipBtn (props)
     // if we *are* this user, then don't show the button
     if (session.username === profile.value['hashedUsername']) return null
 
-    console.log('render friendship button')
-
     return <Button isSpinning={isSpinning} className="friend-request"
         onClick={onClick}
     >
@@ -90,9 +88,12 @@ function ({ webnative, session, params }) {
         const msg = { signature: toString(sig), author, value: friendReq }
 
         setResolving(true)
-        const res = await ky.post('/api/friend-request', { json: msg }).json()
-
-        console.log('ressssssssssss', res)
+        try {
+            const res = await ky.post('/api/friend-request', { json: msg }).json()
+            console.log('ressssssssssss', res)
+        } catch (err) {
+            setResolving(false)
+        }
 
         setResolving(false)
     }

@@ -88,7 +88,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
                 },
                 q.If(
                     q.Exists(q.Var('match')),
-                    q.Abort('Already exists'),
+                    'Already exists',
                     q.Create(
                         q.Collection('friend-request'),
                         { data: value }
