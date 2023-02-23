@@ -64,17 +64,17 @@ const Home:FunctionComponent<Props> = function ({ session }) {
                     return file.post.author
                 })))
 
-                console.log('authors', authors)
-
                 const authorQuery = new URLSearchParams({
                     names: authors.concat(['foo']).toString()
                 })
-                console.log('*query*', authorQuery.toString())
 
+                // we are getting profiles by request the authors of the files
+                // * should do this by requesting based on out friend list,
+                //   which is a private file
                 const profiles = await fetch('/api/username-by-hash?' +
                     authorQuery.toString()).then(res => res.json())
 
-                console.log('profiles', profiles)
+                console.log('profiles response', profiles)
 
                 setPosts(files)
             })

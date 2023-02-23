@@ -4,17 +4,10 @@ import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { useSignal } from '@preact/signals'
 import './route-friends.css'
-import { Friend } from '../friend.js'
-import { listPath } from '../friend.js'
+import { Friend, listPath, Request } from '../friend.js'
 
 interface Props {
     session: Signal<wn.Session | null>
-}
-
-interface Request {
-    humanName: string  // the requester's human name
-    from: string  // the requester's hashed DID
-    to: string  // our hashed DID
 }
 
 export const Friends:FunctionComponent<Props> = function ({ session }) {

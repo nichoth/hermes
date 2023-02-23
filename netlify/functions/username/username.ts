@@ -18,7 +18,7 @@ const client = new faunadb.Client({
 // `username` is the new human-readable username
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
 
-export const handler:Handler = async function hanlder (ev:HandlerEvent) {
+export const handler:Handler = async function handler (ev:HandlerEvent) {
     if (ev.httpMethod === 'GET') {
         const path = ev.path.replace(/\/\.netlify\/functions\/[^/]*\//, '')
         const pathParts = (path) ? path.split('/') : []
@@ -135,15 +135,20 @@ export const handler:Handler = async function hanlder (ev:HandlerEvent) {
 
     if (ev.httpMethod === 'POST') {
         // create a new user
-        const doc = await client.query(q.Create(
-            q.Collection('username'),
-            { data: { humanName, hashedUsername, timestamp, rootDid } }
-        ))
-
-        return {
-            statusCode: 201,
-            body: JSON.stringify(doc)
+        try {
+            const doc = await client.query(q.Create(
+                q.Collection('profile'),
+                { data: { humanName, hashedUsername, timestamp, rootDid } }
+            ))
+            return {
+                statusCode: 201,
+                body: JSON.stringify(doc)
+            }
+        } catch (err) {
+            console.log('oh noooooooo', err.toString())
+            return { statusCode: 500, body: err.toString() }
         }
+
     }
 
     interface DbResponse {

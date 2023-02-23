@@ -32,10 +32,9 @@ export const handler:Handler = async function hanlder (ev:HandlerEvent) {
     }
 
     const hashArr = qs.names?.split(',')
-    console.log('arrrrrrrrr', hashArr)
 
     return {
         statusCode: 200,
-        body: JSON.stringify('bla')
+        body: JSON.stringify(JSON.stringify(hashArr))
     }
 }

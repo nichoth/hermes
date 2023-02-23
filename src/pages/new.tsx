@@ -7,7 +7,6 @@ import * as wn from "webnative"
 import timestamp from 'monotonic-timestamp'
 import Button from '../components/button.jsx'
 import TextInput from '../components/text-input.jsx'
-// import { PERMISSIONS } from '../permissions.js'
 import { LOG_DIR_PATH, BLOB_DIR_PATH, APP_INFO } from '../CONSTANTS.js'
 import './new.css'
 
