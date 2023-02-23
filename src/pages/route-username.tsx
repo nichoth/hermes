@@ -1,7 +1,8 @@
 import { FunctionComponent } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import * as wn from "webnative"
-import { useSignal, Signal } from '@preact/signals'
+import { Signal, useSignal } from '@preact/signals'
+import Button from '../components/button.jsx'
 import { Friend } from '../friend.js'
 import ky from 'ky'
 
@@ -16,8 +17,8 @@ function getProfile (humanName, i) {
 }
 
 export const UserRoute:FunctionComponent<Props> = function ({ session, params }) {
-    const [profile, setProfile] = useState<Friend | unknown>(null)
-    const [err, setErr] = useState<string | null>(null)
+    const profile = useSignal<Friend|unknown>(null)
+    const err = useSignal<string|null>(null)
 
     const { username, index } = params
 
@@ -25,16 +26,18 @@ export const UserRoute:FunctionComponent<Props> = function ({ session, params })
     useEffect(() => {
         getProfile(username, (index || null))
             .then((userProfile) => {
-                setProfile(userProfile)
+                profile.value = userProfile
+
+                // use the hashedUsername to get their photos, etc
             })
             .catch(err => {
                 console.log('in here', err)
                 console.log('in here', err.toString())
-                setErr(err.toString())
+                err.value = err.toString()
             })
     }, [session])
 
-    console.log('user profile', profile)
+    console.log('user profile', profile.value)
     
     // need to fetch this user's profile info
     console.log('props', params, session.value)
@@ -42,9 +45,21 @@ export const UserRoute:FunctionComponent<Props> = function ({ session, params })
     return <div className="route-username">
         <h1>{username}</h1>
 
-        {err ?
-            <p>{err}</p> :
-            null
+        {err.value ?
+            (<div className="error-msg">
+                <p>{err.value}</p>
+            </div>) :
+            FrienshipButton()
         }
+    </div>
+}
+
+function FrienshipButton () {
+    // @TODO -- check if you are friends already
+
+    return <div className="profile-route">
+        <Button className="friend-request">
+            request friendship
+        </Button>
     </div>
 }

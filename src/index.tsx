@@ -40,11 +40,11 @@ const App: FunctionComponent<Props> = function App () {
     const userData = useSignal<UserData|null>(null)
 
     // @ts-ignore
-    window.webnative = webnative
+    window.webnative = webnative.value
     // @ts-ignore
     window.wn = wn
     // @ts-ignore
-    window.session = session
+    window.session = session.value
     // @ts-ignore
     window.userData = userData.value
 

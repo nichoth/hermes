@@ -4,8 +4,8 @@ import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { useSignal } from '@preact/signals'
 import './route-friends.css'
-import { APP_INFO, FRIENDS_PATH } from "../CONSTANTS.js"
 import { Friend } from '../friend.js'
+import { listPath } from '../friend.js'
 
 interface Props {
     session: Signal<wn.Session | null>
@@ -22,11 +22,7 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
     const pendingFriends = useSignal<Friend[] | []>([])
     const requests = useSignal<Request[] | []>([])
 
-    const listPath = wn.path.appData(
-        APP_INFO,
-        wn.path.file(FRIENDS_PATH)
-    )
-
+    // get friend list
     useEffect(() => {
         const fs = session.value?.fs
         if (!fs) return
