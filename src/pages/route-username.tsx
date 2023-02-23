@@ -4,9 +4,9 @@ import * as wn from "webnative"
 import { Signal, useSignal } from '@preact/signals'
 import stringify from 'json-stable-stringify'
 import { publicKeyToDid } from "webnative/did/transformers";
+import ky from 'ky'
 import Button from '../components/button.jsx'
 import { Friend } from '../friend.js'
-import ky from 'ky'
 import { sign, toString } from '../util.js'
 
 function getProfile (humanName, i):Promise<Friend> {
@@ -17,7 +17,7 @@ function getProfile (humanName, i):Promise<Friend> {
 interface BtnProps {
     isSpinning: boolean,
     session: wn.Session,
-    profile: Friend,
+    profile: Signal<Friend>,
     onClick: Function
 }
 
@@ -27,10 +27,12 @@ const FriendshipBtn:FunctionComponent<BtnProps> = function FriendshipBtn (props)
     const { isSpinning, session, profile, onClick } = props
 
     // don't show the button before the profile has resolved
-    if (!(profile && profile['hashedUsername'])) return null
+    if (!(profile.value && profile.value['hashedUsername'])) return null
 
     // if we *are* this user, then don't show the button
-    if (session.username === profile['hashedUsername']) return null
+    if (session.username === profile.value['hashedUsername']) return null
+
+    console.log('render friendship button')
 
     return <Button isSpinning={isSpinning} className="friend-request"
         onClick={onClick}
@@ -60,7 +62,6 @@ function ({ webnative, session, params }) {
     // get the hashed username for the given username
     // @TODO -- check if we have this profile already
     useEffect(() => {
-        console.log('in effect')
         getProfile(username, (index || null))
             .then((userProfile) => {
                 profile.value = userProfile
@@ -71,17 +72,14 @@ function ({ webnative, session, params }) {
             })
     }, [])
 
-    // need to fetch this user's profile info
-    console.log('render route username', params, session.value)
-
     async function requestFriend (ev:Event) {
         ev.preventDefault()
         if (!(profile.value && profile.value['hashedUsername'])) return
 
         // these are the hashed usernames
         const friendReq = {
-            from: session.value?.username,
-            to: profile.value['hashedUsername']
+            from: session.value?.username,  // us
+            to: profile.value['hashedUsername']   // them
         }
 
         const pubKey = await keystore.publicWriteKey()
@@ -104,7 +102,7 @@ function ({ webnative, session, params }) {
 
         <ErrView err={err.value} />
 
-        <FriendshipBtn session={session.value} profile={profile.value as Friend}
+        <FriendshipBtn session={session.value} profile={profile as Signal<Friend>}
             onClick={requestFriend} isSpinning={isResolving}
         />
     </div>

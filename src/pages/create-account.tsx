@@ -12,7 +12,7 @@ import ky from 'ky'
 import TextInput from '../components/text-input.jsx'
 import Button from '../components/button.jsx'
 import { isUsernameValid, isUsernameAvailable, createDID,
-    USERDATA_STORAGE_KEY, prepareDid, UserData } from '../username.js'
+    USERDATA_STORAGE_KEY, prepareDid, UserData, authorDID } from '../username.js'
 import * as username from '../username.js'
 import './centered.css'
 import { sign, toString } from '../util.js'
@@ -50,36 +50,28 @@ const CreateAccount:FunctionComponent<Props> = function ({
         const { crypto, storage } = webnative.value.components
         const { keystore } = crypto
         const did = await createDID(crypto)
-        const preppedDid = await prepareDid(did) // the hashed DID
-
-        // -------- get author ------
+        const hashedUsername = await prepareDid(did) // the hashed DID
 
         // author is a DID format string
-        const pubKey = await crypto.keystore.publicWriteKey()
-        const ksAlg = await crypto.keystore.getAlgorithm()
-        const author = publicKeyToDid(crypto, pubKey, ksAlg)
+        const author = await authorDID(crypto)
 
-        // -------- /get author ------
-
-        console.log('prepped did', preppedDid)
-
-        const isValid = await isUsernameValid(preppedDid, webnative.value)
+        const isValid = await isUsernameValid(hashedUsername, webnative.value)
         console.log('is valid', isValid)
         if (!isValid) return console.log('not valid!!!')
 
         // probably don't need to check isAvailable, because the
         // username for fission *is always* unique
         const isAvailable = await isUsernameAvailable(
-            preppedDid,
+            hashedUsername,
             webnative.value
         )
-        if (!isAvailable) return console.log('not available', preppedDid)
+        if (!isAvailable) return console.log('not available', hashedUsername)
 
         const newUserData:UserData = {
             humanName: username,
             author,
-            rootDid: did,
-            hashedUsername: preppedDid,
+            rootDid: author,
+            hashedUsername,
             description: '',
             timestamp: timestamp()
         }
@@ -90,7 +82,7 @@ const CreateAccount:FunctionComponent<Props> = function ({
         // * validate the given UCAN -- 
 
         const { success } = await webnative.value.auth.register({
-            username: preppedDid
+            username: hashedUsername
         })
 
         if (!success) return console.log('not success...')

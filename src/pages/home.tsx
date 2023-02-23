@@ -68,8 +68,8 @@ const Home:FunctionComponent<Props> = function ({ session }) {
                     names: authors.concat(['foo']).toString()
                 })
 
-                // we are getting profiles by request the authors of the files
-                // * should do this by requesting based on out friend list,
+                // we are getting profiles by requesting the authors of the files
+                // * should do this by requesting based on our friend list,
                 //   which is a private file
                 const profiles = await fetch('/api/username-by-hash?' +
                     authorQuery.toString()).then(res => res.json())

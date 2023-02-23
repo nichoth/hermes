@@ -19,11 +19,13 @@ const client = new faunadb.Client({
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
 
 export const handler:Handler = async function handler (ev:HandlerEvent) {
+    // look up a *fission* username by human name
     if (ev.httpMethod === 'GET') {
         const path = ev.path.replace(/\/\.netlify\/functions\/[^/]*\//, '')
         const pathParts = (path) ? path.split('/') : []
         const [name, seq] = pathParts
 
+        // @TODO -- be sure to sort them by date created
         const res:{ data } = await client.query(
             q.Map(
                 q.Paginate(q.Match(q.Index('profile-by-humanName'), name)),
@@ -54,6 +56,10 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
             body: JSON.stringify('invalid http method')
         }
     }
+
+    //
+    // method is POST or PUT now
+    //
 
     let author, humanName, hashedUsername, signature, value, timestamp,
         rootDid;
@@ -119,7 +125,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
     } catch (err:any) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ msg: err.message })
+            body: err.toString()
         }
     }
 
@@ -133,30 +139,46 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
         }
     }
 
+    // method is POST -- create a new user
     if (ev.httpMethod === 'POST') {
-        // create a new user
+
+        // @TODO -- should check the `accountDID` for the given username
+        //   matches the given author,
+        //   it *must* match because POST request means we are creating a new account
+        //   need to lookup the accountDID via
+        //     `await webnative.accountDID('name')` --  be sure it is the same
+        //     as the given author/rootDid
+
+        if (author !== rootDid) {
+            return {
+                statusCode: 422,
+                body: 'author should match rootDid in a POST request'
+            }
+        }
+
         try {
-            const doc = await client.query(q.Create(
+            const doc:{ data } = await client.query(q.Create(
                 q.Collection('profile'),
                 { data: { humanName, hashedUsername, timestamp, rootDid } }
             ))
             return {
                 statusCode: 201,
-                body: JSON.stringify(doc)
+                body: JSON.stringify(doc.data)
             }
         } catch (err) {
-            console.log('oh noooooooo', err.toString())
             return { statusCode: 500, body: err.toString() }
         }
-
     }
 
     interface DbResponse {
-        type?: number
-        message?: string
+        type?: number,
+        message?: string,
+        data?: object
     }
 
-    // method is PUT -- update an existing user
+    // method is PUT -- so update an existing user
+    // @TODO -- need to check the author is allowed to write this username
+    // `program.accountDID()` should resolve via UCAN + the given author
     const doc:DbResponse = await client.query(
         q.Let(
             {
@@ -186,6 +208,6 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
     // we updated a record with a new username
     return {
         statusCode: 204,
-        body: JSON.stringify(doc)
+        body: JSON.stringify(doc.data)
     }
 }

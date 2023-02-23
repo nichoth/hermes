@@ -38,6 +38,14 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
         }
     }
 
+    //
+    // @TODO
+    // need to map the given message author to the given username...
+    //
+    // resolve the rootDID from a UCAN
+    // verify that the given author has been authorized by the rootDID
+    //
+
     let isOk:boolean
     try {
         isOk = await verify(author, signature, stringify(value))
@@ -58,14 +66,40 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
         }
     }
 
-    console.log('*in ss fn*')
+    console.log('*in ss fn*', Date.now())
+    console.log('ev.httpMethod', ev.httpMethod)
+
+    // ALSO -- check if the friend request already exists,
+    // return 204 if so
 
     try {
         // request is ok, write to the DB
-        const doc:({ data }) = await client.query(q.Create(
-            q.Collection('friend-request'),
-            { data: value }
-        ))
+        // const doc:({ data }) = await client.query(q.Create(
+        //     q.Collection('friend-request'),
+        //     { data: value }
+        // ))
+
+        const { from, to } = value
+
+        const doc:({ data } | string) = await client.query(
+            q.Let(
+                {
+                    match: q.Match(q.Index('request'), [from, to])
+                },
+                q.If(
+                    q.Exists(q.Var('match')),
+                    q.Abort('Already exists'),
+                    q.Create(
+                        q.Collection('friend-request'),
+                        { data: value }
+                    )
+                )
+            )
+        )
+
+        if (typeof doc === 'string') {
+            return { statusCode: 409, body: doc }
+        }
 
         return {
             statusCode: 201,

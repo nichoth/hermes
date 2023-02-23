@@ -32,10 +32,19 @@ export const isUsernameValid = (
 
 export const USERDATA_STORAGE_KEY = 'userData'
 
+// this is only used for creating the hasehd username in Fission
 export const createDID = async (
     crypto: Crypto.Implementation
 ): Promise<string> => {
     const pubKey = await crypto.keystore.publicExchangeKey()
+    const ksAlg = await crypto.keystore.getAlgorithm()
+    return publicKeyToDid(crypto, pubKey, ksAlg)
+}
+
+export const authorDID = async (
+    crypto: Crypto.Implementation
+): Promise<string> => {
+    const pubKey = await crypto.keystore.publicWriteKey()
     const ksAlg = await crypto.keystore.getAlgorithm()
     return publicKeyToDid(crypto, pubKey, ksAlg)
 }
