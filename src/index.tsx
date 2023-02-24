@@ -47,6 +47,8 @@ const App: FunctionComponent<Props> = function App () {
     window.session = session.value
     // @ts-ignore
     window.userData = userData.value
+    // @ts-ignore
+    window.__crypto = webnative.value?.components.crypto
 
     function logout (ev) {
         ev.preventDefault()

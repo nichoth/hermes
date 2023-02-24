@@ -23,7 +23,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
         })
     }
 
-    // method is POST
+    // **method is POST**
     // verify that the request came from who it says it did
     // write a new friendship request to the DB
 

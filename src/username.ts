@@ -4,6 +4,10 @@ import { sha256 } from "webnative/components/crypto/implementation/browser"
 import type { Crypto } from "webnative";
 import { publicKeyToDid } from "webnative/did/transformers";
 
+// for dev
+// @ts-ignore
+window.publicKeyToDid = publicKeyToDid
+
 // this returns a hash of the user's DID
 // a 'true' username, that cannot be edited
 // export const prepareUsername = async (did:string): Promise<string> => {

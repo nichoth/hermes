@@ -74,25 +74,27 @@ function ({ webnative, session, params }) {
         ev.preventDefault()
         if (!(profile.value && profile.value['hashedUsername'])) return
 
+        const author = await webnative.value.agentDID()
+
         // these are the hashed usernames
         const friendReq = {
             from: session.value?.username,  // us
-            to: profile.value['hashedUsername']   // them
+            to: profile.value['hashedUsername'],   // them
+            author
         }
 
-        const pubKey = await keystore.publicWriteKey()
-        const ksAlg = await keystore.getAlgorithm()
-        const author = publicKeyToDid(crypto, pubKey, ksAlg)
+        // const pubKey = await keystore.publicWriteKey()
+        // const ksAlg = await keystore.getAlgorithm()
+        // const author = publicKeyToDid(crypto, pubKey, ksAlg)
 
         const sig = await sign(keystore, stringify(friendReq))
         const msg = { signature: toString(sig), author, value: friendReq }
 
         setResolving(true)
         try {
-            const res = await ky.post('/api/friend-request', { json: msg }).json()
-            console.log('ressssssssssss', res)
+            await ky.post('/api/friend-request', { json: msg }).json()
         } catch (err) {
-            setResolving(false)
+            console.log('errrrrrr', err)
         }
 
         setResolving(false)
