@@ -18,19 +18,48 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
     if (ev.httpMethod === 'GET') {
         // get requests related to your account
         // example path: /friend-request/my-username/2
-        const [name, seq] = parsePath(ev)
+        // const [name, seq] = parsePath(ev)
 
         const qs = ev.queryStringParameters
-        if (!qs || !qs.me || !qs.them) return {
+        if (!qs || !qs.to) return {
             statusCode: 400,
             body: 'bad query parameters'
         }
 
+        if (!qs.from) {
+            // get all incoming friend requests
+            const res:{ data } = await client.query(
+                q.Map(
+                    q.Paginate(
+                        q.Match(q.Index('request-by-recipient'), [qs.to])
+                    ),
+                    q.Lambda('profile', q.Get(q.Var('profile')))
+                )
+            )
 
+            let doc
+            try {
+                doc = res.data[0]
+            } catch (err) {
+                return { statusCode: 500, body: JSON.stringify(err) }
+            }
+
+            console.log('ressssssss', res.data)
+
+            if (!doc) {
+                return { statusCode: 404, body: JSON.stringify('Not found') }
+            }
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(doc.data)
+            }
+        }
+
+        // get requests from a user to a different user
         const res:{ data } = await client.query(
             q.Map(
-                // [from, to]
-                q.Paginate(q.Match(q.Index('request'), [qs.me, qs.them])),
+                q.Paginate(q.Match(q.Index('request'), [qs.from, qs.to])),
                 q.Lambda('profile', q.Get(q.Var('profile')))
             )
         )
@@ -59,7 +88,9 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
         }
     }
 
+    // -----------------------------
     // **method is POST**
+    // -----------------------------
 
     let value, signature, author;
     try {

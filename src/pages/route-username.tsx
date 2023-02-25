@@ -77,8 +77,8 @@ function ({ webnative, session, params }) {
         if (!profile.value) return
         const myHashedName = session.value.username
         const qs = new URLSearchParams({
-            me: myHashedName,
-            them: (profile.value as Friend).hashedUsername
+            from: myHashedName,
+            to: (profile.value as Friend).hashedUsername
         }).toString()
 
         ky.get('/api/friend-request' + '?' + qs).json()
