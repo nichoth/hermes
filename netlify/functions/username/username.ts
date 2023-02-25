@@ -5,6 +5,7 @@ import { default as stringify } from 'json-stable-stringify'
 import { Handler, HandlerEvent } from '@netlify/functions'
 // import * as ucans from '@ucans/ucans'
 import { verify } from '../../../src/util.js'
+import { parsePath } from '../util.js'
 
 const q = faunadb.query
 const client = new faunadb.Client({
@@ -21,9 +22,7 @@ const client = new faunadb.Client({
 export const handler:Handler = async function handler (ev:HandlerEvent) {
     // look up a *fission* username by human name
     if (ev.httpMethod === 'GET') {
-        const path = ev.path.replace(/\/\.netlify\/functions\/[^/]*\//, '')
-        const pathParts = (path) ? path.split('/') : []
-        const [name, seq] = pathParts
+        const [name, seq] = parsePath(ev)
 
         // @TODO -- be sure to sort them by date created
         const res:{ data } = await client.query(

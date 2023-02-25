@@ -7,18 +7,20 @@ import ky from 'ky'
 import Button from '../components/button.jsx'
 import { Friend } from '../friend.js'
 import { sign, toString } from '../util.js'
+import './route-username.css'
 
 interface BtnProps {
     isSpinning: boolean,
     session: wn.Session,
     profile: Signal<Friend>,
-    onClick: Function
+    onClick: Function,
+    disabled: boolean
 }
 
 const FriendshipBtn:FunctionComponent<BtnProps> = function FriendshipBtn (props) {
     // @TODO -- check if you are friends already
     //   disable button if so
-    const { isSpinning, session, profile, onClick } = props
+    const { isSpinning, session, profile, onClick, disabled } = props
 
     // don't show the button before the profile has resolved
     if (!(profile.value && profile.value['hashedUsername'])) return null
@@ -28,6 +30,7 @@ const FriendshipBtn:FunctionComponent<BtnProps> = function FriendshipBtn (props)
 
     return <Button isSpinning={isSpinning} className="friend-request"
         onClick={onClick}
+        disabled={disabled || false}
     >
         request friendship
     </Button>
@@ -45,6 +48,7 @@ export const UserRoute:FunctionComponent<Props> =
 function ({ webnative, session, params }) {
     const profile = useSignal<Friend|unknown>(null)
     const err = useSignal<string|null>(null)
+    const pendingRequest = useSignal<unknown|null>(null)
     const [isResolving, setResolving] = useState<boolean>(false)
 
     if (!session.value) return null
@@ -58,21 +62,31 @@ function ({ webnative, session, params }) {
     useEffect(() => {
         getProfile(username, (index || null))
             .then((userProfile) => {
+                console.log('got user profile', userProfile)
                 profile.value = userProfile
             })
             .catch(err => {
-                console.log('in here', err.toString())
+                console.log('err in here', err.toString())
                 err.value = err.toString()
             })
     }, [])
 
     // get any existing friend requests from us to them
     useEffect(() => {
-        ky.get('/api/friend-request').json()
+        if (!session.value) return
+        if (!profile.value) return
+        const myHashedName = session.value.username
+        const qs = new URLSearchParams({
+            me: myHashedName,
+            them: (profile.value as Friend).hashedUsername
+        }).toString()
+
+        ky.get('/api/friend-request' + '?' + qs).json()
             .then(res => {
                 console.log('got friend requests', res)
+                pendingRequest.value = res
             })
-    }, [])
+    }, [profile.value])
 
     async function requestFriend (ev:Event) {
         ev.preventDefault()
@@ -113,10 +127,19 @@ function ({ webnative, session, params }) {
     return <div className="route-username">
         <h1>{username}</h1>
 
+        { pendingRequest.value ?
+            (<div className="badges">
+                <span>Pending request</span>
+            </div>) :
+            null
+        }
+
         <ErrView err={err.value} />
 
         <FriendshipBtn session={session.value} profile={profile as Signal<Friend>}
-            onClick={requestFriend} isSpinning={isResolving}
+            onClick={requestFriend}
+            isSpinning={isResolving}
+            disabled={!!pendingRequest.value}
         />
     </div>
 }
