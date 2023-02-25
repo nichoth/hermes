@@ -1,16 +1,8 @@
 // @ts-check
 import * as uint8arrays from 'uint8arrays'
 import { Implementation } from 'webnative/components/crypto/implementation'
-// import Crypto from 'crypto'
 type KeyStore = Implementation['keystore']
-
-// import * as BrowserCrypto from 'webnative/components/crypto/implementation/browser.js'
 import * as BrowserCrypto from 'webnative/components/crypto/implementation/browser'
-
-// import * as components from 'webnative/components'
-// import * as crypto from 'webnative/components/crypto/'
-// const { crypto } = BrowserCrypto
-
 
 const KEY_TYPE = {
     RSA: "rsa",
@@ -18,9 +10,6 @@ const KEY_TYPE = {
     BLS: "bls12-381"
 }
 
-const ECC_WRITE_ALG = 'ECDSA'
-const DEFAULT_HASH_ALG = 'SHA-256'
-const DEFAULT_CHAR_SIZE = 16
 const EDWARDS_DID_PREFIX = new Uint8Array([ 0xed, 0x01 ])
 const BLS_DID_PREFIX = new Uint8Array([ 0xea, 0x01 ])
 const RSA_DID_PREFIX = new Uint8Array([ 0x00, 0xf5, 0x02 ])
@@ -29,20 +18,6 @@ const BASE58_DID_PREFIX = 'did:key:z'
 export function sleep (ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
 }
-
-// export const verify = (publicKey, sig, msg) => {
-//     const keyType = BrowserCrypto.did.keyTypes['']
-
-//     return webcrypto.subtle.verify(
-//         {
-//             name: ECC_WRITE_ALG,
-//             hash: { name: DEFAULT_HASH_ALG }
-//         },
-//         publicKey,
-//         utils.normalizeBase64ToBuf(sig),
-//         utils.normalizeUnicodeToBuf(msg, DEFAULT_CHAR_SIZE)
-//     )
-// }
 
 export const verify = async (did:string, sig:string, msg:string) => {
     const { publicKey, type } = didToPublicKey(did)
@@ -67,6 +42,7 @@ export function didToPublicKey (did:string): ({ publicKey:Uint8Array, type:strin
     const magicalBuf = uint8arrays.fromString(didWithoutPrefix, "base58btc")
     const { keyBuffer, type } = parseMagicBytes(magicalBuf)
 
+    // create a Crypto object keypair
     // const pubKey = await webcrypto.subtle.importKey('raw', keyBuffer,
     //     type, false, ['verify'])
   

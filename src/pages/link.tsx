@@ -40,7 +40,6 @@ export const Link:FunctionComponent<Props> = function ({ webnative, session }) {
     window.setShowLinked = setShowLinked
 
     useEffect(() => {
-        // const { session } = webnative.value
         const _session = session.value
         if (!_session) return
         let _producer

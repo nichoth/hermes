@@ -14,5 +14,6 @@ export interface Request {
 
 export interface Friend {
     humanName: string,
-    hashedUsername: string
+    hashedUsername: string,
+    rootDid: string
 }

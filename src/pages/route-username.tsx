@@ -3,16 +3,10 @@ import { useEffect, useState } from 'preact/hooks'
 import * as wn from "webnative"
 import { Signal, useSignal } from '@preact/signals'
 import stringify from 'json-stable-stringify'
-import { publicKeyToDid } from "webnative/did/transformers";
 import ky from 'ky'
 import Button from '../components/button.jsx'
 import { Friend } from '../friend.js'
 import { sign, toString } from '../util.js'
-
-function getProfile (humanName, i):Promise<Friend> {
-    return ky.get('/api/username/' + humanName + (i ? `/${parseInt(i)}` : ''))
-        .json()
-}
 
 interface BtnProps {
     isSpinning: boolean,
@@ -45,6 +39,8 @@ interface Props {
     webnative: Signal<wn.Program>
 }
 
+// we get the human name from thr URL
+// get the Fission name from our own DB, by human name
 export const UserRoute:FunctionComponent<Props> =
 function ({ webnative, session, params }) {
     const profile = useSignal<Friend|unknown>(null)
@@ -58,7 +54,7 @@ function ({ webnative, session, params }) {
     const { keystore } = crypto
 
     // get the hashed username for the given username
-    // @TODO -- check if we have this profile already
+    // @TODO -- check if we have this profile cached locally already
     useEffect(() => {
         getProfile(username, (index || null))
             .then((userProfile) => {
@@ -67,6 +63,14 @@ function ({ webnative, session, params }) {
             .catch(err => {
                 console.log('in here', err.toString())
                 err.value = err.toString()
+            })
+    }, [])
+
+    // get any existing friend requests from us to them
+    useEffect(() => {
+        ky.get('/api/friend-request').json()
+            .then(res => {
+                console.log('got friend requests', res)
             })
     }, [])
 
@@ -83,18 +87,24 @@ function ({ webnative, session, params }) {
             author
         }
 
-        // const pubKey = await keystore.publicWriteKey()
-        // const ksAlg = await keystore.getAlgorithm()
-        // const author = publicKeyToDid(crypto, pubKey, ksAlg)
-
         const sig = await sign(keystore, stringify(friendReq))
-        const msg = { signature: toString(sig), author, value: friendReq }
+        const msg = { signature: toString(sig), value: friendReq }
 
         setResolving(true)
         try {
-            await ky.post('/api/friend-request', { json: msg }).json()
+            const res = await ky.post('/api/friend-request', { json: msg }).json()
+            console.log('made a request', res)
         } catch (err) {
-            console.log('errrrrrr', err)
+            // @ts-ignore
+            const { response:res } = err
+            if (res.status === 409) {
+                // @TODO -- should show a message to the user
+                setResolving(false)
+                return console.log('**there already is a request pending**')
+            }
+
+            // @ts-ignore
+            console.log('errr', err, err.status)
         }
 
         setResolving(false)
@@ -117,4 +127,9 @@ function ErrView ({ err }) {
             <p>{err}</p>
         </div>) :
         null
+}
+
+function getProfile (humanName, i):Promise<Friend> {
+    return ky.get('/api/username/' + humanName + (i ? `/${parseInt(i)}` : ''))
+        .json()
 }

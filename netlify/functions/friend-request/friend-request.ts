@@ -2,6 +2,7 @@ import { Handler, HandlerEvent } from '@netlify/functions'
 import { default as faunadb } from 'faunadb'
 import stringify from 'json-stable-stringify'
 import { verify } from '../../../src/util.js'
+import { parsePath } from '../util.js'
 
 const q = faunadb.query
 const client = new faunadb.Client({
@@ -11,27 +12,29 @@ const client = new faunadb.Client({
 export const handler:Handler = async function handler (ev:HandlerEvent) {
     if (ev.httpMethod === 'GET') {
         // get requests related to your account
+        // example path: /friend-request/my-username/2
+        const [name, seq] = parsePath(ev)
+        // @TODO -- need to encrypt things
     }
 
-    if (ev.httpMethod !== 'POST' || !ev.body) {
-        return ev.body ? ({
+    if (ev.httpMethod !== 'POST') {
+        return {
             statusCode: 405,
             body: 'Invalid http method'
-        }) : ({
-            statusCode: 400,
-            body: 'Invalid request'
-        })
+        }
     }
 
     // **method is POST**
-    // verify that the request came from who it says it did
-    // write a new friendship request to the DB
 
     let value, signature, author;
     try {
-        const body = JSON.parse(ev.body || '');
-        ({ value, signature, author } = body);
+        const body = JSON.parse(ev.body || '')
+        console.log('body', body)
+        signature = body.signature
+        value = body.value
+        author = body.value.author
     } catch (err:any) {
+        console.log('errr', err)
         return {
             statusCode: 422,
             body: 'invalid JSON'
@@ -45,6 +48,8 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
     // resolve the rootDID from a UCAN
     // verify that the given author has been authorized by the rootDID
     //
+    // see https://github.com/fission-codes/webnative/blob/bd236da96fb3ee4a97d6a95b39d32ca4ccc70da6/src/components/reference/dns-over-https.ts#L9
+    // -- this is how they do the DNS lookup in fission/webnative
 
     let isOk:boolean
     try {
@@ -66,19 +71,8 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
         }
     }
 
-    console.log('*in ss fn*', Date.now())
-    console.log('ev.httpMethod', ev.httpMethod)
-
-    // ALSO -- check if the friend request already exists,
-    // return 204 if so
-
     try {
         // request is ok, write to the DB
-        // const doc:({ data }) = await client.query(q.Create(
-        //     q.Collection('friend-request'),
-        //     { data: value }
-        // ))
-
         const { from, to } = value
 
         const doc:({ data } | string) = await client.query(
@@ -91,7 +85,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
                     'Already exists',
                     q.Create(
                         q.Collection('friend-request'),
-                        { data: value }
+                        { data: { signature, value } }
                     )
                 )
             )

@@ -6,6 +6,7 @@ import { generateFromString } from 'generate-avatar'
 import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
+import ky from 'ky'
 // import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
@@ -103,7 +104,7 @@ const App: FunctionComponent<Props> = function App () {
                 try {
                     // @TODO -- use the remote DB to fetch any updates to username,
                     //   and synchronize the data
-                    // const res = await fetch(URL_PREFIX + '/username')
+                    // const res = await fetch('/api/username')
                     //     .then(res => res.json())
 
                     // userData.value = res
