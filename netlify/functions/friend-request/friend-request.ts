@@ -2,7 +2,7 @@ import { Handler, HandlerEvent } from '@netlify/functions'
 import { default as faunadb } from 'faunadb'
 import stringify from 'json-stable-stringify'
 import { verify } from '../../../src/util.js'
-import { parsePath } from '../util.js'
+// import { parsePath } from '../util.js'
 
 // @TODO -- encryption
 // should keep friend request info private
@@ -21,13 +21,13 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
         // const [name, seq] = parsePath(ev)
 
         const qs = ev.queryStringParameters
-        if (!qs || !qs.to) return {
+        if (!qs || (!qs.to && !qs.from)) return {
             statusCode: 400,
             body: 'bad query parameters'
         }
 
         if (!qs.from) {
-            // get all incoming friend requests
+            // only `qs.to` is defined
             const res:{ data } = await client.query(
                 q.Map(
                     q.Paginate(
@@ -44,8 +44,6 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
                 return { statusCode: 500, body: JSON.stringify(err) }
             }
 
-            console.log('ressssssss', res.data)
-
             if (!doc) {
                 return { statusCode: 404, body: JSON.stringify('Not found') }
             }
@@ -56,6 +54,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
             }
         }
 
+        // qs.to and qs.from are defined
         // get requests from a user to a different user
         const res:{ data } = await client.query(
             q.Map(

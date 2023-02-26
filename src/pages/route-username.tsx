@@ -129,7 +129,7 @@ function ({ webnative, session, params }) {
 
         { pendingRequest.value ?
             (<div className="badges">
-                <span>Pending request</span>
+                <span>Request pending&hellip;</span>
             </div>) :
             null
         }
