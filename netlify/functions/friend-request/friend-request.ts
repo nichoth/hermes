@@ -2,7 +2,6 @@ import { Handler, HandlerEvent } from '@netlify/functions'
 import { default as faunadb } from 'faunadb'
 import stringify from 'json-stable-stringify'
 import { verify } from '../../../src/util.js'
-// import { parsePath } from '../util.js'
 
 // @TODO -- encryption
 // should keep friend request info private
@@ -17,41 +16,66 @@ const client = new faunadb.Client({
 export const handler:Handler = async function handler (ev:HandlerEvent) {
     if (ev.httpMethod === 'GET') {
         // get requests related to your account
-        // example path: /friend-request/my-username/2
-        // const [name, seq] = parsePath(ev)
 
         const qs = ev.queryStringParameters
-        if (!qs || (!qs.to && !qs.from)) return {
+
+        if (!qs) return {
             statusCode: 400,
             body: 'bad query parameters'
         }
 
-        if (!qs.from) {
+        if (((!qs.to || !qs.from)) && !(qs.fromto)) return {
+            statusCode: 400,
+            body: 'bad query parameters'
+        }
+
+        if (qs.to) {
             // only `qs.to` is defined
             const res:{ data } = await client.query(
                 q.Map(
                     q.Paginate(
-                        q.Match(q.Index('request-by-recipient'), [qs.to])
+                        q.Match(q.Index('requests-to'), [qs.to])
                     ),
-                    q.Lambda('profile', q.Get(q.Var('profile')))
+                    q.Lambda('request', q.Get(q.Var('request')))
                 )
             )
 
-            let doc
-            try {
-                doc = res.data[0]
-            } catch (err) {
-                return { statusCode: 500, body: JSON.stringify(err) }
-            }
+            return responseFromData(res)
+        }
 
-            if (!doc) {
-                return { statusCode: 404, body: JSON.stringify('Not found') }
-            }
+        if (qs.from) {
+            // only `qs.from` is defined
+            const res:{ data } = await client.query(
+                q.Map(
+                    q.Paginate(
+                        q.Match(q.Index('requests-from'), [qs.from])
+                    ),
+                    q.Lambda('request', q.Get(q.Var('request')))
+                )
+            )
 
-            return {
-                statusCode: 200,
-                body: JSON.stringify(doc.data)
-            }
+            return responseFromData(res)
+        }
+
+        if (qs.fromto) {
+            // `fromto` is defined
+            // get all requests from `username` || to `username`
+            const res:{ data } = await client.query(
+                q.Map(
+                    q.Paginate(q.Union(
+                        q.Match(q.Index('requests-from'), qs.fromto),
+                        q.Match(q.Index('requests-to'), qs.fromto)
+                    )),
+                    q.Lambda('req', q.Get(q.Var('req')))
+                ),
+            )
+
+            console.log('ressssssss', res)
+
+            const response = responseFromData(res)
+
+            console.log('respnssssssssssseee', response)
+            return response
         }
 
         // qs.to and qs.from are defined
@@ -63,21 +87,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
             )
         )
 
-        let doc
-        try {
-            doc = res.data[0]
-        } catch (err) {
-            return { statusCode: 500, body: JSON.stringify(err) }
-        }
-
-        if (!doc) {
-            return { statusCode: 404, body: JSON.stringify('Not found') }
-        }
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(doc.data)
-        }
+        return responseFromData(res)
     }
 
     if (ev.httpMethod !== 'POST') {
@@ -169,5 +179,23 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
             statusCode: 500,
             body: err.toString()
         }
+    }
+}
+
+function responseFromData (res) {
+    let doc
+    try {
+        doc = res.data.map(d => d.data)
+    } catch (err) {
+        return { statusCode: 500, body: JSON.stringify(err) }
+    }
+
+    if (!doc) {
+        return { statusCode: 404, body: JSON.stringify('Not found') }
+    }
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify(doc)
     }
 }

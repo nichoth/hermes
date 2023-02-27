@@ -97,7 +97,7 @@ function ({ webnative, session, params }) {
         // these are the hashed usernames
         const friendReq = {
             from: session.value?.username,  // us
-            to: profile.value['hashedUsername'],   // them
+            to: profile.value['hashedUsername'],  // them
             author
         }
 
@@ -121,7 +121,7 @@ function ({ webnative, session, params }) {
             console.log('errr', err, err.status)
         }
 
-        setResolving(false)
+        if (isResolving) setResolving(false)
     }
 
     return <div className="route-username">

@@ -3,6 +3,7 @@ import * as wn from "webnative"
 import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { useSignal } from '@preact/signals'
+import ky from 'ky'
 import './route-friends.css'
 import { Friend, listPath, Request } from '../friend.js'
 
@@ -12,8 +13,8 @@ interface Props {
 
 export const Friends:FunctionComponent<Props> = function ({ session }) {
     const friendsList = useSignal<Friend[] | []>([])
-    const pendingFriends = useSignal<Friend[] | []>([])
-    const requests = useSignal<Request[] | []>([])
+    const incomingRequests = useSignal<Friend[]>([])
+    const outgoingRequests = useSignal<Request[]>([])
 
     // get friend list
     useEffect(() => {
@@ -28,7 +29,50 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             .catch(err => {
                 console.log('*could not read friend list*', err)
             })
-    }, [session])
+    }, [session.value])
+
+    // get incoming and outgoing friend requests
+    useEffect(() => {
+        if (!session.value?.username) return
+        const qs = new URLSearchParams({ fromto: session.value.username }).toString()
+        ky.get(`/api/friend-request?${qs}`).json()
+            .then(res => {
+                console.log('got friend requests', res)
+            })
+            .catch(err => {
+                console.log('errrrr', err)
+            })
+    }, [session.value])
+
+    // // get outgoing friend requests
+    // useEffect(() => {
+    //     if (!session.value?.username) return
+    //     const qs = new URLSearchParams({ from: session.value.username }).toString()
+    //     ky.get(`/api/friend-request?${qs}`).json()
+    //         .then(res => {
+    //             console.log('got outfoing requests', res)
+    //             outgoingRequests.value = (res as [])
+    //         })
+    //         .catch(err => {
+    //             console.log('errr', err)
+    //             // do nothing
+    //         })
+    // }, [session.value])
+
+    // // get incoming friend requests
+    // useEffect(() => {
+    //     if (!session.value?.username) return
+    //     const qs = new URLSearchParams({ to: session.value.username }).toString()
+    //     ky.get(`/api/friend-request?${qs}`).json()
+    //         .then(res => {
+    //             console.log('got incoming requests', res)
+    //             incomingRequests.value = (res as [])
+    //         })
+    //         .catch(err => {
+    //             console.log('errr incoming requests', err)
+    //             // do nothing
+    //         })
+    // }, [session.value])
 
     return <div className="route route-friends">
         <h1>Friendship information</h1>
@@ -37,25 +81,25 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             <a href="/friends/request">Request a new friend</a>
         </p>
 
-        <h2>Pending requests</h2>
-        {!requests.value.length ?
+        <h2>Incoming friend requests</h2>
+        {!(incomingRequests.value).length ?
             (<p><em>none</em></p>) :
             (<ul>
-                {requests.value.map(req => {
-                    return <li className="friend-request">a request</li>
-                })}
-            </ul>)
-        }
-
-        <h2>Pending friends</h2>
-        {!pendingFriends.value.length ?
-            (<p><em>none</em></p>) :
-            (<ul>
-                {(pendingFriends.value.map(user => {
+                {(incomingRequests.value.map(user => {
                     return <li className="friend">
                         {user.humanName}
                     </li>
                 }))}
+            </ul>)
+        }
+
+        <h2>Outgoing friend requests</h2>
+        {!outgoingRequests.value.length ?
+            (<p><em>none</em></p>) :
+            (<ul>
+                {outgoingRequests.value.map(req => {
+                    return <li className="friend-request">{req.value.to}</li>
+                })}
             </ul>)
         }
 

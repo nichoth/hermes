@@ -7,9 +7,11 @@ export const listPath = wn.path.appData(
 )
 
 export interface Request {
-    humanName: string  // the requester's human name
-    from: string  // the requester's hashed DID
-    to: string  // our hashed DID
+    value: {
+        humanName: string  // the requester's human name
+        from: string  // the requester's hashed DID
+        to: string  // our hashed DID
+    }
 }
 
 export interface Friend {
