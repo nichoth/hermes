@@ -13,7 +13,7 @@ interface Props {
 
 export const Friends:FunctionComponent<Props> = function ({ session }) {
     const friendsList = useSignal<Friend[] | []>([])
-    const incomingRequests = useSignal<Friend[]>([])
+    const incomingRequests = useSignal<Request[]>([])
     const outgoingRequests = useSignal<Request[]>([])
 
     // get friend list
@@ -36,8 +36,17 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
         if (!session.value?.username) return
         const qs = new URLSearchParams({ fromto: session.value.username }).toString()
         ky.get(`/api/friend-request?${qs}`).json()
-            .then(res => {
+            .then((res) => {
                 console.log('got friend requests', res)
+                const outgoing = (res as Array<Request>).filter(msg => {
+                    return msg.value.from === session.value?.username
+                })
+                if (outgoing.length) outgoingRequests.value = outgoing
+
+                const incoming = (res as Array<Request>).filter(msg => {
+                    return msg.value.to === session.value?.username
+                })
+                if (incoming.length) incomingRequests.value = incoming
             })
             .catch(err => {
                 console.log('errrrr', err)
@@ -85,9 +94,9 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
         {!(incomingRequests.value).length ?
             (<p><em>none</em></p>) :
             (<ul>
-                {(incomingRequests.value.map(user => {
-                    return <li className="friend">
-                        {user.humanName}
+                {(incomingRequests.value.map(req => {
+                    return <li className="friend-request">
+                        {req.value.from}
                     </li>
                 }))}
             </ul>)

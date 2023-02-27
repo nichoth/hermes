@@ -10,7 +10,7 @@ export interface Request {
     value: {
         humanName: string  // the requester's human name
         from: string  // the requester's hashed DID
-        to: string  // our hashed DID
+        to: string  // recipient's hashed DID
     }
 }
 

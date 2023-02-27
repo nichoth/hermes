@@ -70,12 +70,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
                 ),
             )
 
-            console.log('ressssssss', res)
-
-            const response = responseFromData(res)
-
-            console.log('respnssssssssssseee', response)
-            return response
+            return responseFromData(res)
         }
 
         // qs.to and qs.from are defined
