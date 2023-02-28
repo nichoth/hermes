@@ -6,6 +6,8 @@ import { useSignal } from '@preact/signals'
 import ky from 'ky'
 import './route-friends.css'
 import { Friend, listPath, Request } from '../friend.js'
+import ButtonTwo from '../components/button-two.jsx'
+import { APP_INFO, FRIENDS_PATH } from '../CONSTANTS.js'
 
 interface Props {
     session: Signal<wn.Session | null>
@@ -34,7 +36,10 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
     // get incoming and outgoing friend requests
     useEffect(() => {
         if (!session.value?.username) return
-        const qs = new URLSearchParams({ fromto: session.value.username }).toString()
+        const qs = new URLSearchParams({
+            fromto: session.value.username
+        }).toString()
+
         ky.get(`/api/friend-request?${qs}`).json()
             .then((res) => {
                 console.log('got friend requests', res)
@@ -53,35 +58,48 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             })
     }, [session.value])
 
-    // // get outgoing friend requests
-    // useEffect(() => {
-    //     if (!session.value?.username) return
-    //     const qs = new URLSearchParams({ from: session.value.username }).toString()
-    //     ky.get(`/api/friend-request?${qs}`).json()
-    //         .then(res => {
-    //             console.log('got outfoing requests', res)
-    //             outgoingRequests.value = (res as [])
-    //         })
-    //         .catch(err => {
-    //             console.log('errr', err)
-    //             // do nothing
-    //         })
-    // }, [session.value])
+    async function accept (req:Request, ev:Event) {
+        ev.preventDefault()
+        console.log('accept friend', req)
+        // @TODO
+        // set up shared private files here
+        // see https://guide.fission.codes/developers/webnative/sharing-private-data
+        // see https://github.com/users/nichoth/projects/4/views/1?pane=issue&itemId=20845590
 
-    // // get incoming friend requests
-    // useEffect(() => {
-    //     if (!session.value?.username) return
-    //     const qs = new URLSearchParams({ to: session.value.username }).toString()
-    //     ky.get(`/api/friend-request?${qs}`).json()
-    //         .then(res => {
-    //             console.log('got incoming requests', res)
-    //             incomingRequests.value = (res as [])
-    //         })
-    //         .catch(err => {
-    //             console.log('errr incoming requests', err)
-    //             // do nothing
-    //         })
-    // }, [session.value])
+
+        const friendsListPath = wn.path.appData(
+            APP_INFO,
+            wn.path.file(FRIENDS_PATH)
+        )
+
+        let friendList:Request[] = []
+        try {
+            const data = new TextDecoder().decode(
+                await session.value?.fs?.read(friendsListPath)
+            )
+            friendList = JSON.parse(data)
+            console.log('*friend list*', friendList)
+        } catch (err) {
+            console.log('reading friend list error', err)
+            if ((err as Error).toString().includes('Path does not exist')) {
+                // do nothing
+            }
+        }
+
+        friendList.push(req)
+        const filepath = wn.path.appData(
+            APP_INFO,
+            wn.path.file(FRIENDS_PATH)
+        )
+        const fs = session.value?.fs
+        if (!fs) return console.log('oh on')
+
+        await fs.write(
+            filepath,
+            new TextEncoder().encode(JSON.stringify(friendList))
+        )
+        await fs.publish()
+    }
 
     return <div className="route route-friends">
         <h1>Friendship information</h1>
@@ -96,7 +114,10 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             (<ul>
                 {(incomingRequests.value.map(req => {
                     return <li className="friend-request">
-                        {req.value.from}
+                        <span>{req.value.from}</span>
+                        <ButtonTwo onClick={accept.bind(null, req)}>
+                            Accept friendship
+                        </ButtonTwo>
                     </li>
                 }))}
             </ul>)
@@ -118,7 +139,7 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             (<ul>
                 {friendsList.value.map(friend => {
                     return <li className="friend">
-                        {friend.humanName}
+                        {friend.humanName || 'someone'}
                     </li>
                 })}
             </ul>)

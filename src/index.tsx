@@ -10,7 +10,7 @@ import ky from 'ky'
 // import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-import { AVATAR_PATH, PROFILE_PATH } from './CONSTANTS.js'
+import { AVATAR_PATH, PROFILE_PATH, FRIENDS_PATH } from './CONSTANTS.js'
 import { UserData } from './username.js'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
@@ -39,6 +39,8 @@ const App: FunctionComponent<Props> = function App () {
     const session = useSignal<wn.Session | null>(null)
     const mobileNavOpen = useSignal<boolean>(false)
     const userData = useSignal<UserData|null>(null)
+        // let friendList:Request[] = []
+    const friendList = useSignal<Request[]>([])
 
     // @ts-ignore
     window.webnative = webnative.value
@@ -173,7 +175,36 @@ const App: FunctionComponent<Props> = function App () {
             })
     }, [session.value])
 
+    //
+    // get the friend list
+    //
+    useEffect(() => {
+        if (!session.value) return
+        const friendsListPath = wn.path.appData(
+            APP_INFO,
+            wn.path.file(FRIENDS_PATH)
+        )
+
+        session.value.fs?.read(friendsListPath)
+            .then(async listData => {
+                const data = new TextDecoder().decode(listData)
+                friendList.value = JSON.parse(data)
+            })
+            .catch(async err => {
+                console.log('reading friend list error', err)
+                if ((err as Error).toString().includes('Path does not exist')) {
+                    // create the file
+                    await session.value?.fs?.write(
+                        friendsListPath,
+                        new TextEncoder().encode(JSON.stringify([]))
+                    )
+                }
+            })
+    }, [session.value])
+
+    //
     // find the view for this route
+    //
     const match = router.match(routeState.value)
     const Node = match ?
         match.action(match.params) :

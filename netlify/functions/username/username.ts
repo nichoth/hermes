@@ -20,7 +20,7 @@ const client = new faunadb.Client({
 // `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
 
 export const handler:Handler = async function handler (ev:HandlerEvent) {
-    // look up a *fission* username by human name
+    // look up a *fission* user profile by human name
     if (ev.httpMethod === 'GET') {
         const [name, seq] = parsePath(ev)
 

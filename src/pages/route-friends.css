@@ -12,4 +12,8 @@
     & p {
         margin-top: 0;
     }
+
+    & span.button-two {
+        margin-left: 1rem;
+    }
 }

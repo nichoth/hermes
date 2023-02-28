@@ -32,7 +32,7 @@ const FriendshipBtn:FunctionComponent<BtnProps> = function FriendshipBtn (props)
         onClick={onClick}
         disabled={disabled || false}
     >
-        request friendship
+        Request friendship
     </Button>
 }
 
@@ -81,8 +81,10 @@ function ({ webnative, session, params }) {
             to: (profile.value as Friend).hashedUsername
         }).toString()
 
-        ky.get('/api/friend-request' + '?' + qs).json()
+        const url = '/api/friend-request' + '?' + qs
+        ky.get(url).json()
             .then(res => {
+                console.log('url', url)
                 console.log('got friend requests', res)
                 pendingRequest.value = res
             })
@@ -127,7 +129,7 @@ function ({ webnative, session, params }) {
     return <div className="route-username">
         <h1>{username}</h1>
 
-        { pendingRequest.value ?
+        {pendingRequest.value ?
             (<div className="badges">
                 <span>Request pending&hellip;</span>
             </div>) :

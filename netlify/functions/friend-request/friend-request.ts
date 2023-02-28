@@ -29,6 +29,19 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
             body: 'bad query parameters'
         }
 
+        if (qs.from && qs.to) {
+            // qs.to and qs.from are defined
+            // get requests from a user to a different user
+            const res:{ data } = await client.query(
+                q.Map(
+                    q.Paginate(q.Match(q.Index('request'), [qs.from, qs.to])),
+                    q.Lambda('profile', q.Get(q.Var('profile')))
+                )
+            )
+
+            return responseFromData(res)
+        }
+
         if (qs.to) {
             // only `qs.to` is defined
             const res:{ data } = await client.query(
@@ -73,16 +86,11 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
             return responseFromData(res)
         }
 
-        // qs.to and qs.from are defined
-        // get requests from a user to a different user
-        const res:{ data } = await client.query(
-            q.Map(
-                q.Paginate(q.Match(q.Index('request'), [qs.from, qs.to])),
-                q.Lambda('profile', q.Get(q.Var('profile')))
-            )
-        )
-
-        return responseFromData(res)
+        // default case
+        if (!qs) return {
+            statusCode: 400,
+            body: 'no query parameters'
+        }
     }
 
     if (ev.httpMethod !== 'POST') {
@@ -99,12 +107,10 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
     let value, signature, author;
     try {
         const body = JSON.parse(ev.body || '')
-        console.log('body', body)
         signature = body.signature
         value = body.value
         author = body.value.author
     } catch (err:any) {
-        console.log('errr', err)
         return {
             statusCode: 422,
             body: 'invalid JSON'
@@ -185,7 +191,7 @@ function responseFromData (res) {
         return { statusCode: 500, body: JSON.stringify(err) }
     }
 
-    if (!doc) {
+    if (!doc || (Array.isArray(doc) && !doc.length)) {
         return { statusCode: 404, body: JSON.stringify('Not found') }
     }
 
