@@ -55,6 +55,10 @@ body {
         text-decoration: none;
         width: 4rem;
 
+        & span {
+            min-height: 1rem;
+        }
+
         &:hover, &.active {
             text-decoration: underline;
         }

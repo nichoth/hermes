@@ -100,41 +100,51 @@ const App: FunctionComponent<Props> = function App () {
                     console.log('...not session...', program)
                     if (location.pathname === '/create-account') return
                     if (location.pathname.includes('login')) return
-                    route.setRoute('/login')
+                    return route.setRoute('/login')
                 }
 
                 try {
-                    // @TODO -- use the remote DB to fetch any updates to username,
-                    //   and synchronize the data
-                    // const res = await fetch('/api/username')
-                    //     .then(res => res.json())
 
-                    // userData.value = res
+                    // // @TODO -- use the remote DB to fetch any updates to username,
+                    // //   and synchronize the data
 
-                    // let data = await program.components.storage.getItem(
-                    //     USERDATA_STORAGE_KEY
-                    // ) as string
 
-                    // if (!data) {
-                        // look in wnfs
-                        const profilePath = wn.path.appData(
-                            APP_INFO,
-                            wn.path.file(PROFILE_PATH)
-                        )
-                        const data = new TextDecoder().decode(
-                            await session.value?.fs?.read(profilePath)
-                        )
+                    const qs = new URLSearchParams({
+                        names: session.value?.username
+                    })
+                    const url = ('/api/username-by-hash' + '?' + qs)
+                    const profile = await ky.get(url).json()
+                    userData.value = profile as UserData
+
+                    // // const res = await fetch('/api/username')
+                    // //     .then(res => res.json())
+
+                    // // userData.value = res
+
+                    // // let data = await program.components.storage.getItem(
+                    // //     USERDATA_STORAGE_KEY
+                    // // ) as string
+
+                    // // if (!data) {
+                    //     // look in wnfs
+                    //     const profilePath = wn.path.appData(
+                    //         APP_INFO,
+                    //         wn.path.file(PROFILE_PATH)
+                    //     )
+                    //     const data = new TextDecoder().decode(
+                    //         await session.value?.fs?.read(profilePath)
+                    //     )
+                    // // }
+
+                    // userData.value = JSON.parse(data) as UserData
+                    // console.log('user data', userData.value)
+
+                    // if (!userData.value) {
+                    //     // @TODO
+                    //     // we dont have the userData locally, need to fetch
+                    //     // this happens if you are on a new device
+                    //     //
                     // }
-
-                    userData.value = JSON.parse(data) as UserData
-                    console.log('user data', userData.value)
-
-                    if (!userData.value) {
-                        // @TODO
-                        // we dont have the userData locally, need to fetch
-                        // this happens if you are on a new device
-                        //
-                    }
                 } catch (err) {
                     console.log('errrrrrrrr, parsing json', err)
                 }
@@ -189,6 +199,7 @@ const App: FunctionComponent<Props> = function App () {
             .then(async listData => {
                 const data = new TextDecoder().decode(listData)
                 friendList.value = JSON.parse(data)
+                console.log('friend list', JSON.parse(data))
             })
             .catch(async err => {
                 console.log('reading friend list error', err)
@@ -198,6 +209,7 @@ const App: FunctionComponent<Props> = function App () {
                         friendsListPath,
                         new TextEncoder().encode(JSON.stringify([]))
                     )
+                    await session.value?.fs?.publish()
                 }
             })
     }, [session.value])

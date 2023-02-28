@@ -26,15 +26,31 @@ export const handler:Handler = async function hanlder (ev:HandlerEvent) {
     console.log('ev.qs', ev.queryStringParameters)
 
     const qs = ev.queryStringParameters
-    if (!qs) return {
+    if (!qs || !qs.names) return {
         statusCode: 422,
         body: JSON.stringify('Need a query string')
     }
 
     const hashArr = qs.names?.split(',')
 
+    const res:{ data } = await client.query(
+        q.Map(
+            q.Paginate(q.Union(
+                ...(hashArr.map((hash => {
+                    return q.Match(q.Index('profile-by-hash'), hash)
+                })))
+            )),
+            q.Lambda('req', q.Get(q.Var('req')))
+        ),
+    )
+
     return {
         statusCode: 200,
-        body: JSON.stringify(JSON.stringify(hashArr))
+        body: (hashArr.length === 1 ?
+            JSON.stringify(res.data[0].data) :
+            JSON.stringify(res.data.map(item => {
+                return item.data
+            }))
+        )
     }
 }

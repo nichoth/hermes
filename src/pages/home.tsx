@@ -60,21 +60,21 @@ const Home:FunctionComponent<Props> = function ({ session }) {
 
                 const files = await Promise.all(_files)
 
-                const authors:string[] = Array.from(new Set(files.map(file => {
-                    return file.post.author
-                })))
+                // const authors:string[] = Array.from(new Set(files.map(file => {
+                //     return file.post.author
+                // })))
 
-                const authorQuery = new URLSearchParams({
-                    names: authors.concat(['foo']).toString()
-                })
+                // const authorQuery = new URLSearchParams({
+                //     names: authors.concat(['foo']).toString()
+                // })
 
                 // we are getting profiles by requesting the authors of the files
                 // * should do this by requesting based on our friend list,
                 //   which is a private file
-                const profiles = await fetch('/api/username-by-hash?' +
-                    authorQuery.toString()).then(res => res.json())
+                // const profiles = await fetch('/api/username-by-hash?' +
+                //     authorQuery.toString()).then(res => res.json())
 
-                console.log('profiles response', profiles)
+                // console.log('profiles response', profiles)
 
                 setPosts(files)
             })
