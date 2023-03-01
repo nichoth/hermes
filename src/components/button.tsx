@@ -1,10 +1,10 @@
 import { FunctionalComponent, JSX, h } from 'preact'
 import './button.css'
 
-interface Props {
+interface Props extends JSX.HTMLAttributes {
     isSpinning?: boolean,
     className?: string,
-    onClick: (ev:JSX.TargetedEvent<HTMLButtonElement>) => void
+    // onClick: (ev:JSX.TargetedEvent<HTMLButtonElement>) => void
 }
 
 export const Button:FunctionalComponent<Props> = function (props) {

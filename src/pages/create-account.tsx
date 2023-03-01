@@ -5,7 +5,6 @@ import { Signal } from '@preact/signals'
 import { TargetedEvent } from 'preact/compat'
 import * as wn from 'webnative'
 import timestamp from 'monotonic-timestamp'
-import { publicKeyToDid } from "webnative/did/transformers";
 import * as ucans from '@ucans/ucans'
 import stringify from 'json-stable-stringify'
 import ky from 'ky'
@@ -102,7 +101,6 @@ const CreateAccount:FunctionComponent<Props> = function ({
             }
         })
 
-        console.log('*program*', program)
         webnative.value = program
         userData.value = newUserData
 
@@ -110,6 +108,16 @@ const CreateAccount:FunctionComponent<Props> = function ({
         console.log('__session__', _session)
         if (!_session) return
         session.value = _session
+        
+
+        // ----- create an exchange key ---------------
+        // see https://guide.fission.codes/developers/webnative/sharing-private-data#exchange-keys
+        const { fs } = session.value
+        if (fs) {
+            program.fileSystem.addPublicExchangeKey(fs)
+        }
+        // ----- /create an exchange key ---------------
+
 
         // --------------- DB stuff -----------------------
         // const ucan = Object.values(session.value.fs?.proofs || {})[0]
@@ -123,13 +131,13 @@ const CreateAccount:FunctionComponent<Props> = function ({
         window.msg = msg
 
         // save to DB
-        const res = await ky.post('/api/username', { json: msg }).json()
-
-        console.log('**save username response**', res)
+        await ky.post('/api/username', { json: msg }).json()
         // --------------- DB stuff -----------------------
 
 
         // -------------- wnfs stuff ---------------------------
+        // this is hard b/c we need the server to be able to resolve a human name
+        // given a hashed name
 
         // const profilePath = wn.path.appData(
         //     APP_INFO,
