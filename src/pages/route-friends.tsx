@@ -5,9 +5,10 @@ import { Signal } from '@preact/signals'
 import { useSignal } from '@preact/signals'
 import ky from 'ky'
 import './route-friends.css'
-import { Friend, listPath, Request } from '../friend.js'
+import { Request } from '../friend.js'
 import ButtonTwo from '../components/button-two.jsx'
-import { APP_INFO, FRIENDS_PATH } from '../CONSTANTS.js'
+import { LOG_DIR_PATH, BLOB_DIR_PATH, APP_INFO,
+    FRIENDS_PATH } from '../CONSTANTS.js'
 import { UserData } from '../username.js'
 
 interface Props {
@@ -74,8 +75,8 @@ export const Friends:FunctionComponent<Props> = function (props) {
             }
         }
 
-        const el = friendListData.find(request => {
-            return (request.value.from === req.value.from)
+        const el = friendListData.find(existingFriend => {
+            return (existingFriend.value.from === req.value.from)
         })
         if (el) {
             isAccepting.value = false
@@ -95,7 +96,16 @@ export const Friends:FunctionComponent<Props> = function (props) {
             filepath,
             new TextEncoder().encode(JSON.stringify(friendListData))
         )
-        await fs.publish()
+
+        const shareDetails = await fs.sharePrivate(
+            [
+                wn.path.appData(APP_INFO, wn.path.directory(LOG_DIR_PATH)),
+                wn.path.appData(APP_INFO, wn.path.directory(BLOB_DIR_PATH))
+            ],
+            { shareWith: req.value.from } // alternative: list of usernames, or sharing/exchange DID(s)
+        )
+
+        console.log('**share details**', shareDetails)
 
         isAccepting.value = false
         friendsList.value = friendListData

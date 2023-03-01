@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact'
+import { FunctionComponent, JSX } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import * as wn from "webnative"
 import { Signal, useSignal } from '@preact/signals'
@@ -8,12 +8,13 @@ import Button from '../components/button.jsx'
 import { Friend } from '../friend.js'
 import { sign, toString } from '../util.js'
 import './route-username.css'
+import { TargetedEvent } from 'preact/compat'
 
 interface BtnProps {
     isSpinning: boolean,
     session: wn.Session,
     profile: Signal<Friend>,
-    onClick: Function,
+    onClick: (ev:JSX.TargetedEvent<EventTarget>) => void
     disabled: boolean
 }
 
@@ -90,13 +91,12 @@ function ({ webnative, session, params }) {
             })
     }, [profile.value])
 
-    async function requestFriend (ev:Event) {
+    async function requestFriend (ev:TargetedEvent) {
         ev.preventDefault()
         if (!(profile.value && profile.value['hashedUsername'])) return
 
         const author = await webnative.value.agentDID()
 
-        // these are the hashed usernames
         const friendReq = {
             from: session.value?.username,  // us
             to: profile.value['hashedUsername'],  // them

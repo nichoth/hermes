@@ -110,13 +110,15 @@ const CreateAccount:FunctionComponent<Props> = function ({
         session.value = _session
         
 
-        // ----- create an exchange key ---------------
+        // ------------------ create an exchange key ---------------
         // see https://guide.fission.codes/developers/webnative/sharing-private-data#exchange-keys
         const { fs } = session.value
         if (fs) {
             program.fileSystem.addPublicExchangeKey(fs)
         }
-        // ----- /create an exchange key ---------------
+        // ------------------ /create an exchange key ---------------
+
+
 
 
         // --------------- DB stuff -----------------------
@@ -133,6 +135,8 @@ const CreateAccount:FunctionComponent<Props> = function ({
         // save to DB
         await ky.post('/api/username', { json: msg }).json()
         // --------------- DB stuff -----------------------
+
+
 
 
         // -------------- wnfs stuff ---------------------------
