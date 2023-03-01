@@ -8,30 +8,20 @@ import './route-friends.css'
 import { Friend, listPath, Request } from '../friend.js'
 import ButtonTwo from '../components/button-two.jsx'
 import { APP_INFO, FRIENDS_PATH } from '../CONSTANTS.js'
+import { UserData } from '../username.js'
 
 interface Props {
     session: Signal<wn.Session | null>
+    friendsList: Signal<Request[]>
+    friendProfiles: Signal<{ [key:string]: UserData }>
 }
 
-export const Friends:FunctionComponent<Props> = function ({ session }) {
-    const friendsList = useSignal<Friend[] | []>([])
+export const Friends:FunctionComponent<Props> = function (props) {
+    const { session, friendsList, friendProfiles } = props
+    // const friendsList = useSignal<Friend[] | []>([])
     const incomingRequests = useSignal<Request[]>([])
     const outgoingRequests = useSignal<Request[]>([])
-
-    // get friend list
-    useEffect(() => {
-        const fs = session.value?.fs
-        if (!fs) return
-
-        fs.read(listPath)
-            .then(_friendsList => {
-                const list = JSON.parse(new TextDecoder().decode(_friendsList))
-                friendsList.value = list
-            })
-            .catch(err => {
-                console.log('*could not read friend list*', err)
-            })
-    }, [session.value])
+    const isAccepting = useSignal<boolean>(false)
 
     // get incoming and outgoing friend requests
     useEffect(() => {
@@ -42,7 +32,6 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
 
         ky.get(`/api/friend-request?${qs}`).json()
             .then((res) => {
-                console.log('got friend requests', res)
                 const outgoing = (res as Array<Request>).filter(msg => {
                     return msg.value.from === session.value?.username
                 })
@@ -60,25 +49,24 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
 
     async function accept (req:Request, ev:Event) {
         ev.preventDefault()
-        console.log('accept friend', req)
         // @TODO
         // set up shared private files here
         // see https://guide.fission.codes/developers/webnative/sharing-private-data
         // see https://github.com/users/nichoth/projects/4/views/1?pane=issue&itemId=20845590
 
+        isAccepting.value = true
 
         const friendsListPath = wn.path.appData(
             APP_INFO,
             wn.path.file(FRIENDS_PATH)
         )
 
-        let friendList:Request[] = []
+        let friendListData:Request[] = []
         try {
             const data = new TextDecoder().decode(
                 await session.value?.fs?.read(friendsListPath)
             )
-            friendList = JSON.parse(data)
-            console.log('*friend list*', friendList)
+            friendListData = JSON.parse(data)
         } catch (err) {
             console.log('reading friend list error', err)
             if ((err as Error).toString().includes('Path does not exist')) {
@@ -86,20 +74,34 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             }
         }
 
-        friendList.push(req)
+        const el = friendListData.find(request => {
+            return (request.value.from === req.value.from)
+        })
+        if (el) {
+            isAccepting.value = false
+            // this shouldn't happen
+            return console.log('already friends...')
+        }
+
+        friendListData.push(req)
         const filepath = wn.path.appData(
             APP_INFO,
             wn.path.file(FRIENDS_PATH)
         )
         const fs = session.value?.fs
-        if (!fs) return console.log('oh on')
+        if (!fs) return console.log('oh no')
 
         await fs.write(
             filepath,
-            new TextEncoder().encode(JSON.stringify(friendList))
+            new TextEncoder().encode(JSON.stringify(friendListData))
         )
         await fs.publish()
+
+        isAccepting.value = false
+        friendsList.value = friendListData
     }
+
+    // need to map the friend list to a list of profiles
 
     return <div className="route route-friends">
         <h1>Friendship information</h1>
@@ -115,7 +117,9 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
                 {(incomingRequests.value.map(req => {
                     return <li className="friend-request">
                         <span>{req.value.from}</span>
-                        <ButtonTwo onClick={accept.bind(null, req)}>
+                        <ButtonTwo isSpinning={isAccepting.value}
+                            onClick={accept.bind(null, req)}
+                        >
                             Accept friendship
                         </ButtonTwo>
                     </li>
@@ -139,7 +143,7 @@ export const Friends:FunctionComponent<Props> = function ({ session }) {
             (<ul>
                 {friendsList.value.map(friend => {
                     return <li className="friend">
-                        {friend.humanName || 'someone'}
+                        {(friendProfiles.value[friend.value.from])?.humanName}
                     </li>
                 })}
             </ul>)

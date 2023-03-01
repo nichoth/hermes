@@ -8,22 +8,59 @@ const client = new faunadb.Client({
     secret: process.env.FAUNADB_SERVER_SECRET || ''
 })
 
-// a request is like
-// { ucan, value: { signature, username, author, rootDID, hashedUsername,
-//   timestamp } }
-// `author` is the DID from the device that is writing the message
-// `username` is the new human-readable username
-// `hashedUsername` -- the hash of the `rootDID` -- this is unique per account
-
 export const handler:Handler = async function hanlder (ev:HandlerEvent) {
-    if (ev.httpMethod !== 'GET') {
+    if ((ev.httpMethod !== 'GET') && (ev.httpMethod !== 'POST')) {
         return {
             statusCode: 405,
             body: JSON.stringify('invalid HTTP method')
         }
     }
 
-    console.log('ev.qs', ev.queryStringParameters)
+    if (ev.httpMethod === 'POST') {
+        let hashes
+        // handle a request for multiple profiles
+        try {
+            const body = JSON.parse(ev.body || '')
+            hashes = body.hashes
+        } catch (err:any) {
+            return {
+                statusCode: 422,
+                body: 'invalid JSON'
+            }
+        }
+
+        // query DB
+        const res:{ data } = await client.query(
+            q.Map(
+                q.Paginate(q.Union(
+                    ...(hashes.map((hash => {
+                        return q.Match(q.Index('profile-by-hash'), hash)
+                    })))
+                )),
+                q.Lambda('profile', q.Get(q.Var('profile')))
+            ),
+        )
+
+        console.log('res.data', res.data.map(item => item.data))
+
+        return {
+            statusCode: 200,
+            // map of hashedName => profile
+            body: JSON.stringify(
+                res.data
+                    .map(item => item.data)
+                    .reduce((acc, profile) => {
+                        acc[profile.hashedUsername] = profile
+                        return acc
+                    }, {})
+            )
+        }
+    }
+
+
+    // ------------------------------------
+    // method is GET
+    // ------------------------------------
 
     const qs = ev.queryStringParameters
     if (!qs || !qs.names) return {

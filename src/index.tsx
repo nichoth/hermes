@@ -7,11 +7,11 @@ import HamburgerWrapper from '@nichoth/components/hamburger.mjs'
 import MobileNav from '@nichoth/components/mobile-nav-menu.mjs'
 import Route from 'route-event'
 import ky from 'ky'
-// import { USERDATA_STORAGE_KEY } from './username.js'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-import { AVATAR_PATH, PROFILE_PATH, FRIENDS_PATH } from './CONSTANTS.js'
+import { AVATAR_PATH, FRIENDS_PATH } from './CONSTANTS.js'
 import { UserData } from './username.js'
+import { Request } from './friend.js'
 import '@nichoth/components/hamburger.css'
 import '@nichoth/components/mobile-nav-menu.css'
 import '@nichoth/components/z-index.css'
@@ -39,8 +39,8 @@ const App: FunctionComponent<Props> = function App () {
     const session = useSignal<wn.Session | null>(null)
     const mobileNavOpen = useSignal<boolean>(false)
     const userData = useSignal<UserData|null>(null)
-        // let friendList:Request[] = []
-    const friendList = useSignal<Request[]>([])
+    const friendsList = useSignal<Request[]>([])
+    const friendProfiles = useSignal<{ [key:string]:UserData }|unknown>({})
 
     // @ts-ignore
     window.webnative = webnative.value
@@ -176,7 +176,6 @@ const App: FunctionComponent<Props> = function App () {
             })
             .catch(err => {
                 // no avatar file, so set it to an auto generated value
-                console.log('**cant read in index**', err)
                 console.log('the avatar path we couldnt read...', avatarPath)
                 appAvatar.value = 'data:image/svg+xml;utf8,' +
                     generateFromString(username)
@@ -186,27 +185,27 @@ const App: FunctionComponent<Props> = function App () {
     }, [session.value])
 
     //
-    // get the friend list
+    // get the friends list
     //
     useEffect(() => {
         if (!session.value) return
-        const friendsListPath = wn.path.appData(
+        const friendsListData = wn.path.appData(
             APP_INFO,
             wn.path.file(FRIENDS_PATH)
         )
 
-        session.value.fs?.read(friendsListPath)
+        session.value.fs?.read(friendsListData)
             .then(async listData => {
-                const data = new TextDecoder().decode(listData)
-                friendList.value = JSON.parse(data)
-                console.log('friend list', JSON.parse(data))
+                friendsList.value = JSON.parse(
+                    new TextDecoder().decode(listData)
+                )
             })
             .catch(async err => {
                 console.log('reading friend list error', err)
                 if ((err as Error).toString().includes('Path does not exist')) {
                     // create the file
                     await session.value?.fs?.write(
-                        friendsListPath,
+                        friendsListData,
                         new TextEncoder().encode(JSON.stringify([]))
                     )
                     await session.value?.fs?.publish()
@@ -215,12 +214,25 @@ const App: FunctionComponent<Props> = function App () {
     }, [session.value])
 
     //
+    // get profiles from friends list
+    //
+    useEffect(() => {
+        if (!friendsList.value.length) return
+        const friendsSet = new Set(friendsList.value.map(item => item.value.from))
+        const friends = Array.from(friendsSet)  // deduplicate
+        ky.post('/api/username-by-hash', { json: { hashes: friends } }).json()
+            .then(res => {
+                friendProfiles.value = res
+            })
+    }, [friendsList.value])
+
+    //
     // find the view for this route
     //
     const match = router.match(routeState.value)
-    const Node = match ?
+    const Node = (match ?
         match.action(match.params) :
-        () => (<p class="404">missing route</p>)
+        () => (<p class="404">missing route</p>))
 
     function mobileNavHandler (ev:Event) {
         ev.preventDefault()
@@ -275,6 +287,7 @@ const App: FunctionComponent<Props> = function App () {
             <Node webnative={webnative} appAvatar={appAvatar} session={session} 
                 params={match?.params} setRoute={route.setRoute}
                 splats={match?.splats} userData={userData}
+                friendsList={friendsList} friendProfiles={friendProfiles}
             />
         </div>
     </div>)

@@ -62,26 +62,6 @@ export interface UserData {
     timestamp: number
 }
 
-// export const createAccountLinkingConsumer = async (
-//     username: string,
-//     program: wn.Program
-// ): Promise<wn.AccountLinkingConsumer> => {
-//     return program.auth.accountConsumer(username)
-
-//     // if (webnative.auth) return webnative.auth.accountConsumer(username)
-  
-//     // // Wait for program to be initialised
-//     // return new Promise(function (resolve) {
-//     //     (function waitForAuthStrategy() {
-//     //         if (webnative.auth) {
-//     //             return resolve(webnative.auth.accountConsumer(username))
-//     //         }
-    
-//     //         setTimeout(waitForAuthStrategy, 30);
-//     //     })()
-//     // })
-// }
-
 export const createAccountLinkingProducer = async (
     username: string,
     webnative: wn.Program

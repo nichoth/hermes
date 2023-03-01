@@ -1,10 +1,16 @@
-import { h } from 'preact'
+import { FunctionalComponent, JSX, h } from 'preact'
 import './button.css'
 
-export function Button (props) {
+interface Props {
+    isSpinning?: boolean,
+    className?: string,
+    onClick: (ev:JSX.TargetedEvent<HTMLButtonElement>) => void
+}
+
+export const Button:FunctionalComponent<Props> = function (props) {
     return <span class="form-stuff">
         {props.isSpinning ?
-            <button {...props} class={props.class || '' + ' spinning'}
+            <button {...props} class={props.className || '' + ' spinning'}
                 disabled={true}
             >
                 <span class="btn-content">{props.children}</span>
