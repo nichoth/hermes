@@ -105,6 +105,6 @@ export function sign (keystore:KeyStore, msg:string) {
     return keystore.sign(uint8arrays.fromString(msg))
 }
 
-export function toString (arr:Uint8Array) {
+export function toString (arr:Uint8Array):string {
     return uint8arrays.toString(arr, 'base64url')
 }

@@ -110,6 +110,8 @@ function ({ webnative, session, params }) {
         try {
             const res = await ky.post('/api/friend-request', { json: msg }).json()
             console.log('made a request', res)
+            // @TODO -- set the badge message
+            setResolving(false)
         } catch (err) {
             // @ts-ignore
             const { response:res } = err

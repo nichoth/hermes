@@ -104,9 +104,10 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
     // **method is POST**
     // -----------------------------
 
-    let value, signature, author;
+    let value, signature, author, method;
     try {
         const body = JSON.parse(ev.body || '')
+        method = body.method
         signature = body.signature
         value = body.value
         author = body.value.author
@@ -129,8 +130,10 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
 
     let isOk:boolean
     try {
+        console.log('**author**', author)
         isOk = await verify(author, signature, stringify(value))
     } catch (err:any) {
+        console.log('woo hoooooooo', err)
         return {
             statusCode: 500,
             body: JSON.stringify({ msg: err.message })
@@ -144,6 +147,26 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
                 msg: 'Invalid signature',
                 originalMessage: ev.body
             })
+        }
+    }
+
+    if (method === 'DELETE') {
+        console.log('.........is delete.......')
+        try {
+            await client.query(
+                q.Delete(
+                    q.Select('ref', q.Get(
+                        q.Match(q.Index('request'), [value.from, value.to])
+                    ))
+                )
+            )
+
+            return {
+                statusCode: 204
+            }
+        } catch (err) {
+            console.log('on no errr', err)
+            return { statusCode: 500, body: err.toString() }
         }
     }
 
@@ -188,6 +211,7 @@ function responseFromData (res) {
     try {
         doc = res.data.map(d => d.data)
     } catch (err) {
+        console.log('there was an error', doc)
         return { statusCode: 500, body: JSON.stringify(err) }
     }
 

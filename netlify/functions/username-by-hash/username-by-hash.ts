@@ -41,8 +41,6 @@ export const handler:Handler = async function hanlder (ev:HandlerEvent) {
             ),
         )
 
-        console.log('res.data', res.data.map(item => item.data))
-
         return {
             statusCode: 200,
             // map of hashedName => profile

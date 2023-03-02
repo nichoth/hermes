@@ -4,21 +4,25 @@ import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
 import { useSignal } from '@preact/signals'
 import ky from 'ky'
-import './route-friends.css'
+import stringify from 'json-stable-stringify'
+import { sign } from '../util.js'
+import { toString } from '../util.js'
 import { Request } from '../friend.js'
 import ButtonTwo from '../components/button-two.jsx'
 import { LOG_DIR_PATH, BLOB_DIR_PATH, APP_INFO,
     FRIENDS_PATH } from '../CONSTANTS.js'
 import { UserData } from '../username.js'
+import './route-friends.css'
 
 interface Props {
     session: Signal<wn.Session | null>
+    webnative: Signal<wn.Program | null>
     friendsList: Signal<Request[]>
     friendProfiles: Signal<{ [key:string]: UserData }>
 }
 
 export const Friends:FunctionComponent<Props> = function (props) {
-    const { session, friendsList, friendProfiles } = props
+    const { webnative, session, friendsList, friendProfiles } = props
     // const friendsList = useSignal<Friend[] | []>([])
     const incomingRequests = useSignal<Request[]>([])
     const outgoingRequests = useSignal<Request[]>([])
@@ -44,7 +48,7 @@ export const Friends:FunctionComponent<Props> = function (props) {
                 if (incoming.length) incomingRequests.value = incoming
             })
             .catch(err => {
-                console.log('errrrr', err)
+                console.log('no friend requests, do nothing', err)
             })
     }, [session.value])
 
@@ -54,6 +58,8 @@ export const Friends:FunctionComponent<Props> = function (props) {
         // set up shared private files here
         // see https://guide.fission.codes/developers/webnative/sharing-private-data
         // see https://github.com/users/nichoth/projects/4/views/1?pane=issue&itemId=20845590
+
+        if (!webnative.value) throw new Error('webnative is undefined')
 
         isAccepting.value = true
 
@@ -92,17 +98,49 @@ export const Friends:FunctionComponent<Props> = function (props) {
         const fs = session.value?.fs
         if (!fs) return console.log('oh no')
 
+        // write our new friend list
         await fs.write(
             filepath,
             new TextEncoder().encode(JSON.stringify(friendListData))
         )
 
+        // filter our list of requests in memory
+        incomingRequests.value = incomingRequests.value.filter(_req => {
+            return _req.value.from !== req.value.from
+        })
+
+        // delete the request from the server/DB
+        const friendRequest = {
+            from: req.value.from,
+            to: session.value?.username,
+            author: await webnative.value.agentDID()
+        }
+
+        // need to sign this so it is authenticated
+        const { keystore } = webnative.value.components.crypto
+        // const { keystore } = crypto
+        const sig = toString(await sign(keystore, stringify(friendRequest)))
+        const msg = {
+            signature: sig,
+            method: 'DELETE',
+            value: friendRequest
+        }
+
+        try {
+            const delRes = await ky.post('/api/friend-request', { json: msg }).json()
+            console.log('delete response', delRes)
+        } catch (err) {
+            console.log('errrrrrrrrrrrrrr', err)
+        }
+
+        // share via `wnfs`
         const shareDetails = await fs.sharePrivate(
             [
                 wn.path.appData(APP_INFO, wn.path.directory(LOG_DIR_PATH)),
                 wn.path.appData(APP_INFO, wn.path.directory(BLOB_DIR_PATH))
             ],
-            { shareWith: req.value.from } // alternative: list of usernames, or sharing/exchange DID(s)
+            // alternative: list of usernames, or sharing/exchange DID(s)
+            { shareWith: req.value.from } 
         )
 
         console.log('**share details**', shareDetails)
