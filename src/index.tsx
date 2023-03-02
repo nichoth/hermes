@@ -9,7 +9,7 @@ import Route from 'route-event'
 import ky from 'ky'
 import Router from './router.jsx'
 import { navList } from './navigation.js'
-import { AVATAR_PATH, FRIENDS_PATH } from './CONSTANTS.js'
+import { AVATAR_PATH, BLOB_DIR_PATH, FRIENDS_PATH, LOG_DIR_PATH } from './CONSTANTS.js'
 import { UserData } from './username.js'
 import { Request } from './friend.js'
 import '@nichoth/components/hamburger.css'
@@ -115,36 +115,6 @@ const App: FunctionComponent<Props> = function App () {
                     const url = ('/api/username-by-hash' + '?' + qs)
                     const profile = await ky.get(url).json()
                     userData.value = profile as UserData
-
-                    // // const res = await fetch('/api/username')
-                    // //     .then(res => res.json())
-
-                    // // userData.value = res
-
-                    // // let data = await program.components.storage.getItem(
-                    // //     USERDATA_STORAGE_KEY
-                    // // ) as string
-
-                    // // if (!data) {
-                    //     // look in wnfs
-                    //     const profilePath = wn.path.appData(
-                    //         APP_INFO,
-                    //         wn.path.file(PROFILE_PATH)
-                    //     )
-                    //     const data = new TextDecoder().decode(
-                    //         await session.value?.fs?.read(profilePath)
-                    //     )
-                    // // }
-
-                    // userData.value = JSON.parse(data) as UserData
-                    // console.log('user data', userData.value)
-
-                    // if (!userData.value) {
-                    //     // @TODO
-                    //     // we dont have the userData locally, need to fetch
-                    //     // this happens if you are on a new device
-                    //     //
-                    // }
                 } catch (err) {
                     console.log('errrrrrrrr, parsing json', err)
                 }
@@ -181,6 +151,31 @@ const App: FunctionComponent<Props> = function App () {
                     generateFromString(username)
 
                 if (!wn.path.appData) return
+            })
+    }, [session.value])
+
+    //
+    // make all filepaths necessary
+    //
+    useEffect(() => {
+        const fs = session.value?.fs
+        if (!fs) return
+        const logDirPath = wn.path.appData(APP_INFO, wn.path.directory(LOG_DIR_PATH))
+        fs.mkdir(logDirPath)
+            .then(updatedFs => {
+                console.log('success making directory', updatedFs)
+            })
+            .catch(err => {
+                console.log('error making dir', err)
+            })
+
+        const blobDirPath = wn.path.appData(APP_INFO, wn.path.directory(BLOB_DIR_PATH))
+        fs.mkdir(blobDirPath)
+            .then(updatedFs => {
+                console.log('success making blob path', updatedFs)
+            })
+            .catch(err => {
+                console.log('err making blob path', err)
             })
     }, [session.value])
 
