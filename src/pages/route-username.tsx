@@ -3,12 +3,13 @@ import { useEffect, useState } from 'preact/hooks'
 import * as wn from "webnative"
 import { Signal, useSignal } from '@preact/signals'
 import stringify from 'json-stable-stringify'
+import { TargetedEvent } from 'preact/compat'
 import ky from 'ky'
 import Button from '../components/button.jsx'
 import { Friend } from '../friend.js'
 import { sign, toString } from '../util.js'
+import { Request } from '../friend.js'
 import './route-username.css'
-import { TargetedEvent } from 'preact/compat'
 
 interface BtnProps {
     isSpinning: boolean,
@@ -40,13 +41,14 @@ const FriendshipBtn:FunctionComponent<BtnProps> = function FriendshipBtn (props)
 interface Props {
     session: Signal<wn.Session | null>,
     params: { username:string, index: string },
-    webnative: Signal<wn.Program>
+    webnative: Signal<wn.Program>,
+    friendsList: Signal<Friend[]>
 }
 
 // we get the human name from thr URL
 // get the Fission name from our own DB, by human name
 export const UserRoute:FunctionComponent<Props> =
-function ({ webnative, session, params }) {
+function ({ webnative, session, params, friendsList }) {
     const profile = useSignal<Friend|unknown>(null)
     const err = useSignal<string|null>(null)
     const pendingRequest = useSignal<unknown|null>(null)
@@ -89,6 +91,10 @@ function ({ webnative, session, params }) {
                 console.log('got friend requests', res)
                 pendingRequest.value = res
             })
+            .catch(err => {
+                // window.err = err
+                console.log('errr getting existing requests', err)
+            })
     }, [profile.value])
 
     async function requestFriend (ev:TargetedEvent) {
@@ -111,6 +117,7 @@ function ({ webnative, session, params }) {
             const res = await ky.post('/api/friend-request', { json: msg }).json()
             console.log('made a request', res)
             // @TODO -- set the badge message
+            pendingRequest.value = res
             setResolving(false)
         } catch (err) {
             // @ts-ignore
@@ -143,7 +150,7 @@ function ({ webnative, session, params }) {
         <FriendshipBtn session={session.value} profile={profile as Signal<Friend>}
             onClick={requestFriend}
             isSpinning={isResolving}
-            disabled={!!pendingRequest.value}
+            disabled={(!!pendingRequest.value)}
         />
     </div>
 }

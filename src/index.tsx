@@ -43,6 +43,12 @@ const App: FunctionComponent<Props> = function App () {
     const friendProfiles = useSignal<{ [key:string]:UserData }|unknown>({})
 
     // @ts-ignore
+    window.states = {
+        friendsList,
+        friendProfiles
+    }
+
+    // @ts-ignore
     window.webnative = webnative.value
     // @ts-ignore
     window.wn = wn
@@ -163,7 +169,7 @@ const App: FunctionComponent<Props> = function App () {
         const logDirPath = wn.path.appData(APP_INFO, wn.path.directory(LOG_DIR_PATH))
         fs.mkdir(logDirPath)
             .then(updatedFs => {
-                console.log('success making directory', updatedFs)
+                console.log('success making log directory', updatedFs)
             })
             .catch(err => {
                 console.log('error making dir', err)
@@ -191,6 +197,10 @@ const App: FunctionComponent<Props> = function App () {
 
         session.value.fs?.read(friendsListData)
             .then(async listData => {
+                console.log('read friend list',
+                    JSON.parse(new TextDecoder().decode(listData))
+                )
+
                 friendsList.value = JSON.parse(
                     new TextDecoder().decode(listData)
                 )
@@ -213,8 +223,9 @@ const App: FunctionComponent<Props> = function App () {
     //
     useEffect(() => {
         if (!friendsList.value.length) return
-        const friendsSet = new Set(friendsList.value.map(item => item.value.from))
-        const friends = Array.from(friendsSet)  // deduplicate
+        const friends = Array.from(   // deduplicate
+            new Set(friendsList.value.map(item => item.value.from))
+        )  
         ky.post('/api/username-by-hash', { json: { hashes: friends } }).json()
             .then(res => {
                 friendProfiles.value = res

@@ -130,10 +130,8 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
 
     let isOk:boolean
     try {
-        console.log('**author**', author)
         isOk = await verify(author, signature, stringify(value))
     } catch (err:any) {
-        console.log('woo hoooooooo', err)
         return {
             statusCode: 500,
             body: JSON.stringify({ msg: err.message })
@@ -152,6 +150,7 @@ export const handler:Handler = async function handler (ev:HandlerEvent) {
 
     if (method === 'DELETE') {
         console.log('.........is delete.......')
+        // @TODO -- be sure the author is on the `to` or `from` side of friendship
         try {
             await client.query(
                 q.Delete(
