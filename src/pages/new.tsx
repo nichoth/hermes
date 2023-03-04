@@ -28,8 +28,8 @@ interface InputProps {
 
 const PostInput:FunctionComponent<InputProps> = function PostInput (props) {
     const [pendingImage, setPendingImage] = useState<File|null>(null)
-    const [isValid, setValid] = useState<Boolean>(false)
-    const [isResolving, setResolving] = useState<Boolean>(false)
+    const [isValid, setValid] = useState<boolean>(false)
+    const [isResolving, setResolving] = useState<boolean>(false)
     const { fs, username } = (props.session.value || {})
 
     function checkIsValid () {

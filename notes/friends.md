@@ -33,5 +33,19 @@ const shareDetails = await fs.sharePrivate()
 `sharePrivate` is called by the side accepting the friend request
 
 
+--------------------------------
+
+
+In accepting side, we call `fs.sharePrivate`
+
+In the originating side, you want to call `fs.acceptShare`, with data returned by `sharePrivate`:
+```js
+fs.acceptShare({
+  shareId: shareDetails.shareId,
+  sharedBy: shareDetails.sharedBy.username
+})
+```
+
+This means we need to write the `shareDetails` object to the DB, or send it in another message.
 
 

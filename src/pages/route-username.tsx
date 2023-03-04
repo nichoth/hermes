@@ -116,7 +116,6 @@ function ({ webnative, session, params, friendsList }) {
         try {
             const res = await ky.post('/api/friend-request', { json: msg }).json()
             console.log('made a request', res)
-            // @TODO -- set the badge message
             pendingRequest.value = res
             setResolving(false)
         } catch (err) {
