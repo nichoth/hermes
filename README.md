@@ -3,6 +3,8 @@
 ~~[see the demo website](https://ssc-hermes.netlify.app/)~~
 ⚠️ note — this is not ready to use yet
 
+[see version 1, `ssc`](https://github.com/nichoth/ssc-server)
+
 <div>
     <img style="width: 15vw" src="./hermes_logo_edit.png" alt="Hermes logo"
         title="Hermes logo"
